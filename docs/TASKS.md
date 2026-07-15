@@ -16,7 +16,9 @@
 - [x] eslint 경계 규칙 — FSD 레이어 단방향 import + `packages/core`의 react/next/DOM import 금지
   - [x] core의 DOM 차단 — `packages/core/tsconfig.json`의 `lib: ["ES2022"]`로 DOM 타입 자체 제거 (eslint 규칙보다 확실). 검증: `document` 사용 시 TS2584
   - [x] FSD 레이어 단방향 import — `eslint-plugin-boundaries` v7 (`@repo/eslint-config/fsd`). 슬라이스 간 cross-import는 Steiger 담당(0-7)
-- [ ] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
+- [x] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
+  - `@repo/eslint-config`는 base/next-js/core + fsd export. lint-staged는 워크스페이스별 `.lintstagedrc.json` (루트 일괄 실행 시 eslint 설정을 못 찾아 전 커밋이 실패함)
+  - Steiger: `fsd/segments-by-purpose`는 `src/app/**`만 예외 — Next 라우팅 디렉터리를 겸해서 `providers.tsx`가 세그먼트로 오인됨 (TRD-FE §3.1)
 - [ ] Storybook 셋업 (`@storybook/nextjs-vite`)
 - [ ] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
 - [x] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
