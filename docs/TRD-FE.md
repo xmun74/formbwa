@@ -23,7 +23,7 @@
 
 | 레이어 | 선택 | 비고 |
 |---|---|---|
-| Core | React 19, TypeScript 5.x (strict) | |
+| Core | React 19, TypeScript 6.x (strict) | 모노레포 전 워크스페이스 동일 버전 유지. TS 7(네이티브 포트)은 `typescript-eslint` 미지원(peer `<6.1.0`)이라 보류 |
 | 프레임워크 | Next.js (App Router) | 서버 기능 최소 사용 — 라우팅·정적 서빙·OG 중심 |
 | 폴더 구조 | FSD (Feature-Sliced Design) | §3 |
 | 스타일 | Tailwind CSS 4 | CSS-first config, apps/web 내부에만 |

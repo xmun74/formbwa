@@ -8,16 +8,18 @@
 
 ### M0. FE 초기 세팅 (~0.5일)
 
-- [ ] Turborepo + pnpm workspaces 초기화 (`apps/web`, `packages/core`, 공유 config 골격)
-- [ ] `apps/web` Next.js 앱 생성 — App Router, TypeScript strict, Tailwind CSS 4
-- [ ] 기본 라이브러리 설치·프로바이더 구성 — TanStack Query, Zustand, Axios 인스턴스(`shared/api`), Zod
-- [ ] FSD 레이어 스캐폴딩 (app/views/shared — TRD-FE §3.1. widgets/features/entities는 §3.2 승격 기준 충족 시 생성, 미리 만들지 않음)
-- [ ] `packages/core` 골격 + Vitest 셋업 (빈 테스트 1개로 파이프라인 확인)
+- [x] Turborepo + pnpm workspaces 초기화 (`apps/web`, `packages/core`, 공유 config 골격)
+- [x] `apps/web` Next.js 앱 생성 — App Router, TypeScript strict, Tailwind CSS 4
+- [x] 기본 라이브러리 설치·프로바이더 구성 — TanStack Query, Zustand, Axios 인스턴스(`shared/api`), Zod
+- [x] FSD 레이어 스캐폴딩 (app/views/shared — TRD-FE §3.1. widgets/features/entities는 §3.2 승격 기준 충족 시 생성, 미리 만들지 않음)
+- [x] `packages/core` 골격 + Vitest 셋업 (빈 테스트 1개로 파이프라인 확인)
 - [ ] eslint 경계 규칙 — FSD 레이어 단방향 import + `packages/core`의 react/next/DOM import 금지
+  - [x] core의 DOM 차단 — `packages/core/tsconfig.json`의 `lib: ["ES2022"]`로 DOM 타입 자체 제거 (eslint 규칙보다 확실). 검증: `document` 사용 시 TS2584
+  - [ ] FSD 레이어 단방향 import — `eslint-plugin-boundaries`
 - [ ] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
 - [ ] Storybook 셋업 (`@storybook/nextjs-vite`)
 - [ ] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
-- [ ] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
+- [x] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
 
 ### M1. BE 초기 세팅 (~0.5일)
 
