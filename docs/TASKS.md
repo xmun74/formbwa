@@ -23,7 +23,9 @@
   - 스토리는 컴포넌트 옆에 배치 (`shared/ui/button/button.stories.tsx`) — FSD 슬라이스 응집도 유지
   - init 기본 애드온 중 chromatic(유료 SaaS)·onboarding·addon-vitest(브라우저 테스트, TRD 밖) 제거. Playwright E2E는 M11 몫
   - `preview.tsx`에서 `globals.css`+Pretendard 로드 필수 — layout.tsx를 안 거치므로 안 하면 Tailwind·폰트가 스토리에 미적용
-- [ ] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
+- [x] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
+  - CI는 루트에서 `turbo lint check-types test build` — M1의 `apps/api`가 추가돼도 워크플로 수정 불필요 (turbo가 워크스페이스 그래프로 자동 포함). api 테스트에 Postgres가 필요해지면 그때 `services:` 추가
+  - Vercel은 Root Directory=`apps/web`만 지정하면 Ignored Build Step을 자동 설정한다. **`vercel.json`에 `ignoreCommand`를 두지 말 것** — install 이전 단계라 `npx turbo`가 바이너리를 통째로 받다가 배포가 멈춘다
 - [x] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
 
 ### M1. BE 초기 세팅 (~0.5일)
