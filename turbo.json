@@ -1,7 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
-  // 런타임에만 쓰이고 빌드 산출물에 영향이 없는 값 — 캐시 해시에서 제외하되 통과시킨다
   "globalPassThroughEnv": ["PORT"],
   "tasks": {
     "build": {
