@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  ci:
+    name: Lint, Types, Test, Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # turbo가 변경 범위를 계산하려면 직전 커밋이 필요
+          fetch-depth: 2
+
+      # 설치 버전은 package.json의 packageManager 필드에서 읽는다
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Cache turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - run: pnpm install --frozen-lockfile
+
+      # 루트에서 실행하므로 M1의 apps/api가 추가돼도 이 워크플로는 수정 불필요.
+      # turbo가 워크스페이스 그래프를 읽어 새 앱의 태스크를 자동 포함한다.
+      - name: Lint, check-types, test, build
+        run: pnpm turbo lint check-types test build
+
+      # FSD 슬라이스 규칙 — apps/web 전용 (레이어 방향은 eslint boundaries가 lint에서 검사)
+      - name: Steiger (FSD)
+        run: pnpm steiger
