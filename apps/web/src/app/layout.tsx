@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "formbwa",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
