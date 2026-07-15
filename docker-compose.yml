@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: formbwa-db
+    restart: unless-stopped
+    ports:
+      # 로컬 개발용 — 운영(docker-compose.prod.yml)에서는 호스트 바인딩 금지 (TRD-BE §6.2)
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: formbwa
+      POSTGRES_PASSWORD: formbwa
+      POSTGRES_DB: formbwa
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U formbwa -d formbwa"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

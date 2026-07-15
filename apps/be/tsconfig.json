@@ -1,0 +1,26 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    // Nest는 데코레이터 메타데이터로 DI·class-validator를 구동한다
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    // 서버에는 DOM이 없다 (공유 base는 web 기준이라 DOM 포함)
+    "lib": ["ES2023"],
+    "target": "ES2023",
+    "types": ["node", "jest"],
+
+    // 소스만 export하는 packages/*와 달리 서버는 dist로 emit한다
+    "declaration": false,
+    "declarationMap": false,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "sourceMap": true,
+    "incremental": true,
+    "removeComments": true,
+    "resolvePackageJsonExports": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

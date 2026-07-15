@@ -24,18 +24,26 @@
   - init 기본 애드온 중 chromatic(유료 SaaS)·onboarding·addon-vitest(브라우저 테스트, TRD 밖) 제거. Playwright E2E는 M11 몫
   - `preview.tsx`에서 `globals.css`+Pretendard 로드 필수 — layout.tsx를 안 거치므로 안 하면 Tailwind·폰트가 스토리에 미적용
 - [x] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
-  - CI는 루트에서 `turbo lint check-types test build` — M1의 `apps/api`가 추가돼도 워크플로 수정 불필요 (turbo가 워크스페이스 그래프로 자동 포함). api 테스트에 Postgres가 필요해지면 그때 `services:` 추가
+  - CI는 루트에서 `turbo lint check-types test build` — M1의 `apps/be`가 추가돼도 워크플로 수정 불필요 (turbo가 워크스페이스 그래프로 자동 포함). be 테스트에 Postgres가 필요해지면 그때 `services:` 추가
   - Vercel은 Root Directory=`apps/web`만 지정하면 Ignored Build Step을 자동 설정한다. **`vercel.json`에 `ignoreCommand`를 두지 말 것** — install 이전 단계라 `npx turbo`가 바이너리를 통째로 받다가 배포가 멈춘다
 - [x] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
 
 ### M1. BE 초기 세팅 (~0.5일)
 
-- [ ] `apps/api` NestJS 앱 생성 (TS strict, 공유 eslint/tsconfig 연결)
-- [ ] `docker-compose.yml` — 로컬 Postgres 컨테이너 (개발용)
-- [ ] Prisma init — User/SetRecord 스키마(TRD-BE §5) + 첫 마이그레이션
-- [ ] 헬스체크 엔드포인트 + class-validator 파이프 등록
-- [ ] `turbo prune api --docker` 기반 Dockerfile 골격 (빌드 확인만, 배포는 2단계)
-- [ ] CI에 api lint·build 추가
+- [x] `apps/be` NestJS 앱 생성 (TS strict, 공유 eslint/tsconfig 연결)
+  - Nest 기본은 strict가 아니다 (`noImplicitAny: false`) — 직접 켤 것. TS 6은 `baseUrl`을 deprecated 처리하므로 제거
+  - 공유 설정은 `@repo/eslint-config/nest` (base + node globals). lint에 `--max-warnings 0` 필수 (base의 only-warn 대응)
+  - 포트 4000 — web dev 서버가 3000을 하드코딩 점유
+- [x] `docker-compose.yml` — 로컬 Postgres 컨테이너 (개발용)
+- [x] Prisma init — User/SetRecord 스키마(TRD-BE §5) + 첫 마이그레이션
+  - **Prisma 7은 드라이버 어댑터가 필수** (Rust 엔진 내장 폐기) — `@prisma/adapter-pg` 없으면 `PrismaClientInitializationError`. datasource URL은 `prisma.config.ts`, 클라이언트는 `src/generated/prisma`에 생성(`moduleFormat="cjs"`)
+  - **`postinstall: prisma generate` 필수** — 생성물이 gitignore라 CI엔 없다. 빼면 CI 전체가 깨지는데, turbo 해시에 안 잡혀 캐시 히트로 통과하는 것처럼 보인다 (`--force`로 재현)
+- [x] 헬스체크 엔드포인트 + class-validator 파이프 등록
+  - `$queryRaw`로 DB까지 왕복 — 프로세스만 살고 DB가 죽은 상태를 ok로 보고하지 않게 (검증: DB 정지 시 500)
+- [x] `turbo prune be --docker` 기반 Dockerfile 골격 (빌드 확인만, 배포는 2단계)
+  - `.dockerignore`에 `*.tsbuildinfo` 필수 — 로컬 incremental 캐시가 컨텍스트로 들어가면 컨테이너 안 tsc가 "최신"으로 오판해 `main.js`를 emit하지 않는다
+- [x] CI에 be lint·build 추가
+  - 실제로 할 일이 없었음 — CI가 루트에서 turbo를 돌려 `be#lint/check-types/test/build`를 자동 포함. be에 스크립트만 있으면 됨
 
 > 배포(EC2)·인증 모듈은 2단계. 여기서는 로컬에서 도는 골격까지만.
 
@@ -92,7 +100,7 @@
 
 - [ ] 도메인 구입 + web/api 서브도메인 DNS 구성 (쿠키 공유 전제조건)
 - [ ] EC2 프리티어 생성 — 보안그룹 443만 개방(SSH는 키+IP 제한), 스왑 2GB, 자동 보안 패치
-- [ ] `docker-compose.prod.yml` — nginx + api + db, Postgres 호스트 바인딩 금지 확인
+- [ ] `docker-compose.prod.yml` — nginx + be + db, Postgres 호스트 바인딩 금지 확인
 - [ ] certbot HTTPS 발급·자동 갱신
 - [ ] GitHub Actions 배포: GHCR 빌드/푸시 → EC2 `compose pull && up -d` → `prisma migrate deploy`
 - [ ] 일일 pg_dump → S3 cron + **복구 리허설 1회** (백업은 복구 성공 전까지 백업이 아님)

@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/generated/prisma
+# incremental 빌드 캐시 — 이게 들어가면 컨테이너 안 tsc가 "최신"으로 오판해 emit을 건너뛴다
+**/*.tsbuildinfo
+.git
+**/.env*
+**/storybook-static

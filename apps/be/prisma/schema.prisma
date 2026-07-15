@@ -1,0 +1,39 @@
+// 데이터 모델 — TRD-BE §5
+// 원칙: 저장하는 것은 수치·식별자뿐. 영상·이미지 필드는 스키마 차원에서 만들지 않는다 (§8)
+
+generator client {
+  provider = "prisma-client"
+  // src 안에 둔다 — tsconfig.build.json의 rootDir이 ./src라 밖에 두면 import가 막힌다
+  output = "../src/generated/prisma"
+  // Nest는 CommonJS로 컴파일된다
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String      @id @default(uuid())
+  email     String      @unique
+  name      String?
+  createdAt DateTime    @default(now())
+  records   SetRecord[]
+}
+
+model SetRecord {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  exercise       String   @default("squat")
+  coachId        String
+  startedAt      DateTime
+  durationSec    Int
+  repCount       Int
+  reps           Json // RepMetric[] (타입 원본은 packages/core)
+  feedbackCounts Json // { "knee_shallow": 4, ... }
+  reportText     String? // LLM 총평 (1회 생성 후 저장, 재생성 안 함)
+  createdAt      DateTime @default(now())
+
+  @@index([userId, startedAt])
+}
