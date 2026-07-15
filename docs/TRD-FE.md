@@ -34,7 +34,7 @@
 | 포즈 추론 | `@mediapipe/tasks-vision` | `'use client'` + dynamic import (SSR 제외) |
 | 오버레이 | Canvas 2D | |
 | 음성 재생 | 사전 생성 mp3 프리로드 | 제작 파이프라인은 §6, 폴백: Web Speech API |
-| UI 문서화 | Storybook | widgets/shared 컴포넌트 대상 |
+| UI 문서화 | Storybook | `shared/ui` 컴포넌트 대상 (widgets 승격 시 확대 — §3.2) |
 | 차트 | recharts | 3단계 |
 | 테스트 | Vitest (core fixture 회귀) + Playwright (E2E) | E2E는 `--use-fake-device-for-media-stream` 플래그로 카메라 대체 |
 | Lint/Format | ESLint + Prettier | 공유 설정은 `packages/eslint-config` |
@@ -46,30 +46,44 @@
 
 ## 3. 폴더 구조 — FSD
 
+FSD 공식 v2.1의 **"Start simple, extract when needed"** 원칙을 따른다. 공식 문서는 `app` + `pages` + `shared` 최소 구성을 **완전한 FSD로 인정**하며, `widgets`·`features`·`entities`는 "명확한 가치가 있을 때만" 추가하고 *"just in case"로 빈 레이어 폴더를 만들지 말 것*을 명시한다. 레이어를 미리 파놓는 것은 근거 없는 추상화이므로 하지 않는다.
+
+### 3.1 현재 구성 (1단계)
+
 ```
 apps/web/src/
 ├── app/          # Next.js 라우팅 + FSD app 레이어 (얇게 유지, 로직 금지)
 ├── views/        # FSD pages 레이어 (Next 예약어 충돌로 views 명명)
-├── widgets/
-├── features/
-├── entities/
-└── shared/
+└── shared/       # 공용 ui/lib/api/config
 ```
 
 | 레이어 | 역할 | 슬라이스 예시 |
 |---|---|---|
 | `app/` | 라우팅, 전역 프로바이더(TanStack Query 등) | `app/workout/page.tsx` → views 위임 |
-| `views/` | 화면 조립 | `workout`, `coach-select`, `dashboard`, `report` |
-| `widgets/` | 독립 UI 블록 | `camera-stage`, `set-summary`, `streak-calendar` |
-| `features/` | 사용자 행동 단위 | `calibration`, `pose-tracking`, `voice-feedback`, `save-record` |
-| `entities/` | 도메인 모델·상태 | `session`(Zustand), `coach`(캐릭터·멘트 매니페스트), `record` |
-| `shared/` | 공용 ui/lib/api/config | `shared/api`(Axios 인스턴스), `shared/ui` |
+| `views/` | 화면 조립 + **그 화면 전용** 로직·상태·UI 블록 | `workout`, `coach-select` |
+| `shared/` | 공용 ui/lib/api/config (비즈니스 로직 금지) | `shared/api`(Axios 인스턴스), `shared/ui` |
+
+### 3.2 하위 레이어 승격 기준
+
+`widgets`·`features`·`entities`는 **2곳 이상에서 실제로 재사용이 확인될 때만** 만든다. 그 전까지는 사용처 view 안에 둔다 (공식 Golden Rule: *"When in doubt, keep it in pages"*).
+
+| 레이어 | 승격 조건 | 1단계 판정 |
+|---|---|---|
+| `widgets/` | 2개 이상 view에서 재사용되는 대형 UI 블록 | **없음** — `camera-stage`·`set-summary`는 `views/workout` 전용 |
+| `features/` | 2개 이상에서 재사용되는 사용자 행동 | **없음** — `pose-tracking`·`calibration`·`voice-feedback`은 `views/workout` 전용 |
+| `entities/` | 2개 이상에서 공유되는 도메인 모델 | **`coach`만 후보** — coach-select에서 선택, workout에서 재생. M4 착수 시 확정 |
+
+- 승격은 파일 이동이라 비용이 낮다. 반대로 미리 만든 레이어는 되돌릴 계기가 없어 그대로 굳는다
+- Steiger의 `insignificant-slice` 규칙이 단일 사용처 슬라이스를 지적한다 — 이 기준의 자동 집행자
+- 2단계 이후(`record`, `save-record`, `dashboard`) 항목도 같은 기준으로 착수 시점에 판정한다
+
+### 3.3 규칙
 
 - import 방향: **상위 → 하위 단방향** (app → views → widgets → features → entities → shared). **Steiger**(FSD 공식 린터)로 레이어·슬라이스 규칙 검사, eslint boundaries 병행 — pre-commit(lint-staged)과 CI 양쪽에서 강제
-- `packages/core`는 FSD 외부 패키지 — 실사용처는 `features/pose-tracking`·`entities/session`으로 한정
-- RN 앱(4단계)도 동일 FSD 레이어 구조 사용
+- `packages/core`는 FSD 외부 패키지 — 실사용처는 포즈 파이프라인(§4)과 세션 상태로 한정
+- RN 앱(4단계)도 동일 원칙 적용 — 재사용하는 것은 레이어 목록이 아니라 **"필요할 때 승격"이라는 기준** 자체
 
-## 4. 포즈 파이프라인 (`features/pose-tracking`)
+## 4. 포즈 파이프라인 (`views/workout` — 재사용 확인 시 `features/pose-tracking`으로 승격, §3.2)
 
 - 모델: `pose_landmarker_lite.task`, `runningMode: 'VIDEO'`
 - 렌더링 rAF(60fps)와 추론(15~24fps 스로틀) 분리
@@ -170,7 +184,7 @@ interface CoachDecision {
 
 - `apps/mobile`: React Native (Expo dev build). Capacitor 생략, 직행
 - 카메라/추론: `react-native-vision-camera` Frame Processor + `react-native-fast-tflite` (BlazePose/MoveNet .tflite)
-- `@repo/core`·FSD entities/features 설계 재사용 — 재구축 범위는 카메라·추론·렌더·UI
+- `@repo/core` 재사용 + FSD 레이어 원칙(§3.2 승격 기준) 동일 적용 — 재구축 범위는 카메라·추론·렌더·UI
 - 착수 전 **기술 스파이크 1주**: 파이프라인 PoC로 성능·안정성 확인 (커뮤니티 라이브러리 성숙도 리스크)
 - 개시 조건: 웹 리텐션 지표 달성 (PRD §8)
 - 인증: BE의 `/auth/google/token` 사용 — FE 재작업 없음 (TRD-BE 참조)

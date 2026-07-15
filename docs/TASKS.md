@@ -11,7 +11,7 @@
 - [ ] Turborepo + pnpm workspaces 초기화 (`apps/web`, `packages/core`, 공유 config 골격)
 - [ ] `apps/web` Next.js 앱 생성 — App Router, TypeScript strict, Tailwind CSS 4
 - [ ] 기본 라이브러리 설치·프로바이더 구성 — TanStack Query, Zustand, Axios 인스턴스(`shared/api`), Zod
-- [ ] FSD 레이어 스캐폴딩 (app/views/widgets/features/entities/shared — TRD-FE §3)
+- [ ] FSD 레이어 스캐폴딩 (app/views/shared — TRD-FE §3.1. widgets/features/entities는 §3.2 승격 기준 충족 시 생성, 미리 만들지 않음)
 - [ ] `packages/core` 골격 + Vitest 셋업 (빈 테스트 1개로 파이프라인 확인)
 - [ ] eslint 경계 규칙 — FSD 레이어 단방향 import + `packages/core`의 react/next/DOM import 금지
 - [ ] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
