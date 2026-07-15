@@ -19,7 +19,10 @@
 - [x] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
   - `@repo/eslint-config`는 base/next-js/core + fsd export. lint-staged는 워크스페이스별 `.lintstagedrc.json` (루트 일괄 실행 시 eslint 설정을 못 찾아 전 커밋이 실패함)
   - Steiger: `fsd/segments-by-purpose`는 `src/app/**`만 예외 — Next 라우팅 디렉터리를 겸해서 `providers.tsx`가 세그먼트로 오인됨 (TRD-FE §3.1)
-- [ ] Storybook 셋업 (`@storybook/nextjs-vite`)
+- [x] Storybook 셋업 (`@storybook/nextjs-vite`)
+  - 스토리는 컴포넌트 옆에 배치 (`shared/ui/button/button.stories.tsx`) — FSD 슬라이스 응집도 유지
+  - init 기본 애드온 중 chromatic(유료 SaaS)·onboarding·addon-vitest(브라우저 테스트, TRD 밖) 제거. Playwright E2E는 M11 몫
+  - `preview.tsx`에서 `globals.css`+Pretendard 로드 필수 — layout.tsx를 안 거치므로 안 하면 Tailwind·폰트가 스토리에 미적용
 - [ ] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
 - [x] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
 
