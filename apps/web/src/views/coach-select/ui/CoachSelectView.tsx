@@ -5,8 +5,8 @@ import { useState } from "react";
 import { Button } from "@/shared/ui/button";
 
 import { COACHES } from "../model/coaches";
-import { useCameraPermission } from "../model/use-camera-permission";
-import { CoachCard } from "./coach-card";
+import { useCameraPermission } from "../model/useCameraPermission";
+import { CoachCard } from "./CoachCard";
 
 /**
  * 랜딩 겸 캐릭터 선택 (PRD §4-1, F1-4).

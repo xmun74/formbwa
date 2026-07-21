@@ -1,1 +1,1 @@
-export { CoachSelectView } from "./ui/coach-select-view";
+export { CoachSelectView } from "./ui/CoachSelectView";

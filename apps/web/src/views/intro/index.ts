@@ -1,1 +1,1 @@
-export { IntroView } from "./ui/intro-view";
+export { IntroView } from "./ui/IntroView";
