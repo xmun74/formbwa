@@ -1,5 +1,5 @@
-import { CoachSelectView } from "@/views/coach-select";
+import { IntroView } from "@/views/intro";
 
 export default function Home() {
-  return <CoachSelectView />;
+  return <IntroView />;
 }
