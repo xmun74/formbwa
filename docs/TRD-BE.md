@@ -9,7 +9,7 @@
 1. **서버는 경량**: 무거운 추론은 전부 클라이언트(TRD-FE 참조). 서버는 인증, 수치 기록 저장, LLM 프록시만 담당. GPU 서버 없음
 2. **직접 구축**: BaaS 대신 NestJS + 자체 인프라. 인증·서버 보안을 직접 관리하는 트레이드오프를 감수하고 학습·통제권을 선택 (§6 체크리스트 준수 전제)
 3. **인증의 단일 소유자**: 웹·RN 모두 동일한 토큰 플로우 — 앱 추가 시 인증 재작업 없음
-4. **영상 데이터를 받지 않는다**: 수신하는 것은 각도·횟수 등 수치 JSON뿐
+4. **영상 데이터를 받지 않는다**: 수신하는 것은 각도·횟수 등 수치 JSON뿐. 코치 시범 영상(PRD F1-8)은 **FE 정적 에셋**(Vercel)이라 BE는 관여하지 않는다 — 사용자 영상도, 시범 영상도 서버를 거치지 않는다
 
 ```
 [apps/web — Vercel]  [apps/mobile — 4단계]
@@ -75,7 +75,7 @@ expo-auth-session 구글 로그인 → idToken → /auth/google/token
 model User {
   id        String      @id @default(uuid())
   email     String      @unique
-  name      String?
+  name      String?     // 호명용 닉네임 — 1단계 게스트 때 localStorage에 두던 값을 로그인 시 승격(PRD F1-9). 구글 프로필 이름은 초기값 후보일 뿐, 사용자가 지은 닉네임이 우선
   createdAt DateTime    @default(now())
   records   SetRecord[]
 }

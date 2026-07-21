@@ -1,7 +1,45 @@
 @import "tailwindcss";
 
-@theme {
+/* static: 안 쓰인 토큰도 :root에 방출한다. 디자인 시스템의 스케일은
+   현재 사용 여부와 무관하게 존재해야 하고, 토큰 문서도 이걸 읽는다.
+   (기본 @theme는 미사용 변수를 트리셰이킹해서 스케일에 구멍이 생긴다) */
+@theme static {
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
+
+  /* 브랜드 스케일: 티파니 민트 #81D8D0 = mint-300.
+     검정을 섞지 않고 OKLCH로 굴린다 — 채도를 중간(400~600)에서 유지해야 탁하지 않다.
+     어두워질수록 색상(hue)을 186→202로 살짝 차갑게 틀어 깊이를 준다. */
+  --color-mint-50: oklch(0.985 0.014 186); /* #f0fdfb */
+  --color-mint-100: oklch(0.955 0.03 187); /* #dbf7f3 */
+  --color-mint-200: oklch(0.91 0.055 188); /* #b8eee8 */
+  --color-mint-300: oklch(0.83 0.086 188); /* #82dad2 — 브랜드 */
+  --color-mint-400: oklch(0.735 0.105 190); /* #48beb8 */
+  --color-mint-500: oklch(0.64 0.108 192); /* #0ea09d */
+  --color-mint-600: oklch(0.545 0.1 194); /* #008180 — 버튼 (흰 글씨 4.72) */
+  --color-mint-700: oklch(
+    0.455 0.088 196
+  ); /* #006465 — 강조 텍스트 (canvas 위 6.7) */
+  --color-mint-800: oklch(0.375 0.072 198); /* #004b4d */
+  --color-mint-900: oklch(0.3 0.055 200); /* #003538 */
+  --color-mint-950: oklch(0.23 0.04 202); /* #002225 */
+
+  /* 뉴트럴 — 순수 흑백 대신 민트로 틴트한다. 스케일과 별개로 의미 이름을 둔다 */
+  --color-canvas: oklch(0.975 0.01 188);
+  --color-surface: oklch(0.995 0.005 188);
+  --color-line: oklch(0.9 0.018 188);
+  --color-ink: oklch(0.27 0.024 188);
+  --color-ink-soft: oklch(0.52 0.02 188);
+
+  /* 캐릭터 액센트 — 민트(h188)의 보색 쪽. 티파니 민트 + 코랄은 알려진 조합이다.
+     채도를 억제해 헬스장 형광을 피한다 */
+  --color-coach-warm: oklch(0.79 0.126 66); /* 열정 PT쌤 — 살구 */
+  --color-coach-clay: oklch(0.64 0.108 32); /* 부산 사투리 쌤 — 테라코타 */
+  /* 솔리드 말풍선용 — 흰 글씨 대비를 확보한 깊은 톤 */
+  --color-coach-warm-deep: oklch(0.5 0.115 58);
+  --color-coach-clay-deep: oklch(0.47 0.115 32);
+
+  /* 8px 리듬이되 여백은 유동적으로 */
+  --spacing-gutter: clamp(1.5rem, 4vw, 4rem);
 }
 
 /* Tailwind preflight(@layer base) */

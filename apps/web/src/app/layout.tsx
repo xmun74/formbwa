@@ -15,7 +15,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="font-sans">
+      {/* 순수 흑백을 쓰지 않는다 — 뉴트럴은 전부 민트 색상환으로 틴트 (globals.css @theme) */}
+      <body className="bg-canvas text-ink font-sans">
         <Providers>{children}</Providers>
       </body>
     </html>
