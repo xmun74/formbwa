@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { buttonClass } from "@/shared/ui/button";
+import { AppShell } from "@/shared/ui/app-shell";
 
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
 import { SETUP_STEPS } from "../model/setup";
@@ -21,7 +22,7 @@ export function WorkoutSetupView() {
   const [coachId, setCoachId] = useState<Coach["id"]>(DEFAULT_COACH.id);
 
   return (
-    <main className="min-h-screen">
+    <AppShell>
       {/* 브레드크럼 */}
       <header className="border-line-soft flex h-[62px] items-center gap-3 border-b px-11 text-[15px]">
         <Link
@@ -70,7 +71,7 @@ export function WorkoutSetupView() {
           </div>
 
           <Link
-            href="/workout"
+            href="/prepare"
             className={buttonClass("primary", "mt-8 w-full py-4 text-[16px]")}
           >
             운동 시작
@@ -103,6 +104,6 @@ export function WorkoutSetupView() {
           </p>
         </aside>
       </div>
-    </main>
+    </AppShell>
   );
 }

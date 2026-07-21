@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { buttonClass } from "@/shared/ui/button";
-import { Logo } from "@/shared/ui/logo";
+import { AppShell } from "@/shared/ui/app-shell";
 
 /**
  * `/` 인트로 (PRD §4-1) — 히어로 + 피처 + 시범 영상 플레이스홀더.
@@ -29,15 +29,7 @@ const FEATURES = [
 
 export function IntroView() {
   return (
-    <main className="min-h-screen">
-      {/* 헤더 */}
-      <header className="border-line-soft flex h-[66px] items-center justify-between border-b px-11">
-        <Logo />
-        <span className="border-line text-ink rounded-[9px] border px-4 py-2 text-[15px]">
-          로그인
-        </span>
-      </header>
-
+    <AppShell>
       {/* 히어로 */}
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-gutter py-[70px] lg:grid-cols-[1.05fr_0.95fr]">
         <div>
@@ -110,6 +102,6 @@ export function IntroView() {
           </div>
         ))}
       </section>
-    </main>
+    </AppShell>
   );
 }

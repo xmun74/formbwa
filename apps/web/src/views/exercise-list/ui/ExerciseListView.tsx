@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { buttonClass } from "@/shared/ui/button";
+import { AppShell } from "@/shared/ui/app-shell";
 
 import {
   ALL_EXERCISES,
@@ -23,8 +24,8 @@ export function ExerciseListView() {
     ALL_EXERCISES.find((e) => e.id === selectedId) ?? DEFAULT_EXERCISE;
 
   return (
-    <main className="min-h-screen px-gutter pt-14 pb-32">
-      <div className="max-w-4xl">
+    <AppShell>
+      <div className="px-gutter max-w-4xl pt-14 pb-32">
         <h1 className="text-[30px] font-extrabold tracking-tight">운동 목록</h1>
         <p className="text-ink-soft mt-2 text-[15px]">
           부위를 골라 종목을 선택하세요. 지금은{" "}
@@ -70,6 +71,6 @@ export function ExerciseListView() {
           {selected.name}로 시작하기 →
         </Link>
       </div>
-    </main>
+    </AppShell>
   );
 }
