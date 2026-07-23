@@ -3,7 +3,7 @@
 import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { WORKOUT, SET_RESULT } from "@/shared/config";
+import { displayName, useWorkoutStore } from "@/entities/workout";
 import { Button } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 
@@ -18,25 +18,26 @@ const POINT_CLASS: Record<string, string> = {
  */
 export function SummaryView() {
   const router = useRouter();
+  const { nickname, coach, setNo, totalSets, result } = useWorkoutStore();
 
   const ringLength = 2 * Math.PI * 81; // r=81
-  const ringOffset = ringLength * (1 - SET_RESULT.quality / 100);
+  const ringOffset = ringLength * (1 - result.quality / 100);
 
   const items = [
     {
       icon: <RotateCcw className="size-5" />,
       label: "완료 횟수",
-      value: `${SET_RESULT.reps} / ${SET_RESULT.targetReps}회`,
+      value: `${result.reps} / ${result.targetReps}회`,
     },
     {
       icon: <Trophy className="size-5" />,
       label: "세트 진행",
-      value: `${WORKOUT.setNo} / ${WORKOUT.totalSets}세트`,
+      value: `${setNo} / ${totalSets}세트`,
     },
     {
       icon: <Clock className="size-5" />,
       label: "운동 시간",
-      value: SET_RESULT.durationLabel,
+      value: result.durationLabel,
     },
   ];
 
@@ -48,10 +49,10 @@ export function SummaryView() {
             ✓
           </span>
           <h1 className="mt-5 text-3xl font-extrabold tracking-tight">
-            {WORKOUT.setNo}세트 완료!
+            {setNo}세트 완료!
           </h1>
           <p className="text-ink-soft mt-2 text-base">
-            {WORKOUT.nickname}님, 오늘도 잘 해냈어요 👏
+            {displayName(nickname)}님, 오늘도 잘 해냈어요 👏
           </p>
         </div>
 
@@ -85,7 +86,7 @@ export function SummaryView() {
               </svg>
               <div className="absolute flex items-baseline">
                 <span className="text-ink text-4xl font-extrabold">
-                  {SET_RESULT.quality}
+                  {result.quality}
                 </span>
                 <span className="text-ink text-lg font-bold">%</span>
               </div>
@@ -118,7 +119,7 @@ export function SummaryView() {
             가장 많이 나온 포인트
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
-            {SET_RESULT.points.map((p) => (
+            {result.points.map((p) => (
               <span
                 key={p.label}
                 className={`${POINT_CLASS[p.tone]} rounded-full px-3 py-1.5 text-sm font-semibold`}
@@ -132,14 +133,14 @@ export function SummaryView() {
         {/* 코치 총평 */}
         <div className="bg-brand-50 mt-4 flex gap-4 rounded-2xl p-6">
           <span className="bg-coach-warm grid size-10 shrink-0 place-items-center rounded-full text-xl">
-            {WORKOUT.coach.emoji}
+            {coach.emoji}
           </span>
           <div>
             <div className="text-ink text-base font-bold">
-              {WORKOUT.coach.name}의 총평
+              {coach.name}의 총평
             </div>
             <p className="text-ink-soft mt-1.5 text-base leading-relaxed">
-              {SET_RESULT.coachComment}
+              {result.coachComment}
             </p>
           </div>
         </div>

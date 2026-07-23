@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { useWorkoutStore } from "@/entities/workout";
 import { buttonClass } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 
@@ -22,6 +23,7 @@ export function ExerciseListView() {
   const [selectedId, setSelectedId] = useState(DEFAULT_EXERCISE.id);
   const selected =
     ALL_EXERCISES.find((e) => e.id === selectedId) ?? DEFAULT_EXERCISE;
+  const setExercise = useWorkoutStore((s) => s.setExercise);
 
   return (
     <AppShell>
@@ -61,6 +63,7 @@ export function ExerciseListView() {
       <div className="fixed right-8 bottom-8 z-10">
         <Link
           href="/start"
+          onClick={() => setExercise(selected.name)}
           className={buttonClass(
             "primary",
             "px-7 py-4 text-lg shadow-[0_16px_34px_-14px] shadow-brand-500/70",

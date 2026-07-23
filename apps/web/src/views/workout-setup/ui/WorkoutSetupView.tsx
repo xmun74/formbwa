@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { useWorkoutStore } from "@/entities/workout";
 import { buttonClass } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 
@@ -12,11 +13,19 @@ import { CoachCard } from "./CoachCard";
 
 /**
  * `/start` 운동 준비 (PRD §4-3) — 닉네임(선택) + 코치 선택 + 셋업 안내.
- * "운동 시작" → `/workout` (거기서 카메라 권한·자세 배치).
+ * "운동 시작"에서 닉네임·코치를 entities/workout에 쓰고 `/prepare`로 이동.
  */
 export function WorkoutSetupView() {
   const [nickname, setNickname] = useState("");
   const [coachId, setCoachId] = useState<Coach["id"]>(DEFAULT_COACH.id);
+  const setStoreNickname = useWorkoutStore((s) => s.setNickname);
+  const setStoreCoach = useWorkoutStore((s) => s.setCoach);
+
+  const commitAndStart = () => {
+    setStoreNickname(nickname);
+    const c = COACHES.find((x) => x.id === coachId) ?? DEFAULT_COACH;
+    setStoreCoach({ id: c.id, name: c.name, emoji: c.emoji });
+  };
 
   return (
     <AppShell>
@@ -93,6 +102,7 @@ export function WorkoutSetupView() {
 
           <Link
             href="/prepare"
+            onClick={commitAndStart}
             className={buttonClass("primary", "mt-8 w-full py-4 text-lg")}
           >
             운동 시작

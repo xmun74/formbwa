@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { WORKOUT, SET_RESULT } from "@/shared/config";
+import { displayName, useWorkoutStore } from "@/entities/workout";
 import { ExitButton } from "@/shared/ui/exit-button";
 
 import { DARK_STRIPE } from "../model/workout";
@@ -13,6 +13,7 @@ import { DARK_STRIPE } from "../model/workout";
  */
 export function WorkoutView() {
   const router = useRouter();
+  const { exerciseName, setNo, coach, nickname, result } = useWorkoutStore();
   const panel = `border-dark-line relative overflow-hidden rounded-2xl border ${DARK_STRIPE}`;
 
   return (
@@ -21,12 +22,10 @@ export function WorkoutView() {
       <header className="flex h-14 shrink-0 items-center justify-between px-5">
         <div className="text-dark-ink flex items-center gap-2 text-base font-bold">
           <span className="bg-live size-2 rounded-full" />
-          {WORKOUT.exerciseName} · {WORKOUT.setNo}세트
+          {exerciseName} · {setNo}세트
         </div>
         <div className="flex items-center gap-3 text-base">
-          <span className="text-dark-ink-muted">
-            {WORKOUT.coach.name} 코치 중
-          </span>
+          <span className="text-dark-ink-muted">{coach.name} 코치 중</span>
           <ExitButton />
           <button
             type="button"
@@ -54,7 +53,7 @@ export function WorkoutView() {
             <div className="bg-dark-surface rounded-xl px-4 py-3">
               <div className="text-dark-ink-muted text-sm">이번 세트</div>
               <div className="text-dark-ink mt-1 text-2xl font-extrabold">
-                {SET_RESULT.reps}
+                {result.reps}
                 <span className="text-dark-ink-muted ml-1 text-base font-medium">
                   회
                 </span>
@@ -63,7 +62,7 @@ export function WorkoutView() {
             <div className="bg-dark-surface rounded-xl px-4 py-3">
               <div className="text-dark-ink-muted text-sm">자세 품질</div>
               <div className="text-brand-300 mt-1 text-2xl font-extrabold">
-                {SET_RESULT.quality}
+                {result.quality}
                 <span className="text-dark-ink-muted ml-0.5 text-base font-medium">
                   %
                 </span>
@@ -88,10 +87,10 @@ export function WorkoutView() {
             </span>
             <div>
               <div className="text-dark-ink-muted text-xs">
-                {WORKOUT.nickname}님
+                {displayName(nickname)}님
               </div>
               <div className="text-dark-ink text-lg font-bold">
-                {SET_RESULT.liveCaption}
+                {result.liveCaption}
               </div>
             </div>
           </div>
