@@ -3,7 +3,7 @@
 import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { SESSION, SET_RESULT } from "@/shared/config";
+import { WORKOUT, SET_RESULT } from "@/shared/config";
 import { Button } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 
@@ -31,7 +31,7 @@ export function SummaryView() {
     {
       icon: <Trophy className="size-5" />,
       label: "세트 진행",
-      value: `${SESSION.setNo} / ${SESSION.totalSets}세트`,
+      value: `${WORKOUT.setNo} / ${WORKOUT.totalSets}세트`,
     },
     {
       icon: <Clock className="size-5" />,
@@ -48,10 +48,10 @@ export function SummaryView() {
             ✓
           </span>
           <h1 className="mt-5 text-3xl font-extrabold tracking-tight">
-            {SESSION.setNo}세트 완료!
+            {WORKOUT.setNo}세트 완료!
           </h1>
           <p className="text-ink-soft mt-2 text-base">
-            {SESSION.nickname}님, 오늘도 잘 해냈어요 👏
+            {WORKOUT.nickname}님, 오늘도 잘 해냈어요 👏
           </p>
         </div>
 
@@ -132,11 +132,11 @@ export function SummaryView() {
         {/* 코치 총평 */}
         <div className="bg-brand-50 mt-4 flex gap-4 rounded-2xl p-6">
           <span className="bg-coach-warm grid size-10 shrink-0 place-items-center rounded-full text-xl">
-            {SESSION.coach.emoji}
+            {WORKOUT.coach.emoji}
           </span>
           <div>
             <div className="text-ink text-base font-bold">
-              {SESSION.coach.name}의 총평
+              {WORKOUT.coach.name}의 총평
             </div>
             <p className="text-ink-soft mt-1.5 text-base leading-relaxed">
               {SET_RESULT.coachComment}

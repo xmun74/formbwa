@@ -1,1 +1,1 @@
-export { SESSION, SET_RESULT } from "./session";
+export { WORKOUT, SET_RESULT } from "./workout";

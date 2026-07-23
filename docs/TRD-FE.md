@@ -31,7 +31,7 @@
 | 스타일            | Tailwind CSS 4                                         | CSS-first config. `globals.css`는 `@repo/design-tokens/theme.css`를 `@import`                                                                              |
 | 디자인 토큰       | `@repo/design-tokens` (패키지)                         | 색·간격·타이포(티셔츠)·radius를 플랫폼 중립 TS로 단일화 → 생성기가 Tailwind `@theme` CSS 방출. RN 대비 초기 분리 (스펙: docs/superpowers/specs/2026-07-23) |
 | 서버 상태         | TanStack Query v5                                      | 기록/리포트 fetch·mutation                                                                                                                                 |
-| 클라이언트 상태   | Zustand                                                | 세션 상태머신 미러링. RN에서도 동일 사용                                                                                                                   |
+| 클라이언트 상태   | Zustand                                                | 운동 상태머신 미러링. RN에서도 동일 사용                                                                                                                   |
 | HTTP              | Axios                                                  | 401 → refresh 재시도 인터셉터 (§7)                                                                                                                         |
 | 스키마 검증       | Zod                                                    | API 응답 검증. 폼 도입 시 React Hook Form과 병행                                                                                                           |
 | 포즈 추론         | `@mediapipe/tasks-vision`                              | `'use client'` + dynamic import (SSR 제외)                                                                                                                 |
@@ -77,13 +77,16 @@ apps/web/src/
 
 `widgets`·`features`·`entities`는 **2곳 이상에서 실제로 재사용이 확인될 때만** 만든다. 그 전까지는 사용처 view 안에 둔다 (공식 Golden Rule: _"When in doubt, keep it in pages"_).
 
-| 레이어      | 승격 조건                                 | 1단계 판정                                                                                                                                                                                                                                                                       |
-| ----------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `widgets/`  | 2개 이상 view에서 재사용되는 대형 UI 블록 | **없음** — `camera-stage`·`demo-video`는 `views/prepare`·`views/workout` 전용. 공용 셸(`app-shell`·`site-header`·`exit-button`)은 `shared/ui`                                                                                                                                    |
-| `features/` | 2개 이상에서 재사용되는 사용자 행동       | **없음** — `pose-tracking`·`calibration`·`voice-feedback`은 `views/prepare`·`views/workout` 전용                                                                                                                                                                                 |
-| `entities/` | 2개 이상에서 공유되는 도메인 모델         | **`session` 후보** — 닉네임·선택 코치·세트 결과는 `/workout`·`/summary` 등 여러 라우트가 공유. **현재는 목 상수를 `shared/config/session.ts`에 두었고**(steiger가 `@/` 별칭 참조를 못 세 insignificant-slice 오탐), 상태를 갖는 순간 `entities/session`(Zustand)로 승격한다 (M2) |
+| 레이어      | 승격 조건                                 | 1단계 판정                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `widgets/`  | 2개 이상 view에서 재사용되는 대형 UI 블록 | **없음** — `camera-stage`·`demo-video`는 `views/prepare`·`views/workout` 전용. 공용 셸(`app-shell`·`site-header`·`exit-button`)은 `shared/ui`                                                                                                                                                                                                                                                              |
+| `features/` | 2개 이상에서 재사용되는 사용자 행동       | **없음** — `pose-tracking`·`calibration`·`voice-feedback`은 `views/prepare`·`views/workout` 전용                                                                                                                                                                                                                                                                                                           |
+| `entities/` | 2개 이상에서 공유되는 도메인 모델         | **`workout` 후보** — 이번 운동의 도메인 값(닉네임·선택 코치·선택 종목·세트 결과)을 `/workout`·`/summary`가 공유하며 **localStorage 영속**. 모델·오디오는 도메인이 아니라 인프라라 **`shared/lib`로 분리**(§9.1). **현재는 목 상수를 `shared/config/workout.ts`에 두었고**(steiger가 `@/` 별칭 참조를 못 세 insignificant-slice 오탐), 상태를 갖는 순간 `entities/workout`(Zustand persist)로 승격한다 (M2) |
 
-- **라우트 걸친 상태는 반드시 view 밖에** — 프리로드한 MediaPipe 모델·닉네임·선택 종목·선택 코치는 여러 라우트가 공유한다. Zustand store를 `entities/session`(또는 `shared/model/session`)에 두어 라우트 전환에도 메모리에 유지 (§9.1). view 안에 두면 라우트 이동 시 잃는다
+- **라우트 걸친 상태는 view 밖에 — 성격이 다른 둘을 슬라이스로도 나눈다.**
+  - **`entities/workout` (도메인·선택값) = localStorage 영속.** 닉네임·선택 코치·선택 종목·세트 결과. 전부 직렬화 가능하니 `persist`로 통째 저장 — **인메모리 store는 새로고침에 사라져 "새로고침해도 단계 유지"를 못 한다.** (닉네임은 개인정보라 URL 금지 — localStorage만)
+  - **`shared/lib` (인프라·리소스) = 인메모리.** MediaPipe 모델·오디오 매니페스트는 도메인이 아니라 무거운 런타임 리소스라 entities에 섞지 않는다. 프리로드 훅/스토어로 라우트 전환엔 유지, **새로고침 시엔 재프리로드**(재다운로드 캐시 성격이라 잃어도 됨). 모델을 entity와 분리했으므로 `partialize`로 골라낼 필요가 없다
+  - view 안에 두면 라우트 이동 시 잃는다
 - 승격은 파일 이동이라 비용이 낮다. 반대로 미리 만든 레이어는 되돌릴 계기가 없어 그대로 굳는다
 - Steiger의 `insignificant-slice` 규칙이 단일 사용처 슬라이스를 지적한다 — 이 기준의 자동 집행자
 - 2단계 이후(`record`, `save-record`, `dashboard`) 항목도 같은 기준으로 착수 시점에 판정한다
@@ -91,7 +94,7 @@ apps/web/src/
 ### 3.3 규칙
 
 - import 방향: **상위 → 하위 단방향** (app → views → widgets → features → entities → shared). **Steiger**(FSD 공식 린터)로 레이어·슬라이스 규칙 검사, eslint boundaries 병행 — pre-commit(lint-staged)과 CI 양쪽에서 강제
-- `packages/core`는 FSD 외부 패키지 — 실사용처는 포즈 파이프라인(§4)과 세션 상태로 한정
+- `packages/core`는 FSD 외부 패키지 — 실사용처는 포즈 파이프라인(§4)과 운동 상태로 한정
 - RN 앱(4단계)도 동일 원칙 적용 — 재사용하는 것은 레이어 목록이 아니라 **"필요할 때 승격"이라는 기준** 자체
 
 ## 4. 포즈 파이프라인 (`views/prepare`·`views/workout` — 재사용 확인 시 `features/pose-tracking`으로 승격, §3.2)
@@ -101,8 +104,8 @@ apps/web/src/
 - 랜드마크 visibility 임계값 미달 프레임은 판정 제외
 - 캘리브레이션: 시작 시 기립 자세 3초 → 사용자별 기준 각도·비율 저장 (원근 보정)
 - 카메라 가이드: 노트북 웹캠 기준 측면 45° 배치 안내, 전신 바운딩 박스 확인 후 시작 허용
-- **라우트 분리 + 준비 단계 내부 상태**: 준비(`/prepare`) → 운동(`/workout`) → 요약(`/summary`)을 **별도 라우트**로 둔다(밝은 준비·몰입 다크 운동·밝은 결과는 성격이 달라). 단 `/prepare` 안에서는 `placement`(배치) → `calibration`(3초)를 **내부 2상태 전환**으로 하고, 완료 시 `/workout`으로 이동한다. 라우트 간 상태(선택 코치·세트 결과)는 세션 store(§3.2)로 유지
-- **이탈 가드**: 다크 화면(`/prepare`·`/workout`)에서 세션 중단은 화면 내 [✕ 그만두기] 버튼으로 (→ `/exercises`). 뒤로가기·새로고침·탭 닫기 방어(`beforeunload` + 뒤로가기 가로채 "그만두시겠어요?")는 M2에서 추가
+- **라우트 분리 + 준비 단계 내부 상태**: 준비(`/prepare`) → 운동(`/workout`) → 요약(`/summary`)을 **별도 라우트**로 둔다(밝은 준비·몰입 다크 운동·밝은 결과는 성격이 달라). 단 `/prepare` 안에서는 `placement`(배치) → `calibration`(3초)를 **내부 2상태 전환**으로 하고, 완료 시 `/workout`으로 이동한다. 라우트 간 상태(선택 코치·세트 결과)는 `entities/workout` store(§3.2)로 유지
+- **이탈 가드**: 다크 화면(`/prepare`·`/workout`)에서 운동 중단은 화면 내 [✕ 그만두기] 버튼으로 (→ `/exercises`). 뒤로가기·새로고침·탭 닫기 방어(`beforeunload` + 뒤로가기 가로채 "그만두시겠어요?")는 M2에서 추가
 
 ## 5. 코어 엔진 (packages/core)
 
@@ -226,7 +229,9 @@ interface CoachDecision {
 
 ### 9.1 프리로드 전략 — 라우트에 걸쳐 은폐
 
-라우트 체인(`/` → `/exercises` → `/start` → `/prepare` → `/workout` → `/summary`)이 로딩을 은폐하는 장치다. 사용자가 인트로를 읽고 운동·코치를 고르는 시간이 곧 다운로드 시간이 된다. **핵심 전제: 프리로드한 모델은 라우트가 바뀌어도 유지돼야 한다** — Zustand store(`entities/session`)에 인스턴스를 두면 Next SPA 특성상 라우트 전환에도 메모리에 남는다. view 안에 두면 `/prepare`·`/workout` 진입 시 다시 받게 된다 (§3.2).
+라우트 체인(`/` → `/exercises` → `/start` → `/prepare` → `/workout` → `/summary`)이 로딩을 은폐하는 장치다. 사용자가 인트로를 읽고 운동·코치를 고르는 시간이 곧 다운로드 시간이 된다. **핵심 전제: 프리로드한 모델은 라우트가 바뀌어도 유지돼야 한다** — `shared/lib`의 **인메모리** 프리로드 훅/스토어에 인스턴스를 두면 Next SPA 특성상 라우트 전환에도 메모리에 남는다(모델은 도메인이 아니라 인프라라 entity와 분리 — §3.2). view 안에 두면 `/prepare`·`/workout` 진입 시 다시 받게 된다.
+
+- **모델은 새로고침 시 재프리로드**(인메모리라 사라짐 — 재다운로드 캐시 성격이라 무방). 반면 **닉네임·종목·코치 선택값은 `entities/workout`의 localStorage 영속**(§3.2)이라 새로고침에도 단계가 유지된다. 즉 "새로고침 유지"의 주체는 인메모리가 아니라 **localStorage**다
 
 | 시점                        | 대상                  | 이유                                                                                                 |
 | --------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |

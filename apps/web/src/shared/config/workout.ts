@@ -1,14 +1,15 @@
 /**
- * 세션 컨텍스트 목 데이터 — /workout(운동)·/summary(요약)가 공유한다.
+ * 이번 운동 컨텍스트 목 데이터 — /workout(운동)·/summary(요약)가 읽는다.
  *
  * 지금은 mock 상수라 shared/config에 둔다. 실제로는 /start에서 입력받은
  * 닉네임·코치·선택 종목이 흘러들어오고, 운동 중 판정 결과가 쌓인다.
  *
- * TODO(M2): 상태를 갖는 순간 entities/session (Zustand store)로 승격한다.
+ * TODO(M2): 상태를 갖는 순간 entities/workout (Zustand + persist)로 승격한다.
+ *   선택값(닉네임·코치·종목)은 localStorage 영속, 모델·오디오는 shared/lib 인프라로 분리.
  *   (steiger가 이 레포에서 `@/` 별칭을 못 풀어 엔티티 참조를 0으로 오인 →
  *    지금은 shared에 두어 insignificant-slice 오탐을 피한다.)
  */
-export const SESSION = {
+export const WORKOUT = {
   nickname: "민수",
   coach: { name: "열정 PT쌤", emoji: "🔥" },
   exerciseName: "스쿼트",

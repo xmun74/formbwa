@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { SESSION, SET_RESULT } from "@/shared/config";
+import { WORKOUT, SET_RESULT } from "@/shared/config";
 import { ExitButton } from "@/shared/ui/exit-button";
 
 import { DARK_STRIPE } from "../model/workout";
@@ -21,11 +21,11 @@ export function WorkoutView() {
       <header className="flex h-14 shrink-0 items-center justify-between px-5">
         <div className="text-dark-ink flex items-center gap-2 text-base font-bold">
           <span className="bg-live size-2 rounded-full" />
-          {SESSION.exerciseName} · {SESSION.setNo}세트
+          {WORKOUT.exerciseName} · {WORKOUT.setNo}세트
         </div>
         <div className="flex items-center gap-3 text-base">
           <span className="text-dark-ink-muted">
-            {SESSION.coach.name} 코치 중
+            {WORKOUT.coach.name} 코치 중
           </span>
           <ExitButton />
           <button
@@ -88,7 +88,7 @@ export function WorkoutView() {
             </span>
             <div>
               <div className="text-dark-ink-muted text-xs">
-                {SESSION.nickname}님
+                {WORKOUT.nickname}님
               </div>
               <div className="text-dark-ink text-lg font-bold">
                 {SET_RESULT.liveCaption}

@@ -61,8 +61,11 @@
 
 - [x] **6라우트 골격 (UI shell 완료)** — `/`(intro) → `/exercises`(exercise-list) → `/start`(workout-setup) → `/prepare`(prepare) → `/workout`(workout) → `/summary`(summary) (TRD-FE §3.1). 6개 화면 UI가 목 데이터로 모두 서 있음
   - 준비/운동/요약을 **별도 라우트로 분리** (밝은 준비·몰입 다크 운동·밝은 결과). `/prepare`는 배치→캘리브 내부 2상태. 카메라·포즈·판정 로직은 아래 항목들
-- [ ] **세션 store** (`entities/session`, Zustand) — 모델 인스턴스·닉네임·선택 코치·세트 결과를 라우트 걸쳐 보관. view 안에 두면 `/workout`에서 모델을 다시 받는다 (TRD-FE §3.2·§9.1)
-  - **현재 목 상수를 `shared/config/session.ts`에 둠** (steiger가 `@/` 별칭 참조를 못 세 entities 슬라이스를 insignificant로 오탐 → 임시로 shared). 상태를 갖는 순간 `entities/session`으로 승격
+- [ ] **운동 store 분리** (TRD-FE §3.2·§9.1) — 도메인과 인프라를 슬라이스로 나눔:
+  - **`entities/workout` (Zustand persist)** — 닉네임·선택 코치·선택 종목·세트 결과. 전부 직렬화 가능하니 localStorage 통째 영속 → 새로고침에도 단계 유지 (인메모리만 두면 날아감)
+  - **`shared/lib` 프리로드 훅/스토어 = 인메모리** — MediaPipe 모델·오디오. 도메인이 아니라 리소스라 entity와 분리. 라우트 전환엔 유지, 새로고침 시 재프리로드
+  - **현재 목 상수를 `shared/config/workout.ts`에 둠** (steiger가 `@/` 별칭 참조를 못 세 entities 슬라이스를 insignificant로 오탐 → 임시로 shared). 상태를 갖는 순간 `entities/workout`으로 승격
+  - /exercises 종목·/start 닉네임·코치를 store에 쓰고 /workout·/summary가 읽게 배선
 - [ ] `getUserMedia` 카메라 스트림 + `@mediapipe/tasks-vision` 로딩 (`'use client'` + dynamic import). 모델 프리로드는 `/` 진입 시 시작 → store 보관
 - [ ] 렌더링(rAF) / 추론(15~24fps 스로틀) 분리 루프
 - [ ] Canvas 랜드마크 오버레이 (F1-7)
@@ -94,15 +97,15 @@
   - 매니페스트에 영상 경로 추가 (mp3와 같은 방식, 하드코딩 금지)
 - [x] **`/` 인트로 + `/exercises` 운동 목록 + `/start` 설정 화면 (UI 완료)** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/exercises`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`(`views/workout-setup`)는 닉네임 입력 + 준비물 안내(2m·측면 45°) + 캐릭터 카드(리치) + "운동 시작"(→ `/prepare`)
   - **UI는 목 데이터로 완성**. 실 캐릭터 에셋·음성·카메라 고지 위치 조정은 M4 본체에서
-  - M2에서 라우트 골격·세션 store는 이미 섬 — 여기선 화면 내용을 채움
-  - 운동 목록은 **부위별 구조를 미리** 세워 3단계 종목 추가(F3-3) 때 화면 재작업 없게. 선택 종목은 세션 store에 저장
+  - M2에서 라우트 골격·운동 store(entities/workout)는 이미 섬 — 여기선 화면 내용을 채움
+  - 운동 목록은 **부위별 구조를 미리** 세워 3단계 종목 추가(F3-3) 때 화면 재작업 없게. 선택 종목은 entities/workout에 저장
   - 프리로드 (TRD-FE §9.1): `/` 진입 시 모델·WASM(store 보관) / `/start` 캐릭터 선택 시 mp3
   - 캐릭터 이름·성격은 매니페스트에서 읽을 것 — 사투리 게이트(PRD §12)에서 교체될 수 있음
 - [ ] 닉네임 개인화 (F1-9, TRD-FE §6.1) — **선택 입력(필수 아님, 비우면 "회원님")**, 자동 포커스 금지·플레이스홀더 예시. localStorage 저장(재방문 유지), 운동 중 **자막에 이름 상시**. 세트 경계 음성 호명은 비-실시간이라 런타임 TTS 허용(미리 합성·캐싱, 실시간 교정 루프엔 넣지 않음)
 
 ### M5. 세트 요약·마무리 (F1-6) (~1일)
 
-- [ ] 세션 Zustand 스토어 + 세트 종료 요약 화면 (F1-6)
+- [ ] entities/workout 스토어 + 세트 종료 요약 화면 (F1-6)
 - [ ] ~~카메라 처리 방식 고지 + 운동 면책 문구~~ → **M4 랜딩으로 이동** (PRD §10이 "첫 화면에 명시"를 요구, TRD-FE §8은 권한 요청 직전을 요구)
 - [ ] 판정 튜닝 라운드 1 — 지인 ~5명 테스트, fixture 보강
 
