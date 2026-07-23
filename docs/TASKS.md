@@ -47,18 +47,29 @@
 
 > 배포(EC2)·인증 모듈은 2단계. 여기서는 로컬에서 도는 골격까지만.
 
+### M1.5. 디자인 시스템 — 토큰 패키지 (UI 1차와 함께 진행, 스펙: docs/superpowers/specs/2026-07-23-design-tokens-design.md)
+
+- [x] **`@repo/design-tokens` 패키지** — 색·간격·타이포(티셔츠 스케일)·radius를 플랫폼 중립 TS로 단일화 (RN 대비 초기 분리). 무빌드(`@repo/core` 패턴)
+- [x] **TS → `theme.css` 생성기** (`gen` 스크립트, tsx) — Tailwind v4 `@theme static` 방출, 결과 CSS는 커밋. `globals.css`가 `@import`
+- [x] **하드코딩 값 → 스케일 이전** — 컴포넌트의 `text-[..px]`·`rounded-[..px]`를 `text-*`·`rounded-*` 유틸리티로 (히어로 clamp·이모지·실루엣 플레이스홀더는 예외). base=14
+- [x] **공용 UI 셸** — `shared/ui`에 `app-shell`(고정 헤더+스크롤 영역)·`site-header`·`exit-button`·`Logo`(브랜드 SVG 마크)·`Button`. 아이콘은 `lucide-react`
+- [ ] RN 타깃 시 생성기에 hex 출력(OKLCH→hex) 추가 — 4단계
+
+> 색 토큰은 Claude Design 원본 값 그대로. 타이포/radius는 신규 스케일이라 기본 `text-*`가 소폭 변함(의도).
+
 ### M2. 라우트 골격 + 포즈 파이프라인 + 운동 화면 (F1-5, F1-7, F1-8) (~2~3일)
 
-- [ ] **4라우트 골격** — `/`(views/intro) → `/exercises`(views/exercise-list) → `/start`(views/coach-select) → `/workout`(views/workout) (TRD-FE §3.1)
-  - ⚠️ 현재 코드는 `/`가 `coach-select`다 (라우트 분리 결정 전 작성). **`coach-select`를 `/start`로 옮기고**, `/`엔 `views/intro`(히어로+"시작하기") 신설, `/exercises`엔 `views/exercise-list` 신설. 닉네임 입력란도 `coach-select`(=`/start`)에 추가
-- [ ] **세션 store** (`entities/session` 또는 `shared/model/session`, Zustand) — 모델 인스턴스·닉네임·선택 코치를 라우트 걸쳐 보관. view 안에 두면 `/workout`에서 모델을 다시 받는다 (TRD-FE §3.2·§9.1)
+- [x] **6라우트 골격 (UI shell 완료)** — `/`(intro) → `/exercises`(exercise-list) → `/start`(workout-setup) → `/prepare`(prepare) → `/workout`(workout) → `/summary`(summary) (TRD-FE §3.1). 6개 화면 UI가 목 데이터로 모두 서 있음
+  - 준비/운동/요약을 **별도 라우트로 분리** (밝은 준비·몰입 다크 운동·밝은 결과). `/prepare`는 배치→캘리브 내부 2상태. 카메라·포즈·판정 로직은 아래 항목들
+- [ ] **세션 store** (`entities/session`, Zustand) — 모델 인스턴스·닉네임·선택 코치·세트 결과를 라우트 걸쳐 보관. view 안에 두면 `/workout`에서 모델을 다시 받는다 (TRD-FE §3.2·§9.1)
+  - **현재 목 상수를 `shared/config/session.ts`에 둠** (steiger가 `@/` 별칭 참조를 못 세 entities 슬라이스를 insignificant로 오탐 → 임시로 shared). 상태를 갖는 순간 `entities/session`으로 승격
 - [ ] `getUserMedia` 카메라 스트림 + `@mediapipe/tasks-vision` 로딩 (`'use client'` + dynamic import). 모델 프리로드는 `/` 진입 시 시작 → store 보관
 - [ ] 렌더링(rAF) / 추론(15~24fps 스로틀) 분리 루프
 - [ ] Canvas 랜드마크 오버레이 (F1-7)
 - [ ] 전신 바운딩 박스 체크 + 카메라 배치 가이드 UI, 측면 45° 안내 (F1-5)
 - [ ] 기립 캘리브레이션 3초 → 기준값 저장 (F1-5)
-- [ ] `/workout` 내부 상태 전환 `placement → calibration → active → summary` (라우트 아닌 한 화면 상태) + **이탈 가드**(`beforeunload`·뒤로가기 가로채 "그만두시겠어요?" + [✕ 그만두기]) (TRD-FE §4)
-- [ ] 운동 화면 레이아웃 — **왼쪽 내 카메라/오버레이(작게) + 오른쪽 코치 시범 영상(크게, 플레이스홀더 `<video>`)** (F1-8, PRD §4-4, TRD-FE §6.2). 입문자 중심 위계(시범=주). 실제 영상은 M4, 여기선 자리·재생만
+- [ ] **이탈 가드** — 라우트 분리는 완료(`/prepare` 배치·캘리브 / `/workout` 운동 / `/summary` 요약). 현재 [✕ 그만두기](→ `/exercises`)만 있고, `beforeunload`·뒤로가기 가로채 "그만두시겠어요?" 방어는 M2에서 추가 (TRD-FE §4)
+- [x] **운동 화면 레이아웃 (UI 완료)** — **왼쪽 내 카메라/오버레이(작게) + 오른쪽 코치 시범 영상(크게, 플레이스홀더)** (F1-8, PRD §4-4, TRD-FE §6.2). 입문자 중심 위계(시범=주). 실제 카메라·영상은 M2/M4, 현재는 자리·목 데이터만
   - 시범 mp4는 프로그레시브 재생 (전체 프리로드 없이 첫 프레임부터 — §9.1). 판정과 동기화하지 않음
 
 ### M3. 코어 엔진 (F1-1, F1-2) (~1주 — 병목은 코딩이 아니라 몸으로 하는 오탐 검증)
@@ -81,7 +92,8 @@
   - 정상 스쿼트 촬영(M3 fixture 겸용) → 마커리스 모캡 → **인체 비율 캐릭터(얼굴=코치)** 리타겟 → 단색/스튜디오 배경 렌더 → mp4 루프
   - 도구: MakeHuman(CC0) + 모캡(무료 티어 **비상업 주의**) + Blender. 투명 영상 금지(호환·깜빡임)
   - 매니페스트에 영상 경로 추가 (mp3와 같은 방식, 하드코딩 금지)
-- [ ] **`/` 인트로 + `/exercises` 운동 목록 + `/start` 설정 화면** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/exercises`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`는 닉네임 입력 + 카메라 처리 고지 + 준비물 안내(2m·측면 45°) + 캐릭터 카드 + "운동 시작"(카메라 권한 → `/workout`)
+- [x] **`/` 인트로 + `/exercises` 운동 목록 + `/start` 설정 화면 (UI 완료)** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/exercises`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`(`views/workout-setup`)는 닉네임 입력 + 준비물 안내(2m·측면 45°) + 캐릭터 카드(리치) + "운동 시작"(→ `/prepare`)
+  - **UI는 목 데이터로 완성**. 실 캐릭터 에셋·음성·카메라 고지 위치 조정은 M4 본체에서
   - M2에서 라우트 골격·세션 store는 이미 섬 — 여기선 화면 내용을 채움
   - 운동 목록은 **부위별 구조를 미리** 세워 3단계 종목 추가(F3-3) 때 화면 재작업 없게. 선택 종목은 세션 store에 저장
   - 프리로드 (TRD-FE §9.1): `/` 진입 시 모델·WASM(store 보관) / `/start` 캐릭터 선택 시 mp3

@@ -23,29 +23,30 @@
 
 ## 2. 기술 스택
 
-| 레이어            | 선택                                                   | 비고                                                                                                              |
-| ----------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Core              | React 19, TypeScript 6.x (strict)                      | 모노레포 전 워크스페이스 동일 버전 유지. TS 7(네이티브 포트)은 `typescript-eslint` 미지원(peer `<6.1.0`)이라 보류 |
-| 프레임워크        | Next.js (App Router)                                   | 서버 기능 최소 사용 — 라우팅·정적 서빙·OG 중심                                                                    |
-| 폴더 구조         | FSD (Feature-Sliced Design)                            | §3                                                                                                                |
-| 스타일            | Tailwind CSS 4                                         | CSS-first config, apps/web 내부에만                                                                               |
-| 서버 상태         | TanStack Query v5                                      | 기록/리포트 fetch·mutation                                                                                        |
-| 클라이언트 상태   | Zustand                                                | 세션 상태머신 미러링. RN에서도 동일 사용                                                                          |
-| HTTP              | Axios                                                  | 401 → refresh 재시도 인터셉터 (§7)                                                                                |
-| 스키마 검증       | Zod                                                    | API 응답 검증. 폼 도입 시 React Hook Form과 병행                                                                  |
-| 포즈 추론         | `@mediapipe/tasks-vision`                              | `'use client'` + dynamic import (SSR 제외)                                                                        |
-| 오버레이          | Canvas 2D                                              |                                                                                                                   |
-| 음성 재생         | 사전 생성 mp3 프리로드                                 | 제작 파이프라인은 §6.1, 폴백: Web Speech API                                                                      |
-| 시범 영상         | HTML5 `<video loop muted playsinline>` (사전 렌더 mp4) | 라이브 3D 아님 — §1·§6.2. 프로그레시브 재생                                                                       |
-| UI 문서화         | Storybook                                              | `shared/ui` 컴포넌트 대상 (widgets 승격 시 확대 — §3.2)                                                           |
-| 차트              | recharts                                               | 3단계                                                                                                             |
-| 테스트            | Vitest (core fixture 회귀) + Playwright (E2E)          | E2E는 `--use-fake-device-for-media-stream` 플래그로 카메라 대체                                                   |
-| Lint/Format       | ESLint + Prettier                                      | 공유 설정은 `packages/eslint-config`                                                                              |
-| FSD 아키텍처 린트 | Steiger                                                | FSD 레이어·슬라이스 규칙 자동 검사 (§3)                                                                           |
-| Git hooks         | Husky + lint-staged                                    | pre-commit: 변경 파일만 lint+format                                                                               |
-| 커밋 규칙         | commitlint (Conventional Commits)                      | commit-msg 훅. `feat(core): ...` 형식                                                                             |
-| 모노레포          | Turborepo + pnpm workspaces                            |                                                                                                                   |
-| CI/CD             | GitHub Actions + Vercel                                | CI에서 lint·steiger·test 재검증 (훅 우회 대비)                                                                    |
+| 레이어            | 선택                                                   | 비고                                                                                                                                                       |
+| ----------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Core              | React 19, TypeScript 6.x (strict)                      | 모노레포 전 워크스페이스 동일 버전 유지. TS 7(네이티브 포트)은 `typescript-eslint` 미지원(peer `<6.1.0`)이라 보류                                          |
+| 프레임워크        | Next.js (App Router)                                   | 서버 기능 최소 사용 — 라우팅·정적 서빙·OG 중심                                                                                                             |
+| 폴더 구조         | FSD (Feature-Sliced Design)                            | §3                                                                                                                                                         |
+| 스타일            | Tailwind CSS 4                                         | CSS-first config. `globals.css`는 `@repo/design-tokens/theme.css`를 `@import`                                                                              |
+| 디자인 토큰       | `@repo/design-tokens` (패키지)                         | 색·간격·타이포(티셔츠)·radius를 플랫폼 중립 TS로 단일화 → 생성기가 Tailwind `@theme` CSS 방출. RN 대비 초기 분리 (스펙: docs/superpowers/specs/2026-07-23) |
+| 서버 상태         | TanStack Query v5                                      | 기록/리포트 fetch·mutation                                                                                                                                 |
+| 클라이언트 상태   | Zustand                                                | 세션 상태머신 미러링. RN에서도 동일 사용                                                                                                                   |
+| HTTP              | Axios                                                  | 401 → refresh 재시도 인터셉터 (§7)                                                                                                                         |
+| 스키마 검증       | Zod                                                    | API 응답 검증. 폼 도입 시 React Hook Form과 병행                                                                                                           |
+| 포즈 추론         | `@mediapipe/tasks-vision`                              | `'use client'` + dynamic import (SSR 제외)                                                                                                                 |
+| 오버레이          | Canvas 2D                                              |                                                                                                                                                            |
+| 음성 재생         | 사전 생성 mp3 프리로드                                 | 제작 파이프라인은 §6.1, 폴백: Web Speech API                                                                                                               |
+| 시범 영상         | HTML5 `<video loop muted playsinline>` (사전 렌더 mp4) | 라이브 3D 아님 — §1·§6.2. 프로그레시브 재생                                                                                                                |
+| UI 문서화         | Storybook                                              | `shared/ui` 컴포넌트 대상 (widgets 승격 시 확대 — §3.2)                                                                                                    |
+| 차트              | recharts                                               | 3단계                                                                                                                                                      |
+| 테스트            | Vitest (core fixture 회귀) + Playwright (E2E)          | E2E는 `--use-fake-device-for-media-stream` 플래그로 카메라 대체                                                                                            |
+| Lint/Format       | ESLint + Prettier                                      | 공유 설정은 `packages/eslint-config`                                                                                                                       |
+| FSD 아키텍처 린트 | Steiger                                                | FSD 레이어·슬라이스 규칙 자동 검사 (§3)                                                                                                                    |
+| Git hooks         | Husky + lint-staged                                    | pre-commit: 변경 파일만 lint+format                                                                                                                        |
+| 커밋 규칙         | commitlint (Conventional Commits)                      | commit-msg 훅. `feat(core): ...` 형식                                                                                                                      |
+| 모노레포          | Turborepo + pnpm workspaces                            |                                                                                                                                                            |
+| CI/CD             | GitHub Actions + Vercel                                | CI에서 lint·steiger·test 재검증 (훅 우회 대비)                                                                                                             |
 
 ## 3. 폴더 구조 — FSD
 
@@ -58,27 +59,29 @@ apps/web/src/
 ├── app/          # Next.js 라우팅 + FSD app 레이어 (얇게 유지, 로직 금지)
 │   ├── page.tsx             # /          → views/intro
 │   ├── exercises/page.tsx   # /exercises → views/exercise-list (운동 목록)
-│   ├── start/page.tsx       # /start     → views/coach-select (닉네임+코치)
-│   └── workout/page.tsx     # /workout   → views/workout
+│   ├── start/page.tsx       # /start     → views/workout-setup (닉네임+코치)
+│   ├── prepare/page.tsx     # /prepare   → views/prepare (배치·캘리브)
+│   ├── workout/page.tsx     # /workout   → views/workout (운동)
+│   └── summary/page.tsx     # /summary   → views/summary (요약)
 ├── views/        # FSD pages 레이어 (Next 예약어 충돌로 views 명명)
-└── shared/       # 공용 ui/lib/api/config
+└── shared/       # 공용 ui/lib/api/config (design-token은 @repo/design-tokens 패키지)
 ```
 
-| 레이어    | 역할                                           | 슬라이스 예시                                               |
-| --------- | ---------------------------------------------- | ----------------------------------------------------------- |
-| `app/`    | 라우팅, 전역 프로바이더(TanStack Query 등)     | 4라우트 `/`·`/exercises`·`/start`·`/workout` → 각 view 위임 |
-| `views/`  | 화면 조립 + **그 화면 전용** 로직·상태·UI 블록 | `intro`, `exercise-list`, `coach-select`, `workout`         |
-| `shared/` | 공용 ui/lib/api/config (비즈니스 로직 금지)    | `shared/api`(Axios 인스턴스), `shared/ui`                   |
+| 레이어    | 역할                                           | 슬라이스 예시                                                                     |
+| --------- | ---------------------------------------------- | --------------------------------------------------------------------------------- |
+| `app/`    | 라우팅, 전역 프로바이더(TanStack Query 등)     | 6라우트 `/`·`/exercises`·`/start`·`/prepare`·`/workout`·`/summary` → 각 view 위임 |
+| `views/`  | 화면 조립 + **그 화면 전용** 로직·상태·UI 블록 | `intro`, `exercise-list`, `workout-setup`, `prepare`, `workout`, `summary`        |
+| `shared/` | 공용 ui/lib/api/config (비즈니스 로직 금지)    | `shared/api`(Axios 인스턴스), `shared/ui`                                         |
 
 ### 3.2 하위 레이어 승격 기준
 
 `widgets`·`features`·`entities`는 **2곳 이상에서 실제로 재사용이 확인될 때만** 만든다. 그 전까지는 사용처 view 안에 둔다 (공식 Golden Rule: _"When in doubt, keep it in pages"_).
 
-| 레이어      | 승격 조건                                 | 1단계 판정                                                                                                                                                                                                                                            |
-| ----------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `widgets/`  | 2개 이상 view에서 재사용되는 대형 UI 블록 | **없음** — `camera-stage`·`demo-video`·`set-summary`는 `views/workout` 전용                                                                                                                                                                           |
-| `features/` | 2개 이상에서 재사용되는 사용자 행동       | **없음** — `pose-tracking`·`calibration`·`voice-feedback`은 `views/workout` 전용                                                                                                                                                                      |
-| `entities/` | 2개 이상에서 공유되는 도메인 모델         | **`session`·`coach` 후보** — 세션·모델 상태는 `/`(프리로드 시작)·`/exercises`·`/start`(닉네임·코치)·`/workout`(사용) 여러 라우트에 걸쳐 공유되므로 view 밖(`entities/session` 또는 `shared/model`)이 맞다. `coach`도 후보(선택↔재생). M2 착수 시 확정 |
+| 레이어      | 승격 조건                                 | 1단계 판정                                                                                                                                                                                                                                                                       |
+| ----------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `widgets/`  | 2개 이상 view에서 재사용되는 대형 UI 블록 | **없음** — `camera-stage`·`demo-video`는 `views/prepare`·`views/workout` 전용. 공용 셸(`app-shell`·`site-header`·`exit-button`)은 `shared/ui`                                                                                                                                    |
+| `features/` | 2개 이상에서 재사용되는 사용자 행동       | **없음** — `pose-tracking`·`calibration`·`voice-feedback`은 `views/prepare`·`views/workout` 전용                                                                                                                                                                                 |
+| `entities/` | 2개 이상에서 공유되는 도메인 모델         | **`session` 후보** — 닉네임·선택 코치·세트 결과는 `/workout`·`/summary` 등 여러 라우트가 공유. **현재는 목 상수를 `shared/config/session.ts`에 두었고**(steiger가 `@/` 별칭 참조를 못 세 insignificant-slice 오탐), 상태를 갖는 순간 `entities/session`(Zustand)로 승격한다 (M2) |
 
 - **라우트 걸친 상태는 반드시 view 밖에** — 프리로드한 MediaPipe 모델·닉네임·선택 종목·선택 코치는 여러 라우트가 공유한다. Zustand store를 `entities/session`(또는 `shared/model/session`)에 두어 라우트 전환에도 메모리에 유지 (§9.1). view 안에 두면 라우트 이동 시 잃는다
 - 승격은 파일 이동이라 비용이 낮다. 반대로 미리 만든 레이어는 되돌릴 계기가 없어 그대로 굳는다
@@ -91,15 +94,15 @@ apps/web/src/
 - `packages/core`는 FSD 외부 패키지 — 실사용처는 포즈 파이프라인(§4)과 세션 상태로 한정
 - RN 앱(4단계)도 동일 원칙 적용 — 재사용하는 것은 레이어 목록이 아니라 **"필요할 때 승격"이라는 기준** 자체
 
-## 4. 포즈 파이프라인 (`views/workout` — 재사용 확인 시 `features/pose-tracking`으로 승격, §3.2)
+## 4. 포즈 파이프라인 (`views/prepare`·`views/workout` — 재사용 확인 시 `features/pose-tracking`으로 승격, §3.2)
 
 - 모델: `pose_landmarker_lite.task`, `runningMode: 'VIDEO'`
 - 렌더링 rAF(60fps)와 추론(15~24fps 스로틀) 분리
 - 랜드마크 visibility 임계값 미달 프레임은 판정 제외
 - 캘리브레이션: 시작 시 기립 자세 3초 → 사용자별 기준 각도·비율 저장 (원근 보정)
 - 카메라 가이드: 노트북 웹캠 기준 측면 45° 배치 안내, 전신 바운딩 박스 확인 후 시작 허용
-- **`/workout` 내부 상태**: `placement`(배치) → `calibration`(3초) → `active`(운동) → `summary`(요약)를 라우트가 아닌 **한 화면 안 상태 전환**으로 (연속 세션이라 중간을 라우트로 나누면 뒤로가기·카메라 스트림이 꼬인다)
-- **이탈 가드**: `/workout`에서 뒤로가기·새로고침·탭 닫기 시 세션이 날아간다 → `beforeunload` + 뒤로가기 가로채 "그만두시겠어요?" 확인. 명시적 이탈은 화면 내 [✕ 그만두기] 버튼으로 (→ `/start`)
+- **라우트 분리 + 준비 단계 내부 상태**: 준비(`/prepare`) → 운동(`/workout`) → 요약(`/summary`)을 **별도 라우트**로 둔다(밝은 준비·몰입 다크 운동·밝은 결과는 성격이 달라). 단 `/prepare` 안에서는 `placement`(배치) → `calibration`(3초)를 **내부 2상태 전환**으로 하고, 완료 시 `/workout`으로 이동한다. 라우트 간 상태(선택 코치·세트 결과)는 세션 store(§3.2)로 유지
+- **이탈 가드**: 다크 화면(`/prepare`·`/workout`)에서 세션 중단은 화면 내 [✕ 그만두기] 버튼으로 (→ `/exercises`). 뒤로가기·새로고침·탭 닫기 방어(`beforeunload` + 뒤로가기 가로채 "그만두시겠어요?")는 M2에서 추가
 
 ## 5. 코어 엔진 (packages/core)
 
@@ -223,7 +226,7 @@ interface CoachDecision {
 
 ### 9.1 프리로드 전략 — 라우트에 걸쳐 은폐
 
-4라우트(`/` → `/exercises` → `/start` → `/workout`)가 로딩을 은폐하는 장치다. 사용자가 인트로를 읽고 운동·코치를 고르는 시간이 곧 다운로드 시간이 된다. **핵심 전제: 프리로드한 모델은 라우트가 바뀌어도 유지돼야 한다** — Zustand store(`entities/session`)에 인스턴스를 두면 Next SPA 특성상 라우트 전환에도 메모리에 남는다. view 안에 두면 `/workout` 진입 시 다시 받게 된다 (§3.2).
+라우트 체인(`/` → `/exercises` → `/start` → `/prepare` → `/workout` → `/summary`)이 로딩을 은폐하는 장치다. 사용자가 인트로를 읽고 운동·코치를 고르는 시간이 곧 다운로드 시간이 된다. **핵심 전제: 프리로드한 모델은 라우트가 바뀌어도 유지돼야 한다** — Zustand store(`entities/session`)에 인스턴스를 두면 Next SPA 특성상 라우트 전환에도 메모리에 남는다. view 안에 두면 `/prepare`·`/workout` 진입 시 다시 받게 된다 (§3.2).
 
 | 시점                        | 대상                  | 이유                                                                                                 |
 | --------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -231,7 +234,7 @@ interface CoachDecision {
 | **`/start` 캐릭터 선택 시** | 해당 캐릭터 mp3 (2MB) | 선택 전엔 무엇을 받을지 모른다 (§6.1)                                                                |
 | **`/workout` 진입 시**      | 코치 시범 mp4         | 프로그레시브 스트리밍 — 전체 프리로드 없이 첫 프레임부터 재생. mp3보다 커서 미리 다 받을 이유가 없다 |
 
-- 카메라 권한은 **`/start`에서** 받는다 (설정 화면의 "운동 시작" 시점) — `/workout`에서 받으면 거부·웹캠 없음일 때 **빈 운동 화면이 뜬 채로** 안내해야 한다. 권한은 오리진 단위로 브라우저가 기억하므로 `/workout`의 `getUserMedia`는 프롬프트 없이 통과한다
+- 카메라 권한은 **`/start`의 "운동 시작" → `/prepare` 진입 시점에** 받는다 — 배치 화면(`/prepare`)이 첫 카메라 화면이다. 권한은 오리진 단위로 브라우저가 기억하므로 이후 `/workout`의 `getUserMedia`는 프롬프트 없이 통과한다
 - 고지 UI는 권한 요청 **직전**(§8) — `/start`의 "운동 시작" 버튼 바로 위. 푸터에 두면 요건 미충족
 
 ## 10. RN 앱 계획 (4단계)
