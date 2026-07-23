@@ -1,5 +1,6 @@
 "use client";
 
+import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { SESSION, SET_RESULT } from "@/shared/config";
@@ -18,10 +19,25 @@ const POINT_CLASS: Record<string, string> = {
 export function SummaryView() {
   const router = useRouter();
 
-  const stats = [
-    { value: String(SET_RESULT.reps), label: "총 횟수", accent: false },
-    { value: `${SET_RESULT.quality}%`, label: "좋은 자세 비율", accent: true },
-    { value: SET_RESULT.durationLabel, label: "운동 시간", accent: false },
+  const ringLength = 2 * Math.PI * 81; // r=81
+  const ringOffset = ringLength * (1 - SET_RESULT.quality / 100);
+
+  const items = [
+    {
+      icon: <RotateCcw className="size-5" />,
+      label: "완료 횟수",
+      value: `${SET_RESULT.reps} / ${SET_RESULT.targetReps}회`,
+    },
+    {
+      icon: <Trophy className="size-5" />,
+      label: "세트 진행",
+      value: `${SESSION.setNo} / ${SESSION.totalSets}세트`,
+    },
+    {
+      icon: <Clock className="size-5" />,
+      label: "운동 시간",
+      value: SET_RESULT.durationLabel,
+    },
   ];
 
   return (
@@ -39,21 +55,63 @@ export function SummaryView() {
           </p>
         </div>
 
-        {/* 스탯 3개 */}
-        <div className="mt-9 grid grid-cols-3 gap-4">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="border-line bg-surface rounded-2xl border p-6 text-center"
-            >
-              <div
-                className={`text-[28px] font-extrabold ${s.accent ? "text-brand-600" : "text-ink"}`}
-              >
-                {s.value}
+        {/* 스탯 — 좌: 자세 정확도 원형 로딩바 / 우: 나머지 지표 */}
+        <div className="mt-9 grid grid-cols-[auto_1fr] items-center gap-8">
+          {/* 자세 정확도 링 */}
+          <div className="flex flex-col items-center">
+            <div className="relative grid size-[176px] place-items-center">
+              <svg viewBox="0 0 176 176" className="size-full -rotate-90">
+                <circle
+                  cx="88"
+                  cy="88"
+                  r="81"
+                  fill="none"
+                  strokeWidth="14"
+                  className="stroke-brand-100"
+                />
+                <circle
+                  cx="88"
+                  cy="88"
+                  r="81"
+                  fill="none"
+                  strokeWidth="14"
+                  strokeLinecap="round"
+                  className="stroke-brand-400"
+                  style={{
+                    strokeDasharray: ringLength,
+                    strokeDashoffset: ringOffset,
+                  }}
+                />
+              </svg>
+              <div className="absolute flex items-baseline">
+                <span className="text-ink text-[40px] font-extrabold">
+                  {SET_RESULT.quality}
+                </span>
+                <span className="text-ink text-[18px] font-bold">%</span>
               </div>
-              <div className="text-ink-muted mt-1.5 text-[14px]">{s.label}</div>
             </div>
-          ))}
+            <span className="text-ink-muted mt-3 text-[14px]">자세 정확도</span>
+          </div>
+
+          {/* 나머지 지표 */}
+          <div className="flex flex-col gap-3">
+            {items.map((item) => (
+              <div
+                key={item.label}
+                className="bg-brand-50 flex items-center gap-3.5 rounded-2xl px-4 py-3.5"
+              >
+                <span className="bg-surface text-brand-500 grid size-11 shrink-0 place-items-center rounded-xl">
+                  {item.icon}
+                </span>
+                <div>
+                  <div className="text-ink-muted text-[13px]">{item.label}</div>
+                  <div className="text-ink text-[18px] font-bold">
+                    {item.value}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 가장 많이 나온 포인트 */}

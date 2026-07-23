@@ -13,6 +13,7 @@ export const SESSION = {
   coach: { name: "열정 PT쌤", emoji: "🔥" },
   exerciseName: "스쿼트",
   setNo: 1,
+  totalSets: 3,
 } as const;
 
 /**
@@ -20,8 +21,9 @@ export const SESSION = {
  * TODO(M3): 판정 파이프라인 결과로 교체. 지금은 목.
  */
 export const SET_RESULT = {
-  reps: 12,
-  quality: 82, // %
+  reps: 12, // 완료한 횟수
+  targetReps: 12, // 목표 횟수
+  quality: 82, // 자세 정확도 %
   durationLabel: "3:20",
   liveCaption: "무릎 조금만 더 굽혀요 — 좋아요!",
   points: [
