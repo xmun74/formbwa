@@ -61,12 +61,10 @@
 
 - [x] **6라우트 골격 (UI shell 완료)** — `/`(intro) → `/exercises`(exercise-list) → `/start`(workout-setup) → `/prepare`(prepare) → `/workout`(workout) → `/summary`(summary) (TRD-FE §3.1). 6개 화면 UI가 목 데이터로 모두 서 있음
   - 준비/운동/요약을 **별도 라우트로 분리** (밝은 준비·몰입 다크 운동·밝은 결과). `/prepare`는 배치→캘리브 내부 2상태. 카메라·포즈·판정 로직은 아래 항목들
-- [ ] **운동 store 분리** (TRD-FE §3.2·§9.1) — 도메인과 인프라를 슬라이스로 나눔:
-  - **`entities/workout` (Zustand persist)** — 닉네임·선택 코치·선택 종목·세트 결과. 전부 직렬화 가능하니 localStorage 통째 영속 → 새로고침에도 단계 유지 (인메모리만 두면 날아감)
-  - **`shared/lib` 프리로드 훅/스토어 = 인메모리** — MediaPipe 모델·오디오. 도메인이 아니라 리소스라 entity와 분리. 라우트 전환엔 유지, 새로고침 시 재프리로드
-  - **현재 목 상수를 `shared/config/workout.ts`에 둠** (steiger가 `@/` 별칭 참조를 못 세 entities 슬라이스를 insignificant로 오탐 → 임시로 shared). 상태를 갖는 순간 `entities/workout`으로 승격
-  - /exercises 종목·/start 닉네임·코치를 store에 쓰고 /workout·/summary가 읽게 배선
-- [ ] `getUserMedia` 카메라 스트림 + `@mediapipe/tasks-vision` 로딩 (`'use client'` + dynamic import). 모델 프리로드는 `/` 진입 시 시작 → store 보관
+- [x] **`entities/workout` store (Zustand persist)** — 닉네임·선택 코치·선택 종목·세트 결과를 localStorage 통째 영속 → 새로고침에도 단계 유지. /exercises 종목·/start 닉네임·코치를 쓰고 /workout·/summary가 읽게 배선 (브라우저 검증 완료). shared/config 목 제거
+  - steiger가 `@/` 별칭을 못 풀어 entities를 insignificant로 오탐 → `steiger.config.ts`에서 `insignificant-slice`를 `entities/**`에 한해 예외 (스캔 루트 src 유지)
+- [ ] **`shared/lib` 프리로드 훅/스토어 = 인메모리** — MediaPipe 모델·오디오. 도메인이 아니라 리소스라 entity와 분리. 라우트 전환엔 유지, 새로고침 시 재프리로드 (카메라 연동과 함께 — 아래)
+- [ ] `getUserMedia` 카메라 스트림 + `@mediapipe/tasks-vision` 로딩 (`'use client'` + dynamic import). 모델 프리로드는 `/` 진입 시 시작 → `shared/lib` 인메모리 보관
 - [ ] 렌더링(rAF) / 추론(15~24fps 스로틀) 분리 루프
 - [ ] Canvas 랜드마크 오버레이 (F1-7)
 - [ ] 전신 바운딩 박스 체크 + 카메라 배치 가이드 UI, 측면 45° 안내 (F1-5)
@@ -77,13 +75,13 @@
 
 ### M3. 코어 엔진 (F1-1, F1-2) (~1주 — 병목은 코딩이 아니라 몸으로 하는 오탐 검증)
 
-- [ ] `angle.ts` — 3관절 각도 계산, 좌표 정규화
-- [ ] `squat-fsm.ts` — 상태머신 + 반복 카운트 (F1-1)
-- [ ] `judge.ts` — 판정 규칙 → JudgeEvent (F1-2). **시범 영상과 분리** — 내 스쿼트를 독립 규칙으로 판정, 선생님과 템포 비교 안 함 (TRD-FE §5.3)
-- [ ] 입문자 그레이스 — 세트 초반 판정 유예/완화 (배우는 시간 확보, PRD §8 완료율). 튜닝 대상
-- [ ] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출
+- [x] `angle.ts` — 3관절 각도(atan2) + `extractFeatures`(가시성 높은 쪽 선택, 미달 프레임 null)
+- [x] `squat-fsm.ts` — 상태머신 + 반복 카운트 (F1-1). 무릎각 히스테리시스, 회당 최저각·기울기·타이밍 누적
+- [x] `judge.ts` — 판정 규칙 → JudgeEvent (F1-2). **시범 영상과 분리**. confidence(precision 우선) + 우선순위 정렬(back_bent>knee_over_toe>knee_shallow)
+- [x] 입문자 그레이스 — `judge.ts`의 `graceReps`로 초반 회차 지적 억제(완주만 칭찬). 임계값은 튜닝 대상
+- [ ] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
   - **정상 촬영본은 M4 시범 영상의 모캡 소스로도 재사용** (TRD-FE §5.4·§6.2) — 촬영은 한 번, 폼을 정확히 잡아 찍을 것
-- [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트)
+- [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 19개는 완료, fixture 회귀는 촬영 후
 
 ### M4. 캐릭터·음성·시범 영상 (F1-3, F1-4, F1-8) (~3~4일)
 
