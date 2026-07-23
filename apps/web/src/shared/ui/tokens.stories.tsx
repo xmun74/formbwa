@@ -141,7 +141,7 @@ function Swatch({ token }: { token: Token }) {
           {token.hex}
         </div>
       </div>
-      <div className="text-ink-soft shrink-0 text-right font-mono text-[0.6875rem] leading-relaxed">
+      <div className="text-ink-soft shrink-0 text-right font-mono text-xs leading-relaxed">
         <div>흰글씨 {onWhite.toFixed(1)}</div>
         <div>ink 위 {onInk.toFixed(1)}</div>
       </div>

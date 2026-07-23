@@ -15,15 +15,15 @@ export function CalibrationStage({ onNext }: { onNext: () => void }) {
       <div className="relative grid size-52 place-items-center">
         <span className="border-dark-line absolute inset-0 rounded-full border" />
         <span className="border-brand-700/40 absolute inset-5 rounded-full border" />
-        <span className="bg-brand-600/30 grid size-32 place-items-center rounded-full text-[26px]">
+        <span className="bg-brand-600/30 grid size-32 place-items-center rounded-full text-2xl">
           🧍
         </span>
       </div>
 
-      <h2 className="text-dark-ink mt-8 text-[27px] font-extrabold">
+      <h2 className="text-dark-ink mt-8 text-2xl font-extrabold">
         가만히 서 계세요
       </h2>
-      <p className="text-dark-ink-soft mt-3 text-[15px]">
+      <p className="text-dark-ink-soft mt-3 text-base">
         기준 자세를 잡고 있어요... 약 3초
       </p>
 
@@ -34,7 +34,7 @@ export function CalibrationStage({ onNext }: { onNext: () => void }) {
       <button
         type="button"
         onClick={onNext}
-        className="border-dark-line text-dark-ink-soft hover:text-dark-ink mt-8 rounded-full border px-5 py-2.5 text-[14px] transition-colors"
+        className="border-dark-line text-dark-ink-soft hover:text-dark-ink mt-8 rounded-full border px-5 py-2.5 text-base transition-colors"
       >
         건너뛰기 →
       </button>

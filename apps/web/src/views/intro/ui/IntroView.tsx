@@ -33,7 +33,7 @@ export function IntroView() {
       {/* 히어로 */}
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-gutter py-[70px] lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <span className="bg-brand-100 text-brand-700 mb-[22px] inline-flex items-center gap-2 rounded-full px-3.5 py-[7px] text-[13.5px] font-semibold">
+          <span className="bg-brand-100 text-brand-700 mb-[22px] inline-flex items-center gap-2 rounded-full px-3.5 py-[7px] text-sm font-semibold">
             <span className="bg-brand-500 size-[7px] rounded-full" />
             AI 맨몸운동 코치
           </span>
@@ -50,15 +50,12 @@ export function IntroView() {
           <div className="mt-8 flex items-center gap-3.5">
             <Link
               href="/exercises"
-              className={buttonClass(
-                "primary",
-                "px-[30px] py-[15px] text-[17px]",
-              )}
+              className={buttonClass("primary", "px-[30px] py-[15px] text-lg")}
             >
               시작하기
             </Link>
           </div>
-          <div className="text-ink-soft mt-10 flex items-center gap-2.5 text-[14.5px]">
+          <div className="text-ink-soft mt-10 flex items-center gap-2.5 text-base">
             <span className="bg-brand-50 grid size-[30px] place-items-center rounded-lg">
               🔒
             </span>
@@ -68,13 +65,13 @@ export function IntroView() {
         </div>
 
         {/* 시범 영상 플레이스홀더 (실제 영상은 M4) */}
-        <div className="border-line relative flex h-[380px] items-end justify-center overflow-hidden rounded-[18px] border bg-[repeating-linear-gradient(135deg,var(--color-brand-50)_0_14px,var(--color-canvas)_14px_28px)]">
+        <div className="border-line relative flex h-[380px] items-end justify-center overflow-hidden rounded-2xl border bg-[repeating-linear-gradient(135deg,var(--color-brand-50)_0_14px,var(--color-canvas)_14px_28px)]">
           <span className="text-ink-muted bg-surface/80 absolute top-4 left-4 rounded-md px-2 py-1 font-mono text-xs">
             코치 시범 영상 · 히어로 루프
           </span>
           <span className="bg-brand-200 -mb-px h-80 w-[130px] rounded-t-[60px]" />
           <div className="bg-surface text-ink absolute right-[22px] bottom-[22px] flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold shadow-[0_8px_20px_-10px] shadow-brand-900/40">
-            <span className="bg-brand-500 grid size-[30px] place-items-center rounded-full text-[13px] text-white">
+            <span className="bg-brand-500 grid size-[30px] place-items-center rounded-full text-sm text-white">
               ✓
             </span>
             방금 자세 좋았어요!
@@ -87,13 +84,13 @@ export function IntroView() {
         {FEATURES.map((f) => (
           <div
             key={f.title}
-            className="border-line bg-surface rounded-[14px] border p-6"
+            className="border-line bg-surface rounded-2xl border p-6"
           >
-            <div className="bg-brand-100 text-brand-700 mb-4 grid size-10 place-items-center rounded-[11px] text-[19px]">
+            <div className="bg-brand-100 text-brand-700 mb-4 grid size-10 place-items-center rounded-xl text-xl">
               {f.icon}
             </div>
-            <div className="mb-1.5 text-[17px] font-bold">{f.title}</div>
-            <div className="text-ink-soft text-[14.5px] leading-relaxed">
+            <div className="mb-1.5 text-lg font-bold">{f.title}</div>
+            <div className="text-ink-soft text-base leading-relaxed">
               {f.body}
             </div>
           </div>

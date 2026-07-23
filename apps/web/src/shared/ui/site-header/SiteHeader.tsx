@@ -9,7 +9,7 @@ export function SiteHeader() {
   return (
     <header className="border-line-soft bg-canvas flex h-[66px] shrink-0 items-center justify-between border-b px-11">
       <Logo />
-      <span className="border-line text-ink rounded-[9px] border px-4 py-2 text-[15px]">
+      <span className="border-line text-ink rounded-lg border px-4 py-2 text-base">
         로그인
       </span>
     </header>

@@ -12,7 +12,7 @@ export function ExitButton() {
     <button
       type="button"
       onClick={() => router.push("/exercises")}
-      className="bg-dark-surface/70 text-dark-ink-soft hover:text-dark-ink rounded-full px-4 py-2 text-[14px] transition-colors"
+      className="bg-dark-surface/70 text-dark-ink-soft hover:text-dark-ink rounded-full px-4 py-2 text-base transition-colors"
     >
       ✕ 그만두기
     </button>

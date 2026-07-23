@@ -38,12 +38,10 @@ export function CoachCard({ coach, selected, onSelect }: CoachCardProps) {
 
       {/* 본문 */}
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-ink text-[21px] font-extrabold tracking-tight">
+        <h3 className="text-ink text-xl font-extrabold tracking-tight">
           {coach.name}
         </h3>
-        <p className="text-brand-400 mt-1 text-[0.7rem] font-bold">
-          “{coach.quote}”
-        </p>
+        <p className="text-brand-400 mt-1 text-xs font-bold">“{coach.quote}”</p>
 
         {/* 3지표 */}
         <div className="mt-4 grid grid-cols-3 gap-2">
@@ -52,10 +50,8 @@ export function CoachCard({ coach, selected, onSelect }: CoachCardProps) {
               key={s.label}
               className="bg-line-soft rounded-xl px-1.5 py-2.5 text-center"
             >
-              <div className="text-ink-muted text-[11px]">{s.label}</div>
-              <div className="text-ink mt-0.5 text-[13px] font-bold">
-                {s.value}
-              </div>
+              <div className="text-ink-muted text-xs">{s.label}</div>
+              <div className="text-ink mt-0.5 text-sm font-bold">{s.value}</div>
             </div>
           ))}
         </div>
@@ -63,13 +59,13 @@ export function CoachCard({ coach, selected, onSelect }: CoachCardProps) {
         {/* 하단: 선택 상태 + 화살표 */}
         <div className="mt-5 flex items-center justify-between">
           <span
-            className={`text-[14px] font-bold ${selected ? "text-brand-700" : "text-ink-muted"}`}
+            className={`text-base font-bold ${selected ? "text-brand-700" : "text-ink-muted"}`}
           >
             {selected ? "선택됨" : "이 코치 선택"}
           </span>
           <span
             className={[
-              "grid size-9 place-items-center rounded-full text-[16px] transition-colors",
+              "grid size-9 place-items-center rounded-full text-lg transition-colors",
               selected
                 ? "bg-brand-400 text-white"
                 : "border-line text-ink-muted border",

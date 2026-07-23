@@ -44,13 +44,13 @@ export function SummaryView() {
     <AppShell>
       <div className="px-gutter mx-auto max-w-3xl py-16">
         <div className="flex flex-col items-center text-center">
-          <span className="bg-brand-500 grid size-16 place-items-center rounded-full text-[28px] text-white">
+          <span className="bg-brand-500 grid size-16 place-items-center rounded-full text-3xl text-white">
             ✓
           </span>
-          <h1 className="mt-5 text-[30px] font-extrabold tracking-tight">
+          <h1 className="mt-5 text-3xl font-extrabold tracking-tight">
             {SESSION.setNo}세트 완료!
           </h1>
-          <p className="text-ink-soft mt-2 text-[15px]">
+          <p className="text-ink-soft mt-2 text-base">
             {SESSION.nickname}님, 오늘도 잘 해냈어요 👏
           </p>
         </div>
@@ -84,13 +84,13 @@ export function SummaryView() {
                 />
               </svg>
               <div className="absolute flex items-baseline">
-                <span className="text-ink text-[40px] font-extrabold">
+                <span className="text-ink text-4xl font-extrabold">
                   {SET_RESULT.quality}
                 </span>
-                <span className="text-ink text-[18px] font-bold">%</span>
+                <span className="text-ink text-lg font-bold">%</span>
               </div>
             </div>
-            <span className="text-ink-muted mt-3 text-[14px]">자세 정확도</span>
+            <span className="text-ink-muted mt-3 text-base">자세 정확도</span>
           </div>
 
           {/* 나머지 지표 */}
@@ -104,10 +104,8 @@ export function SummaryView() {
                   {item.icon}
                 </span>
                 <div>
-                  <div className="text-ink-muted text-[13px]">{item.label}</div>
-                  <div className="text-ink text-[18px] font-bold">
-                    {item.value}
-                  </div>
+                  <div className="text-ink-muted text-sm">{item.label}</div>
+                  <div className="text-ink text-lg font-bold">{item.value}</div>
                 </div>
               </div>
             ))}
@@ -116,14 +114,14 @@ export function SummaryView() {
 
         {/* 가장 많이 나온 포인트 */}
         <div className="border-line bg-surface mt-4 rounded-2xl border p-6">
-          <div className="text-brand-700 text-[14px] font-bold">
+          <div className="text-brand-700 text-base font-bold">
             가장 많이 나온 포인트
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {SET_RESULT.points.map((p) => (
               <span
                 key={p.label}
-                className={`${POINT_CLASS[p.tone]} rounded-full px-3 py-1.5 text-[13px] font-semibold`}
+                className={`${POINT_CLASS[p.tone]} rounded-full px-3 py-1.5 text-sm font-semibold`}
               >
                 {p.label} ({p.count}회)
               </span>
@@ -133,14 +131,14 @@ export function SummaryView() {
 
         {/* 코치 총평 */}
         <div className="bg-brand-50 mt-4 flex gap-4 rounded-2xl p-6">
-          <span className="bg-coach-warm grid size-10 shrink-0 place-items-center rounded-full text-[19px]">
+          <span className="bg-coach-warm grid size-10 shrink-0 place-items-center rounded-full text-xl">
             {SESSION.coach.emoji}
           </span>
           <div>
-            <div className="text-ink text-[15px] font-bold">
+            <div className="text-ink text-base font-bold">
               {SESSION.coach.name}의 총평
             </div>
-            <p className="text-ink-soft mt-1.5 text-[14.5px] leading-relaxed">
+            <p className="text-ink-soft mt-1.5 text-base leading-relaxed">
               {SET_RESULT.coachComment}
             </p>
           </div>

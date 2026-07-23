@@ -26,8 +26,8 @@ export function ExerciseListView() {
   return (
     <AppShell>
       <div className="px-gutter max-w-4xl pt-14 pb-32">
-        <h1 className="text-[30px] font-extrabold tracking-tight">운동 목록</h1>
-        <p className="text-ink-soft mt-2 text-[15px]">
+        <h1 className="text-3xl font-extrabold tracking-tight">운동 목록</h1>
+        <p className="text-ink-soft mt-2 text-base">
           부위를 골라 종목을 선택하세요. 지금은{" "}
           <b className="text-brand-700 font-bold">스쿼트</b>부터 시작할 수
           있어요.
@@ -37,11 +37,9 @@ export function ExerciseListView() {
           {EXERCISE_CATEGORIES.map((cat) => (
             <section key={cat.id}>
               <h2 className="mb-3.5 flex items-baseline gap-2">
-                <span className="text-ink text-[15px] font-bold">
-                  {cat.name}
-                </span>
+                <span className="text-ink text-base font-bold">{cat.name}</span>
                 {cat.note && (
-                  <span className="text-ink-muted text-[13px]">{cat.note}</span>
+                  <span className="text-ink-muted text-sm">{cat.note}</span>
                 )}
               </h2>
               <div className="grid grid-cols-2 gap-4">
@@ -65,7 +63,7 @@ export function ExerciseListView() {
           href="/start"
           className={buttonClass(
             "primary",
-            "px-7 py-4 text-[16px] shadow-[0_16px_34px_-14px] shadow-brand-500/70",
+            "px-7 py-4 text-lg shadow-[0_16px_34px_-14px] shadow-brand-500/70",
           )}
         >
           {selected.name}로 시작하기 →

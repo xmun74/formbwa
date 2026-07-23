@@ -45,7 +45,7 @@ export function ExerciseCard({
       >
         <span
           className={[
-            "h-[62px] w-11 rounded-t-[24px]",
+            "h-[62px] w-11 rounded-t-3xl",
             selected ? "bg-brand-300" : "bg-[#d4dcd9]",
           ].join(" ")}
         />
@@ -55,18 +55,18 @@ export function ExerciseCard({
       <div className="flex items-center justify-between px-1 pb-0.5">
         <span
           className={[
-            "text-[15.5px] font-bold",
+            "text-base font-bold",
             ready ? "text-ink" : "text-ink-muted",
           ].join(" ")}
         >
           {exercise.name}
         </span>
         {ready ? (
-          <span className="bg-brand-100 text-brand-700 rounded-full px-2.5 py-1 text-[12px] font-semibold">
+          <span className="bg-brand-100 text-brand-700 rounded-full px-2.5 py-1 text-xs font-semibold">
             가능
           </span>
         ) : (
-          <span className="bg-line text-ink-muted rounded-full px-2.5 py-1 text-[12px] font-medium">
+          <span className="bg-line text-ink-muted rounded-full px-2.5 py-1 text-xs font-medium">
             준비 중
           </span>
         )}

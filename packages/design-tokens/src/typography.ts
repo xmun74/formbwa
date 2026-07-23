@@ -3,7 +3,7 @@
  * 생성기가 `--font-sans`, `--text-<k>`, `--text-<k>--line-height`로 방출.
  * weight는 별도(font-bold 등).
  *
- * ⚠️ Tailwind v4 기본 --text-* 를 덮어쓴다 (base 16→15, lg 18→17 등) — 의도된 정렬.
+ * ⚠️ Tailwind v4 기본 --text-* 를 덮어쓴다 (base 16→14, lg 18→17 등) — 의도된 정렬.
  */
 export const fontFamily = {
   sans: '"Pretendard Variable", system-ui, sans-serif',
@@ -12,7 +12,7 @@ export const fontFamily = {
 export const fontSize = {
   xs: { size: "12px", lineHeight: "16px" },
   sm: { size: "13px", lineHeight: "18px" },
-  base: { size: "15px", lineHeight: "22px" },
+  base: { size: "14px", lineHeight: "20px" },
   lg: { size: "17px", lineHeight: "26px" },
   xl: { size: "20px", lineHeight: "28px" },
   "2xl": { size: "24px", lineHeight: "32px" },
