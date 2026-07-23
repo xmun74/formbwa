@@ -57,9 +57,6 @@ export function IntroView() {
             >
               시작하기
             </Link>
-            <span className="text-ink-muted text-[15px]">
-              설치 없이 바로 체험
-            </span>
           </div>
           <div className="text-ink-soft mt-10 flex items-center gap-2.5 text-[14.5px]">
             <span className="bg-brand-50 grid size-[30px] place-items-center rounded-lg">
