@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes } from "react";
 type Variant = "primary" | "secondary" | "ghost";
 
 /**
- * primary: 원색 brand-500(#12b394) 배경 + 흰 글씨 — Claude Design 원본 그대로.
+ * primary: 원색 brand-500(#12b394) 배경 + 흰 글씨
  */
 const VARIANT_CLASS: Record<Variant, string> = {
   primary:

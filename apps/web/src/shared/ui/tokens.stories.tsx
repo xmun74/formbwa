@@ -49,7 +49,7 @@ function contrast(a: string, b: string): number {
 const GROUPS: { title: string; note: string; names: string[] }[] = [
   {
     title: "브랜드 — 그린",
-    note: "#12b394 = brand-500 (Claude Design 팔레트). OKLCH 11단계, hue 174. 원색 버튼+흰글씨는 대비 2.66으로 미달이라 흰 글씨는 brand-600부터, 라이트 위 텍스트는 700~.",
+    note: "#12b394 = brand-500. OKLCH 11단계, hue 174. 원색 버튼+흰글씨는 대비 2.66으로 미달이라 흰 글씨는 brand-600부터, 라이트 위 텍스트는 700~.",
     names: [
       "brand-50",
       "brand-100",

@@ -6,7 +6,7 @@
 @theme static {
   --font-sans: "Pretendard Variable", system-ui, sans-serif;
 
-  /* 브랜드 그린 (#12b394 = brand-500). Claude Design 팔레트를 채택.
+  /* 브랜드 그린 (#12b394 = brand-500).
      OKLCH로 11단계 — 채도를 중간에서 유지해 탁하지 않게, hue 174(청록) 고정.
      ⚠️ 원본 #12b394 버튼+흰글씨는 대비 2.66으로 WCAG 미달 → 흰 글씨는 brand-600부터. */
   --color-brand-50: oklch(0.982 0.016 174); /* #effdf8 */
