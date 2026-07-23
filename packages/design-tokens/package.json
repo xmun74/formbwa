@@ -1,0 +1,22 @@
+{
+  "name": "@repo/design-tokens",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./theme.css": "./theme.css"
+  },
+  "scripts": {
+    "gen": "tsx scripts/generate-theme.ts",
+    "lint": "eslint src --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:^",
+    "@repo/typescript-config": "workspace:^",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.39.1",
+    "tsx": "^4.20.6",
+    "typescript": "^6.0.3"
+  }
+}

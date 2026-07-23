@@ -1,60 +1,7 @@
 @import "tailwindcss";
-
-/* static: 안 쓰인 토큰도 :root에 방출한다. 디자인 시스템의 스케일은
-   현재 사용 여부와 무관하게 존재해야 하고, 토큰 문서도 이걸 읽는다.
-   (기본 @theme는 미사용 변수를 트리셰이킹해서 스케일에 구멍이 생긴다) */
-@theme static {
-  --font-sans: "Pretendard Variable", system-ui, sans-serif;
-
-  /* 브랜드 그린 (#12b394 = brand-500).
-     OKLCH로 11단계 — 채도를 중간에서 유지해 탁하지 않게, hue 174(청록) 고정.
-     ⚠️ 원본 #12b394 버튼+흰글씨는 대비 2.66으로 WCAG 미달 → 흰 글씨는 brand-600부터. */
-  --color-brand-50: oklch(0.982 0.016 174); /* #effdf8 */
-  --color-brand-100: oklch(0.955 0.034 174); /* #daf8ee */
-  --color-brand-200: oklch(0.912 0.062 174); /* #b8f0df */
-  --color-brand-300: oklch(0.845 0.1 174); /* #81e2c7 — 다크 위 액센트 */
-  --color-brand-400: oklch(0.755 0.128 174); /* #3ccaa9 */
-  --color-brand-500: oklch(0.685 0.128 174); /* #11b394 — 브랜드 원색 */
-  --color-brand-600: oklch(0.549 0.108 174); /* #00856d — 버튼 (흰 글씨 4.6) */
-  --color-brand-700: oklch(
-    0.485 0.088 174
-  ); /* #106f5b — 강조 텍스트 (canvas 위 5.9) */
-  --color-brand-800: oklch(0.4 0.072 174); /* #0b5445 */
-  --color-brand-900: oklch(0.315 0.055 174); /* #083a2f */
-  --color-brand-950: oklch(0.235 0.04 174); /* #04241d */
-
-  /* 뉴트럴 (라이트) — 디자인의 그린-틴트 값 그대로 토큰화 */
-  --color-canvas: #f7fbfa; /* 페이지 배경 */
-  --color-surface: #ffffff; /* 카드 */
-  --color-surface-sunken: #fbfdfc; /* 비활성('준비 중') 카드 */
-  --color-line: #e8f0ed; /* 기본 보더 */
-  --color-line-soft: #eef4f2; /* 헤더 구분선 */
-  --color-ink: #16302a; /* 본문 (canvas 위 13.5) */
-  --color-ink-soft: #5f746e; /* 보조 텍스트 */
-  --color-ink-muted: #7b8f89; /* 흐린 텍스트·라벨 */
-
-  /* 다크 (운동 화면 — placement·calibration·workout).
-     밝은 조회·설정 → 어두운 몰입 운동. 웹캠·시범 영상이 도드라진다 */
-  --color-dark-canvas: #0e2420;
-  --color-dark-surface: #12302a;
-  --color-dark-surface-2: #16362f;
-  --color-dark-line: #24463d;
-  --color-dark-ink: #eaf5f1;
-  --color-dark-ink-soft: #a7c4bc;
-  --color-dark-ink-muted: #7fa89c;
-
-  /* 액센트 — 캐릭터·상태. 디자인의 의미 색 그대로 */
-  --color-coach-warm: #ffe1d6; /* 열정 PT쌤 아바타 배경 */
-  --color-coach-cool: #dcefff; /* 부산 사투리 쌤 아바타 배경 */
-  --color-point-coral: #fdeee9; /* 자세 포인트 배경 (무릎 등) */
-  --color-point-coral-ink: #d0724d;
-  --color-point-amber: #fdf6e3; /* 자세 포인트 배경 (깊이 등) */
-  --color-point-amber-ink: #b78a1f;
-  --color-live: #ff6b6b; /* 녹화·실시간 표시 */
-
-  /* 8px 리듬이되 여백은 유동적으로 */
-  --spacing-gutter: clamp(1.5rem, 4vw, 4rem);
-}
+/* 디자인 토큰 — 단일 진실은 @repo/design-tokens/src/*.ts.
+   theme.css는 생성물 (pnpm --filter @repo/design-tokens gen). */
+@import "@repo/design-tokens/theme.css";
 
 /* Tailwind preflight(@layer base) */
 @layer base {
