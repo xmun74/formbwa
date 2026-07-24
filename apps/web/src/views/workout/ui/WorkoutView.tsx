@@ -1,16 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
 import { displayName, useWorkoutStore } from "@/entities/workout";
-import { ExitButton } from "@/shared/ui/exit-button";
-
+import { ExitGuard } from "@/shared/ui/exit-guard";
 import { DARK_STRIPE } from "../model/workout";
 
-/**
- * `/workout` 운동 화면 (PRD §4-4) — 좌: 내 웹캠 + 관절 오버레이 + 세트 스탯,
- * 우: 코치 시범 영상 + 음성 캡션. "세트 끝내기" → `/summary`.
- */
 export function WorkoutView() {
   const router = useRouter();
   const { exerciseName, setNo, coach, nickname, result } = useWorkoutStore();
@@ -26,7 +20,7 @@ export function WorkoutView() {
         </div>
         <div className="flex items-center gap-3 text-base">
           <span className="text-dark-ink-muted">{coach.name} 코치 중</span>
-          <ExitButton />
+          <ExitGuard />
           <button
             type="button"
             onClick={() => router.push("/summary")}
@@ -47,7 +41,7 @@ export function WorkoutView() {
             </span>
             <span className="ring-dark-canvas absolute top-[38%] left-[38%] size-3.5 rounded-full bg-[#f4d35e] ring-2" />
             <span className="bg-live ring-dark-canvas absolute top-[56%] left-[46%] size-3.5 rounded-full ring-2" />
-            <span className="bg-dark-surface-2/70 absolute bottom-0 left-1/4 h-56 w-[90px] rounded-t-[45px]" />
+            <span className="bg-dark-surface-2/70 absolute bottom-0 left-1/4 h-56 w-22.5 rounded-t-[45px]" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-dark-surface rounded-xl px-4 py-3">
@@ -79,7 +73,7 @@ export function WorkoutView() {
           <span className="bg-brand-500/20 text-brand-300 absolute top-3 right-3 rounded-full px-3 py-1 text-sm font-bold">
             따라 하기
           </span>
-          <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-[120px] -translate-x-1/2 rounded-t-[60px]" />
+          <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-30 -translate-x-1/2 rounded-t-[60px]" />
 
           <div className="border-dark-line bg-dark-surface-2 absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)]">
             <span className="bg-brand-600 grid size-9 shrink-0 place-items-center rounded-full text-base">

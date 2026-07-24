@@ -1,14 +1,10 @@
-import { ExitButton } from "@/shared/ui/exit-button";
+import { ExitGuard } from "@/shared/ui/exit-guard";
 
-/**
- * 캘리브레이션 — 기준 자세를 잡는 동안 가만히 서 있게 안내.
- * TODO(M3): 3초 자동 완료 로직. 지금은 "건너뛰기"로 운동으로 넘어간다.
- */
 export function CalibrationStage({ onNext }: { onNext: () => void }) {
   return (
     <div className="bg-dark-canvas relative flex min-h-screen flex-col items-center justify-center px-6">
       <div className="absolute top-6 right-8">
-        <ExitButton />
+        <ExitGuard />
       </div>
 
       {/* 동심원 + 실루엣 */}
