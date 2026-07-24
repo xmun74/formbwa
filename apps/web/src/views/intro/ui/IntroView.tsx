@@ -1,13 +1,7 @@
 import Link from "next/link";
-
 import { buttonClass } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
-
-/**
- * `/` 인트로 (PRD §4-1) — 히어로 + 피처 + 시범 영상 플레이스홀더.
- * "시작하기" → `/exercises`. 입력 폼 없이 무엇인지만 보여준다.
- * 이 화면에 머무는 동안 MediaPipe 모델을 백그라운드로 받는다 (M2, TRD-FE §9.1).
- */
+import { PosePreload } from "./PosePreload";
 
 const FEATURES = [
   {
@@ -30,11 +24,12 @@ const FEATURES = [
 export function IntroView() {
   return (
     <AppShell>
+      <PosePreload />
       {/* 히어로 */}
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-gutter py-[70px] lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-gutter py-17.5 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <span className="bg-brand-100 text-brand-700 mb-[22px] inline-flex items-center gap-2 rounded-full px-3.5 py-[7px] text-sm font-semibold">
-            <span className="bg-brand-500 size-[7px] rounded-full" />
+          <span className="bg-brand-100 text-brand-700 mb-5.5 inline-flex items-center gap-2 rounded-full px-3.5 py-1.75 text-sm font-semibold">
+            <span className="bg-brand-500 size-1.75 rounded-full" />
             AI 맨몸운동 코치
           </span>
           <h1 className="text-[clamp(2.5rem,4.5vw,3.25rem)] leading-[1.12] font-extrabold tracking-tight">
@@ -50,13 +45,13 @@ export function IntroView() {
           <div className="mt-8 flex items-center gap-3.5">
             <Link
               href="/exercises"
-              className={buttonClass("primary", "px-[30px] py-[15px] text-lg")}
+              className={buttonClass("primary", "px-7.5 py-3.75 text-lg")}
             >
               시작하기
             </Link>
           </div>
           <div className="text-ink-soft mt-10 flex items-center gap-2.5 text-base">
-            <span className="bg-brand-50 grid size-[30px] place-items-center rounded-lg">
+            <span className="bg-brand-50 grid size-7.5 place-items-center rounded-lg">
               🔒
             </span>
             영상은 <b className="text-ink font-bold">기기 안에서만</b> 처리돼요.
@@ -65,13 +60,13 @@ export function IntroView() {
         </div>
 
         {/* 시범 영상 플레이스홀더 (실제 영상은 M4) */}
-        <div className="border-line relative flex h-[380px] items-end justify-center overflow-hidden rounded-2xl border bg-[repeating-linear-gradient(135deg,var(--color-brand-50)_0_14px,var(--color-canvas)_14px_28px)]">
+        <div className="border-line relative flex h-95 items-end justify-center overflow-hidden rounded-2xl border bg-[repeating-linear-gradient(135deg,var(--color-brand-50)_0_14px,var(--color-canvas)_14px_28px)]">
           <span className="text-ink-muted bg-surface/80 absolute top-4 left-4 rounded-md px-2 py-1 font-mono text-xs">
             코치 시범 영상 · 히어로 루프
           </span>
-          <span className="bg-brand-200 -mb-px h-80 w-[130px] rounded-t-[60px]" />
-          <div className="bg-surface text-ink absolute right-[22px] bottom-[22px] flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold shadow-[0_8px_20px_-10px] shadow-brand-900/40">
-            <span className="bg-brand-500 grid size-[30px] place-items-center rounded-full text-sm text-white">
+          <span className="bg-brand-200 -mb-px h-80 w-32.5 rounded-t-[60px]" />
+          <div className="bg-surface text-ink absolute right-5.5 bottom-5.5 flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold shadow-[0_8px_20px_-10px] shadow-brand-900/40">
+            <span className="bg-brand-500 grid size-7.5 place-items-center rounded-full text-sm text-white">
               ✓
             </span>
             방금 자세 좋았어요!

@@ -1,14 +1,61 @@
 "use client";
 
+import {
+  DEFAULT_SQUAT_CONFIG,
+  defaultJudgeConfig,
+  judgeRep,
+  SquatFSM,
+  type PoseFeatures,
+} from "@repo/core";
 import { useRouter } from "next/navigation";
+import { useCallback, useRef, useState } from "react";
 import { displayName, useWorkoutStore } from "@/entities/workout";
+import { useCameraPose } from "@/shared/lib/pose";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { DARK_STRIPE } from "../model/workout";
+import { captionForEvents } from "../model/caption";
+
+// TODO(캘리브레이션): 기립 무릎 각도는 /prepare 캘리브 결과로 대체. 지금은 기본값.
+const STANDING_KNEE_ANGLE = 170;
+
+const STATUS_TEXT = {
+  loading: "카메라·모델 준비 중…",
+  denied: "카메라 권한이 필요해요",
+  error: "카메라를 시작할 수 없어요",
+  ready: "",
+} as const;
 
 export function WorkoutView() {
   const router = useRouter();
-  const { exerciseName, setNo, coach, nickname, result } = useWorkoutStore();
+  const { exerciseName, setNo, coach, nickname } = useWorkoutStore();
   const panel = `border-dark-line relative overflow-hidden rounded-2xl border ${DARK_STRIPE}`;
+
+  const fsmRef = useRef<SquatFSM | null>(null);
+  fsmRef.current ??= new SquatFSM({
+    standingKneeAngle: STANDING_KNEE_ANGLE,
+    ...DEFAULT_SQUAT_CONFIG,
+  });
+  const judgeCfgRef = useRef(defaultJudgeConfig(STANDING_KNEE_ANGLE));
+
+  const [reps, setReps] = useState(0);
+  const [goodReps, setGoodReps] = useState(0);
+  const [caption, setCaption] = useState("자세를 잡고 시작해요");
+  const quality = reps > 0 ? Math.round((goodReps / reps) * 100) : 0;
+
+  const onFeatures = useCallback((features: PoseFeatures, tMs: number) => {
+    const rep = fsmRef.current!.update(features, tMs);
+    if (!rep) return;
+    const events = judgeRep(rep, judgeCfgRef.current);
+    setReps(rep.repIndex);
+    const hasFault = events.some(
+      (e) => e.type !== "rep_counted" && e.type !== "good_rep",
+    );
+    if (!hasFault) setGoodReps((g) => g + 1);
+    const text = captionForEvents(events);
+    if (text) setCaption(text);
+  }, []);
+
+  const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
 
   return (
     <div className="bg-dark-canvas flex min-h-screen flex-col">
@@ -33,21 +80,30 @@ export function WorkoutView() {
 
       {/* 2패널 */}
       <div className="grid min-h-0 flex-1 grid-cols-[38fr_62fr] gap-3 px-3 pb-3">
-        {/* 좌: 웹캠 + 스탯 */}
+        {/* 좌: 웹캠 + 오버레이 + 스탯 */}
         <div className="flex min-h-0 flex-col gap-3">
           <div className={`${panel} flex-1`}>
-            <span className="bg-dark-canvas/70 text-dark-ink-muted absolute top-3 left-3 rounded-md px-2 py-1 text-xs">
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              className="absolute inset-0 size-full object-cover"
+            />
+            <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+            <span className="bg-dark-canvas/70 text-dark-ink-muted absolute top-3 left-3 z-10 rounded-md px-2 py-1 text-xs">
               내 웹캠 · 관절 오버레이
             </span>
-            <span className="ring-dark-canvas absolute top-[38%] left-[38%] size-3.5 rounded-full bg-[#f4d35e] ring-2" />
-            <span className="bg-live ring-dark-canvas absolute top-[56%] left-[46%] size-3.5 rounded-full ring-2" />
-            <span className="bg-dark-surface-2/70 absolute bottom-0 left-1/4 h-56 w-22.5 rounded-t-[45px]" />
+            {status !== "ready" && (
+              <div className="text-dark-ink-soft absolute inset-0 grid place-items-center text-base">
+                {STATUS_TEXT[status]}
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-dark-surface rounded-xl px-4 py-3">
               <div className="text-dark-ink-muted text-sm">이번 세트</div>
               <div className="text-dark-ink mt-1 text-2xl font-extrabold">
-                {result.reps}
+                {reps}
                 <span className="text-dark-ink-muted ml-1 text-base font-medium">
                   회
                 </span>
@@ -56,7 +112,7 @@ export function WorkoutView() {
             <div className="bg-dark-surface rounded-xl px-4 py-3">
               <div className="text-dark-ink-muted text-sm">자세 품질</div>
               <div className="text-brand-300 mt-1 text-2xl font-extrabold">
-                {result.quality}
+                {quality}
                 <span className="text-dark-ink-muted ml-0.5 text-base font-medium">
                   %
                 </span>
@@ -83,9 +139,7 @@ export function WorkoutView() {
               <div className="text-dark-ink-muted text-xs">
                 {displayName(nickname)}님
               </div>
-              <div className="text-dark-ink text-lg font-bold">
-                {result.liveCaption}
-              </div>
+              <div className="text-dark-ink text-lg font-bold">{caption}</div>
             </div>
           </div>
         </div>
