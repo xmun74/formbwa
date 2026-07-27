@@ -55,7 +55,7 @@ export function WorkoutSetupView() {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="예: 민수 (비워두면 '회원님'으로 불러요)"
-              maxLength={20}
+              maxLength={10}
               className="border-line focus:border-brand-400 bg-surface placeholder:text-ink-muted mt-2.5 w-full rounded-xl border px-4 py-3.5 text-base outline-none transition-colors"
             />
           </label>
