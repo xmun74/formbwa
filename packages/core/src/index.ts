@@ -11,3 +11,5 @@ export { SquatFSM, DEFAULT_SQUAT_CONFIG } from "./squat-fsm";
 export type { SquatState, SquatConfig } from "./squat-fsm";
 export { judgeRep, defaultJudgeConfig } from "./judge";
 export type { JudgeConfig } from "./judge";
+export { Coach, DEFAULT_COACH_CONFIG } from "./coach";
+export type { CoachConfig } from "./coach";

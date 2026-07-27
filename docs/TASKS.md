@@ -63,15 +63,21 @@
   - 준비/운동/요약을 **별도 라우트로 분리** (밝은 준비·몰입 다크 운동·밝은 결과). `/prepare`는 배치→캘리브 내부 2상태. 카메라·포즈·판정 로직은 아래 항목들
 - [x] **`entities/workout` store (Zustand persist)** — 닉네임·선택 코치·선택 종목·세트 결과를 localStorage 통째 영속 → 새로고침에도 단계 유지. /exercises 종목·/start 닉네임·코치를 쓰고 /workout·/summary가 읽게 배선 (브라우저 검증 완료). shared/config 목 제거
   - steiger가 `@/` 별칭을 못 풀어 entities를 insignificant로 오탐 → `steiger.config.ts`에서 `insignificant-slice`를 `entities/**`에 한해 예외 (스캔 루트 src 유지)
-- [ ] **`shared/lib` 프리로드 훅/스토어 = 인메모리** — MediaPipe 모델·오디오. 도메인이 아니라 리소스라 entity와 분리. 라우트 전환엔 유지, 새로고침 시 재프리로드 (카메라 연동과 함께 — 아래)
-- [ ] `getUserMedia` 카메라 스트림 + `@mediapipe/tasks-vision` 로딩 (`'use client'` + dynamic import). 모델 프리로드는 `/` 진입 시 시작 → `shared/lib` 인메모리 보관
-- [ ] 렌더링(rAF) / 추론(15~24fps 스로틀) 분리 루프
-- [ ] Canvas 랜드마크 오버레이 (F1-7)
-- [ ] 전신 바운딩 박스 체크 + 카메라 배치 가이드 UI, 측면 45° 안내 (F1-5)
-- [ ] 기립 캘리브레이션 3초 → 기준값 저장 (F1-5)
-- [ ] **이탈 가드** — 라우트 분리는 완료(`/prepare` 배치·캘리브 / `/workout` 운동 / `/summary` 요약). 현재 [✕ 그만두기](→ `/exercises`)만 있고, `beforeunload`·뒤로가기 가로채 "그만두시겠어요?" 방어는 M2에서 추가 (TRD-FE §4)
-- [x] **운동 화면 레이아웃 (UI 완료)** — **왼쪽 내 카메라/오버레이(작게) + 오른쪽 코치 시범 영상(크게, 플레이스홀더)** (F1-8, PRD §4-4, TRD-FE §6.2). 입문자 중심 위계(시범=주). 실제 카메라·영상은 M2/M4, 현재는 자리·목 데이터만
+- [x] **`shared/lib/pose` 모델 로더 = 인메모리** — `PoseLandmarker` 싱글턴(클라이언트 dynamic import, WASM·모델 CDN). 도메인 아닌 리소스라 entity와 분리. 여러 번 불러도 1회만 로드, 실패 시 재시도
+  - 오디오 프리로드는 M4(mp3)로 미룸
+- [x] `getUserMedia` 카메라 스트림 + `@mediapipe/tasks-vision` 로딩 (`useCameraPose` 훅). 모델 프리로드는 `/` 진입 시 `PosePreload`로 시작
+- [x] 렌더(rAF) / 추론(20fps 스로틀) 분리 루프 — 매 추론마다 오버레이 + `extractFeatures` → `onFeatures`
+- [x] Canvas 랜드마크 오버레이 (F1-7) — 상체+양다리 골격 선/점 (`useCameraPose` 내부)
+- [x] 전신 바운딩 박스 체크 + 배치 가이드 (F1-5) — core `isFullBodyInFrame`, `/prepare` 배치에서 전신 잡히면 "자세 잡았어요" 활성
+- [x] 기립 캘리브레이션 3초 → 기준값 저장 (F1-5) — `/prepare` 캘리브에서 무릎각 중앙값을 `entities/workout.standingKneeAngle`에 저장 → `/workout` FSM·판정이 사용(미측정 시 기본 170)
+- [x] **이탈 가드 (`ExitGuard`)** — `beforeunload` + 뒤로가기 가로채 확인 모달, [✕ 그만두기] → `/exercises` (TRD-FE §4). 다크 화면 공용(`shared/ui/exit-guard`), 브라우저 검증 완료
+- [x] **운동 화면 실배선** — 좌: 실제 `<video>` + 오버레이 + **실시간 반복 카운트·자세 품질%·자막**(core FSM·judge). 우: 코치 시범 플레이스홀더(실영상 M4). 입문자 중심 위계
+  - ⚠️ **웹캠 실검증은 로컬에서 사용자가** (이 환경엔 카메라 없음). 헤드리스에선 크래시 없이 상태 메시지로 폴백 확인
+  - 자막은 판정 이벤트 → 텍스트 임시 매핑(`model/caption.ts`), 음성은 M4(coach.ts)
+  - GPU delegate 이슈 시 `poseModel.ts`의 `delegate: "GPU"` → `"CPU"`
   - 시범 mp4는 프로그레시브 재생 (전체 프리로드 없이 첫 프레임부터 — §9.1). 판정과 동기화하지 않음
+
+> M2는 코드상 완료. 남은 건 **웹캠 실검증**(사용자 로컬)과 **판정 임계값 튜닝**(M3 fixture 기반). 코치 시범 실영상은 M4.
 
 ### M3. 코어 엔진 (F1-1, F1-2) (~1주 — 병목은 코딩이 아니라 몸으로 하는 오탐 검증)
 
@@ -81,7 +87,7 @@
 - [x] 입문자 그레이스 — `judge.ts`의 `graceReps`로 초반 회차 지적 억제(완주만 칭찬). 임계값은 튜닝 대상
 - [ ] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
   - **정상 촬영본은 M4 시범 영상의 모캡 소스로도 재사용** (TRD-FE §5.4·§6.2) — 촬영은 한 번, 폼을 정확히 잡아 찍을 것
-- [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 19개는 완료, fixture 회귀는 촬영 후
+- [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 22개는 완료(angle·fsm·judge·배치판정), fixture 회귀는 촬영 후
 
 ### M4. 캐릭터·음성·시범 영상 (F1-3, F1-4, F1-8) (~3~4일)
 
