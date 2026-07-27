@@ -15,8 +15,8 @@ import { ExitGuard } from "@/shared/ui/exit-guard";
 import { DARK_STRIPE } from "../model/workout";
 import { captionForEvents } from "../model/caption";
 
-// TODO(캘리브레이션): 기립 무릎 각도는 /prepare 캘리브 결과로 대체. 지금은 기본값.
-const STANDING_KNEE_ANGLE = 170;
+// /prepare 캘리브레이션 미측정 시 기본값
+const DEFAULT_STANDING_KNEE_ANGLE = 170;
 
 const STATUS_TEXT = {
   loading: "카메라·모델 준비 중…",
@@ -27,15 +27,17 @@ const STATUS_TEXT = {
 
 export function WorkoutView() {
   const router = useRouter();
-  const { exerciseName, setNo, coach, nickname } = useWorkoutStore();
+  const { exerciseName, setNo, coach, nickname, standingKneeAngle } =
+    useWorkoutStore();
   const panel = `border-dark-line relative overflow-hidden rounded-2xl border ${DARK_STRIPE}`;
 
+  const standing = standingKneeAngle ?? DEFAULT_STANDING_KNEE_ANGLE;
   const fsmRef = useRef<SquatFSM | null>(null);
   fsmRef.current ??= new SquatFSM({
-    standingKneeAngle: STANDING_KNEE_ANGLE,
+    standingKneeAngle: standing,
     ...DEFAULT_SQUAT_CONFIG,
   });
-  const judgeCfgRef = useRef(defaultJudgeConfig(STANDING_KNEE_ANGLE));
+  const judgeCfgRef = useRef(defaultJudgeConfig(standing));
 
   const [reps, setReps] = useState(0);
   const [goodReps, setGoodReps] = useState(0);

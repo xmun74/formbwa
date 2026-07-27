@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-
-import { angleABC, angleFromVertical, extractFeatures } from "./angle";
+import {
+  angleABC,
+  angleFromVertical,
+  extractFeatures,
+  isFullBodyInFrame,
+} from "./angle";
 import { LM, type Landmark, type PoseFrame } from "./types";
 
 describe("angleABC", () => {
@@ -75,5 +79,31 @@ describe("extractFeatures", () => {
       [LM.LEFT_SHOULDER]: { x: 0, y: 0, visibility: 0.2 },
     });
     expect(extractFeatures(frame)).toBeNull();
+  });
+});
+
+describe("isFullBodyInFrame", () => {
+  const inFrame = () =>
+    makeFrame({
+      [LM.LEFT_SHOULDER]: { x: 0.5, y: 0.2 },
+      [LM.LEFT_HIP]: { x: 0.5, y: 0.5 },
+      [LM.LEFT_KNEE]: { x: 0.5, y: 0.7 },
+      [LM.LEFT_ANKLE]: { x: 0.5, y: 0.9 },
+    });
+
+  it("어깨~발목이 여백 안쪽에 다 보이면 true", () => {
+    expect(isFullBodyInFrame(inFrame())).toBe(true);
+  });
+
+  it("발목이 화면 밖(가장자리)이면 false", () => {
+    const frame = inFrame();
+    frame.landmarks[LM.LEFT_ANKLE]!.y = 0.99; // margin(0.05) 밖
+    expect(isFullBodyInFrame(frame)).toBe(false);
+  });
+
+  it("관절 가시성이 낮으면 false", () => {
+    const frame = inFrame();
+    frame.landmarks[LM.LEFT_KNEE]!.visibility = 0.3;
+    expect(isFullBodyInFrame(frame)).toBe(false);
   });
 });

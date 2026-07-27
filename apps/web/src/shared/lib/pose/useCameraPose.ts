@@ -5,14 +5,24 @@ import type {
   PoseLandmarker,
 } from "@mediapipe/tasks-vision";
 import { useEffect, useRef, useState } from "react";
-import { extractFeatures, LM, type PoseFeatures } from "@repo/core";
+import {
+  extractFeatures,
+  LM,
+  type PoseFeatures,
+  type PoseFrame,
+} from "@repo/core";
 import { preloadPoseModel } from "./poseModel";
 
 export type CameraStatus = "loading" | "ready" | "denied" | "error";
 
 interface UseCameraPoseOptions {
-  /** 특징값이 나온 프레임마다 호출 (판정 파이프라인에 투입). 렌더 루프라 setState 남발 금지 */
-  onFeatures?: (features: PoseFeatures, timestampMs: number) => void;
+  /** 특징값이 나온 프레임마다 호출 (판정 파이프라인에 투입). 렌더 루프라 setState 남발 금지.
+   *  원본 프레임도 함께 넘겨 배치 게이트(전신 여부) 등에 쓴다. */
+  onFeatures?: (
+    features: PoseFeatures,
+    timestampMs: number,
+    frame: PoseFrame,
+  ) => void;
   /** 추론 스로틀 (기본 20fps — 렌더 rAF와 분리, TRD-FE §4) */
   fps?: number;
 }
@@ -99,7 +109,7 @@ export function useCameraPose({ onFeatures, fps = 20 }: UseCameraPoseOptions) {
 
       drawOverlay(canvasRef.current, lm);
 
-      const features = extractFeatures({
+      const frame: PoseFrame = {
         landmarks: lm.map((p) => ({
           x: p.x,
           y: p.y,
@@ -107,8 +117,9 @@ export function useCameraPose({ onFeatures, fps = 20 }: UseCameraPoseOptions) {
           visibility: p.visibility ?? 1,
         })),
         timestampMs: now,
-      });
-      if (features) onFeaturesRef.current?.(features, now);
+      };
+      const features = extractFeatures(frame);
+      if (features) onFeaturesRef.current?.(features, now, frame);
     };
 
     const start = async () => {

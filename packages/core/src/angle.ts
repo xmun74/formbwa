@@ -37,6 +37,34 @@ function visSum(lms: Landmark[], idxs: number[]): number {
 }
 
 /**
+ * 전신이 프레임 안에 제대로 들어왔는지 (배치 게이트, F1-5).
+ * 가시성 높은 쪽의 어깨~발목이 모두 보이고, 화면 여백(margin) 안쪽에 있으면 true.
+ */
+export function isFullBodyInFrame(
+  frame: PoseFrame,
+  margin = 0.05,
+  minVisibility = 0.6,
+): boolean {
+  const lm = frame.landmarks;
+  const left = [LM.LEFT_SHOULDER, LM.LEFT_HIP, LM.LEFT_KNEE, LM.LEFT_ANKLE];
+  const right = [
+    LM.RIGHT_SHOULDER,
+    LM.RIGHT_HIP,
+    LM.RIGHT_KNEE,
+    LM.RIGHT_ANKLE,
+  ];
+  const chain = visSum(lm, left) >= visSum(lm, right) ? left : right;
+
+  return chain.every((i) => {
+    const p = lm[i];
+    if (!p || p.visibility < minVisibility) return false;
+    return (
+      p.x >= margin && p.x <= 1 - margin && p.y >= margin && p.y <= 1 - margin
+    );
+  });
+}
+
+/**
  * 프레임 → 특징값. 가시성 높은 쪽(측면 45° 촬영이라 한쪽이 잘 보임)을 고른다.
  * 핵심 관절이 `minVisibility` 미만이면 null (그 프레임은 판정 제외 — TRD-FE §4).
  */

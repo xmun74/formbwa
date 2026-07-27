@@ -36,10 +36,13 @@ interface WorkoutState {
   totalSets: number;
   /** TODO(M3): 판정 파이프라인 결과로 채운다. 지금은 목 기본값. */
   result: SetResult;
+  /** /prepare 캘리브레이션에서 잡은 기립 무릎 각도. 미측정이면 null → /workout이 기본값 사용 */
+  standingKneeAngle: number | null;
 
   setNickname: (v: string) => void;
   setCoach: (c: WorkoutCoach) => void;
   setExercise: (name: string) => void;
+  setStandingKneeAngle: (deg: number) => void;
   reset: () => void;
 }
 
@@ -72,10 +75,12 @@ export const useWorkoutStore = create<WorkoutState>()(
       setNo: 1,
       totalSets: 3,
       result: DEFAULT_RESULT,
+      standingKneeAngle: null,
 
       setNickname: (v) => set({ nickname: v }),
       setCoach: (c) => set({ coach: c }),
       setExercise: (name) => set({ exerciseName: name }),
+      setStandingKneeAngle: (deg) => set({ standingKneeAngle: deg }),
       reset: () =>
         set({ nickname: "", coach: DEFAULT_COACH, exerciseName: "스쿼트" }),
     }),
