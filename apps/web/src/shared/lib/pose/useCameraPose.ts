@@ -42,17 +42,20 @@ const KEY_JOINTS = Object.values(LM);
 
 function drawOverlay(
   canvas: HTMLCanvasElement | null,
+  video: HTMLVideoElement,
   lm: NormalizedLandmark[],
 ): void {
-  if (!canvas) return;
+  if (!canvas || !video.videoWidth) return;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const w = (canvas.width = canvas.clientWidth);
-  const h = (canvas.height = canvas.clientHeight);
+  // 캔버스 비트맵을 비디오 실제 프레임 크기로 → 캔버스에도 object-cover를 줘
+  // 비디오와 똑같이 잘리게 하면 랜드마크가 정확히 겹친다.
+  const w = (canvas.width = video.videoWidth);
+  const h = (canvas.height = video.videoHeight);
   ctx.clearRect(0, 0, w, h);
 
   ctx.strokeStyle = "rgba(60,202,169,0.85)"; // brand-400
-  ctx.lineWidth = 3;
+  ctx.lineWidth = Math.max(4, w / 140);
   for (const [a, b] of CONNECTIONS) {
     const p = lm[a];
     const q = lm[b];
@@ -69,7 +72,7 @@ function drawOverlay(
     const p = lm[i];
     if (!p || (p.visibility ?? 0) < 0.4) continue;
     ctx.beginPath();
-    ctx.arc(p.x * w, p.y * h, 5, 0, Math.PI * 2);
+    ctx.arc(p.x * w, p.y * h, Math.max(6, w / 90), 0, Math.PI * 2);
     ctx.fill();
   }
 }
@@ -107,7 +110,7 @@ export function useCameraPose({ onFeatures, fps = 20 }: UseCameraPoseOptions) {
       const lm = result.landmarks?.[0];
       if (!lm) return;
 
-      drawOverlay(canvasRef.current, lm);
+      drawOverlay(canvasRef.current, video, lm);
 
       const frame: PoseFrame = {
         landmarks: lm.map((p) => ({

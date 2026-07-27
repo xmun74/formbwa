@@ -120,9 +120,12 @@ export function WorkoutView() {
             ref={videoRef}
             muted
             playsInline
-            className="absolute inset-0 size-full object-cover"
+            className="absolute inset-0 size-full -scale-x-100 object-cover"
           />
-          <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 size-full -scale-x-100 object-cover"
+          />
           <span className="bg-dark-canvas/70 text-dark-ink-muted absolute top-3 left-3 z-10 rounded-md px-2 py-1 text-xs">
             내 웹캠 · 관절 오버레이
           </span>

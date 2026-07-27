@@ -69,9 +69,12 @@ export function PlacementStage({ onNext }: { onNext: () => void }) {
           ref={videoRef}
           muted
           playsInline
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full -scale-x-100 object-cover"
         />
-        <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 size-full -scale-x-100 object-cover"
+        />
         <span className="text-dark-ink-muted absolute bottom-4 left-5 z-10 text-sm">
           내 웹캠 · 실시간
         </span>
