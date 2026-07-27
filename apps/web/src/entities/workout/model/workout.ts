@@ -43,6 +43,7 @@ interface WorkoutState {
   setCoach: (c: WorkoutCoach) => void;
   setExercise: (name: string) => void;
   setStandingKneeAngle: (deg: number) => void;
+  setResult: (r: SetResult) => void;
   reset: () => void;
 }
 
@@ -81,6 +82,7 @@ export const useWorkoutStore = create<WorkoutState>()(
       setCoach: (c) => set({ coach: c }),
       setExercise: (name) => set({ exerciseName: name }),
       setStandingKneeAngle: (deg) => set({ standingKneeAngle: deg }),
+      setResult: (r) => set({ result: r }),
       reset: () =>
         set({ nickname: "", coach: DEFAULT_COACH, exerciseName: "스쿼트" }),
     }),

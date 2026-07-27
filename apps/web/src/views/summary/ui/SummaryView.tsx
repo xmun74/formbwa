@@ -2,7 +2,6 @@
 
 import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 import { displayName, useWorkoutStore } from "@/entities/workout";
 import { Button } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
@@ -60,7 +59,7 @@ export function SummaryView() {
         <div className="mt-9 grid grid-cols-[auto_1fr] items-center gap-8">
           {/* 자세 정확도 링 */}
           <div className="flex flex-col items-center">
-            <div className="relative grid size-[176px] place-items-center">
+            <div className="relative grid size-44 place-items-center">
               <svg viewBox="0 0 176 176" className="size-full -rotate-90">
                 <circle
                   cx="88"
@@ -113,22 +112,23 @@ export function SummaryView() {
           </div>
         </div>
 
-        {/* 가장 많이 나온 포인트 */}
-        <div className="border-line bg-surface mt-4 rounded-2xl border p-6">
-          <div className="text-brand-700 text-base font-bold">
-            가장 많이 나온 포인트
+        {result.points.length > 0 && (
+          <div className="border-line bg-surface mt-4 rounded-2xl border p-6">
+            <div className="text-brand-700 text-base font-bold">
+              가장 많이 나온 포인트
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {result.points.map((p) => (
+                <span
+                  key={p.label}
+                  className={`${POINT_CLASS[p.tone]} rounded-full px-3 py-1.5 text-sm font-semibold`}
+                >
+                  {p.label} ({p.count}회)
+                </span>
+              ))}
+            </div>
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {result.points.map((p) => (
-              <span
-                key={p.label}
-                className={`${POINT_CLASS[p.tone]} rounded-full px-3 py-1.5 text-sm font-semibold`}
-              >
-                {p.label} ({p.count}회)
-              </span>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* 코치 총평 */}
         <div className="bg-brand-50 mt-4 flex gap-4 rounded-2xl p-6">

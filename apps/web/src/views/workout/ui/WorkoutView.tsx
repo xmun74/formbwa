@@ -6,6 +6,7 @@ import {
   defaultJudgeConfig,
   judgeRep,
   SquatFSM,
+  type JudgeEventType,
   type PoseFeatures,
 } from "@repo/core";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,7 @@ import { useCameraPose } from "@/shared/lib/pose";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { DARK_STRIPE } from "../model/workout";
 import { pickLine } from "../model/mnemonics";
+import { buildSetResult } from "../model/setResult";
 
 // /prepare 캘리브레이션 미측정 시 기본값
 const DEFAULT_STANDING_KNEE_ANGLE = 170;
@@ -30,6 +32,7 @@ export function WorkoutView() {
   const router = useRouter();
   const { exerciseName, setNo, coach, nickname, standingKneeAngle } =
     useWorkoutStore();
+  const setResult = useWorkoutStore((s) => s.setResult);
   const panel = `border-dark-line relative overflow-hidden rounded-2xl border ${DARK_STRIPE}`;
 
   const standing = standingKneeAngle ?? DEFAULT_STANDING_KNEE_ANGLE;
@@ -44,6 +47,10 @@ export function WorkoutView() {
   const coachIdRef = useRef(coach.id);
   coachIdRef.current = coach.id;
 
+  // 세트 종료 요약용 누적치 (리렌더 불필요 → ref)
+  const faultCountsRef = useRef<Partial<Record<JudgeEventType, number>>>({});
+  const startMsRef = useRef(performance.now());
+
   const [reps, setReps] = useState(0);
   const [goodReps, setGoodReps] = useState(0);
   const [caption, setCaption] = useState("자세를 잡고 시작해요");
@@ -54,10 +61,14 @@ export function WorkoutView() {
     if (!rep) return;
     const events = judgeRep(rep, judgeCfgRef.current);
     setReps(rep.repIndex);
-    const hasFault = events.some(
+    const faults = events.filter(
       (e) => e.type !== "rep_counted" && e.type !== "good_rep",
     );
-    if (!hasFault) setGoodReps((g) => g + 1);
+    if (faults.length === 0) setGoodReps((g) => g + 1);
+    for (const f of faults) {
+      faultCountsRef.current[f.type] =
+        (faultCountsRef.current[f.type] ?? 0) + 1;
+    }
     // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 (음성은 M4)
     const { clipKey } = coachRef.current!.decide(events, tMs);
     if (clipKey) {
@@ -67,6 +78,18 @@ export function WorkoutView() {
   }, []);
 
   const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
+
+  const finishSet = () => {
+    setResult(
+      buildSetResult({
+        reps,
+        goodReps,
+        faultCounts: faultCountsRef.current,
+        durationMs: performance.now() - startMsRef.current,
+      }),
+    );
+    router.push("/summary");
+  };
 
   return (
     <div className="bg-dark-canvas flex min-h-screen flex-col">
@@ -81,7 +104,7 @@ export function WorkoutView() {
           <ExitGuard />
           <button
             type="button"
-            onClick={() => router.push("/summary")}
+            onClick={finishSet}
             className="bg-brand-500 hover:bg-brand-600 rounded-full px-4 py-2 font-bold text-white transition-colors"
           >
             세트 끝내기 →
