@@ -9,10 +9,12 @@ import {
   type JudgeEventType,
   type PoseFeatures,
 } from "@repo/core";
+import { Volume2, VolumeX } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { displayName, useWorkoutStore } from "@/entities/workout";
 import { useCameraPose } from "@/shared/lib/pose";
+import { cancelSpeech, speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { DARK_STRIPE } from "../model/workout";
 import { pickLine } from "../model/mnemonics";
@@ -54,6 +56,9 @@ export function WorkoutView() {
   const [reps, setReps] = useState(0);
   const [goodReps, setGoodReps] = useState(0);
   const [caption, setCaption] = useState("자세를 잡고 시작해요");
+  const [voiceOn, setVoiceOn] = useState(true);
+  const voiceOnRef = useRef(voiceOn);
+  voiceOnRef.current = voiceOn;
   const quality = reps > 0 ? Math.round((goodReps / reps) * 100) : 0;
 
   const onFeatures = useCallback((features: PoseFeatures, tMs: number) => {
@@ -69,13 +74,19 @@ export function WorkoutView() {
       faultCountsRef.current[f.type] =
         (faultCountsRef.current[f.type] ?? 0) + 1;
     }
-    // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 (음성은 M4)
+    // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 + 임시 음성(Web Speech, M4에 mp3)
     const { clipKey } = coachRef.current!.decide(events, tMs);
     if (clipKey) {
       const line = pickLine(coachIdRef.current, clipKey);
-      if (line) setCaption(line);
+      if (line) {
+        setCaption(line);
+        if (voiceOnRef.current) speak(line);
+      }
     }
   }, []);
+
+  // 화면 떠날 때 남은 음성 중단
+  useEffect(() => cancelSpeech, []);
 
   const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
 
@@ -137,7 +148,7 @@ export function WorkoutView() {
 
           {/* 스탯 HUD — 화면 위에 겹쳐 출력 */}
           <div className="absolute top-4 right-4 z-10 flex gap-3">
-            <div className="bg-dark-surface/85 rounded-2xl px-6 py-4 text-center backdrop-blur-sm">
+            <div className="w-35 bg-dark-surface/85 rounded-2xl px-4.5 py-3 backdrop-blur-sm flex flex-col gap-1">
               <div className="text-dark-ink-muted text-base">이번 세트</div>
               <div className="text-dark-ink mt-1 text-5xl font-extrabold">
                 {reps}
@@ -146,7 +157,7 @@ export function WorkoutView() {
                 </span>
               </div>
             </div>
-            <div className="bg-dark-surface/85 rounded-2xl px-6 py-4 text-center backdrop-blur-sm">
+            <div className="w-35 bg-dark-surface/85 rounded-2xl px-4.5 py-3 backdrop-blur-sm flex flex-col gap-1">
               <div className="text-dark-ink-muted text-base">자세 품질</div>
               <div className="text-brand-300 mt-1 text-5xl font-extrabold">
                 {quality}
@@ -169,9 +180,25 @@ export function WorkoutView() {
           <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-30 -translate-x-1/2 rounded-t-[60px]" />
 
           <div className="border-dark-line bg-dark-surface-2 absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)]">
-            <span className="bg-brand-600 grid size-9 shrink-0 place-items-center rounded-full text-base">
-              🔊
-            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setVoiceOn((v) => !v);
+                cancelSpeech();
+              }}
+              aria-label={voiceOn ? "음성 끄기" : "음성 켜기"}
+              className={`grid size-9 shrink-0 place-items-center rounded-full transition-colors ${
+                voiceOn
+                  ? "bg-brand-600 text-white"
+                  : "bg-dark-line text-dark-ink-muted"
+              }`}
+            >
+              {voiceOn ? (
+                <Volume2 className="size-5" />
+              ) : (
+                <VolumeX className="size-5" />
+              )}
+            </button>
             <div>
               <div className="text-dark-ink-muted text-xs">
                 {displayName(nickname)}님

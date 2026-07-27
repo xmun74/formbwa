@@ -90,7 +90,7 @@ export const useWorkoutStore = create<WorkoutState>()(
   ),
 );
 
-/** 닉네임 표시용 — 비어 있으면 "회원님" */
+/** 닉네임 표시용 — 비어 있으면 "회원" */
 export function displayName(nickname: string): string {
-  return nickname.trim() || "회원님";
+  return nickname.trim() || "회원";
 }

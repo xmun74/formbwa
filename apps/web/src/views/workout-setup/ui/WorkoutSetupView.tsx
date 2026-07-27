@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { useWorkoutStore } from "@/entities/workout";
+import { primeSpeech } from "@/shared/lib/speech";
 import { buttonClass } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 
@@ -25,6 +26,7 @@ export function WorkoutSetupView() {
     setStoreNickname(nickname);
     const c = COACHES.find((x) => x.id === coachId) ?? DEFAULT_COACH;
     setStoreCoach({ id: c.id, name: c.name, emoji: c.emoji });
+    primeSpeech(); // 이 클릭(제스처)에서 음성 자동재생 잠금 해제 → /workout 발화가 들리게
   };
 
   return (

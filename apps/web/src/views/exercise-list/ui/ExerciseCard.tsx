@@ -62,9 +62,7 @@ export function ExerciseCard({
           {exercise.name}
         </span>
         {ready ? (
-          <span className="bg-brand-100 text-brand-700 rounded-full px-2.5 py-1 text-xs font-semibold">
-            가능
-          </span>
+          <></>
         ) : (
           <span className="bg-line text-ink-muted rounded-full px-2.5 py-1 text-xs font-medium">
             준비 중
