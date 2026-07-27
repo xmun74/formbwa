@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Coach,
   DEFAULT_SQUAT_CONFIG,
   defaultJudgeConfig,
   judgeRep,
@@ -13,7 +14,7 @@ import { displayName, useWorkoutStore } from "@/entities/workout";
 import { useCameraPose } from "@/shared/lib/pose";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { DARK_STRIPE } from "../model/workout";
-import { captionForEvents } from "../model/caption";
+import { pickLine } from "../model/mnemonics";
 
 // /prepare 캘리브레이션 미측정 시 기본값
 const DEFAULT_STANDING_KNEE_ANGLE = 170;
@@ -38,6 +39,10 @@ export function WorkoutView() {
     ...DEFAULT_SQUAT_CONFIG,
   });
   const judgeCfgRef = useRef(defaultJudgeConfig(standing));
+  const coachRef = useRef<Coach | null>(null);
+  coachRef.current ??= new Coach();
+  const coachIdRef = useRef(coach.id);
+  coachIdRef.current = coach.id;
 
   const [reps, setReps] = useState(0);
   const [goodReps, setGoodReps] = useState(0);
@@ -53,8 +58,12 @@ export function WorkoutView() {
       (e) => e.type !== "rep_counted" && e.type !== "good_rep",
     );
     if (!hasFault) setGoodReps((g) => g + 1);
-    const text = captionForEvents(events);
-    if (text) setCaption(text);
+    // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 (음성은 M4)
+    const { clipKey } = coachRef.current!.decide(events, tMs);
+    if (clipKey) {
+      const line = pickLine(coachIdRef.current, clipKey);
+      if (line) setCaption(line);
+    }
   }, []);
 
   const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
