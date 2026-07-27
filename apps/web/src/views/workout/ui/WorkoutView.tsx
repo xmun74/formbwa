@@ -114,40 +114,40 @@ export function WorkoutView() {
 
       {/* 2패널 */}
       <div className="grid min-h-0 flex-1 grid-cols-[38fr_62fr] gap-3 px-3 pb-3">
-        {/* 좌: 웹캠 + 오버레이 + 스탯 */}
-        <div className="flex min-h-0 flex-col gap-3">
-          <div className={`${panel} flex-1`}>
-            <video
-              ref={videoRef}
-              muted
-              playsInline
-              className="absolute inset-0 size-full object-cover"
-            />
-            <canvas ref={canvasRef} className="absolute inset-0 size-full" />
-            <span className="bg-dark-canvas/70 text-dark-ink-muted absolute top-3 left-3 z-10 rounded-md px-2 py-1 text-xs">
-              내 웹캠 · 관절 오버레이
-            </span>
-            {status !== "ready" && (
-              <div className="text-dark-ink-soft absolute inset-0 grid place-items-center text-base">
-                {STATUS_TEXT[status]}
-              </div>
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-dark-surface rounded-xl px-4 py-3">
-              <div className="text-dark-ink-muted text-sm">이번 세트</div>
-              <div className="text-dark-ink mt-1 text-2xl font-extrabold">
+        {/* 좌: 웹캠·오버레이 (스탯은 위에 absolute HUD로) */}
+        <div className={`${panel} min-h-0`}>
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            className="absolute inset-0 size-full object-cover"
+          />
+          <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+          <span className="bg-dark-canvas/70 text-dark-ink-muted absolute top-3 left-3 z-10 rounded-md px-2 py-1 text-xs">
+            내 웹캠 · 관절 오버레이
+          </span>
+          {status !== "ready" && (
+            <div className="text-dark-ink-soft absolute inset-0 grid place-items-center text-base">
+              {STATUS_TEXT[status]}
+            </div>
+          )}
+
+          {/* 스탯 HUD — 화면 위에 겹쳐 출력 */}
+          <div className="absolute top-4 right-4 z-10 flex gap-3">
+            <div className="bg-dark-surface/85 rounded-2xl px-6 py-4 text-center backdrop-blur-sm">
+              <div className="text-dark-ink-muted text-base">이번 세트</div>
+              <div className="text-dark-ink mt-1 text-5xl font-extrabold">
                 {reps}
-                <span className="text-dark-ink-muted ml-1 text-base font-medium">
+                <span className="text-dark-ink-muted ml-1 text-xl font-medium">
                   회
                 </span>
               </div>
             </div>
-            <div className="bg-dark-surface rounded-xl px-4 py-3">
-              <div className="text-dark-ink-muted text-sm">자세 품질</div>
-              <div className="text-brand-300 mt-1 text-2xl font-extrabold">
+            <div className="bg-dark-surface/85 rounded-2xl px-6 py-4 text-center backdrop-blur-sm">
+              <div className="text-dark-ink-muted text-base">자세 품질</div>
+              <div className="text-brand-300 mt-1 text-5xl font-extrabold">
                 {quality}
-                <span className="text-dark-ink-muted ml-0.5 text-base font-medium">
+                <span className="text-dark-ink-muted ml-0.5 text-xl font-medium">
                   %
                 </span>
               </div>

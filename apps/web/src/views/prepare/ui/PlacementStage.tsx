@@ -5,10 +5,11 @@ import {
   type PoseFeatures,
   type PoseFrame,
 } from "@repo/core";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import { useCameraPose } from "@/shared/lib/pose";
-import { buttonClass } from "@/shared/ui/button";
 import { ExitGuard } from "@/shared/ui/exit-guard";
+
 import { DARK_STRIPE } from "../model/prepare";
 
 const STATUS_TEXT = {
@@ -18,12 +19,15 @@ const STATUS_TEXT = {
   ready: "",
 } as const;
 
-/**
- * 배치 (F1-5) — 웹캠에 전신이 들어오면 "자세 잡았어요"가 활성화된다.
- * 전신 판정은 core `isFullBodyInFrame` (측면 45° 촬영 전제).
- */
+// 전신이 이만큼 유지되면 자동으로 다음(캘리브)으로. 버튼을 없앤 이유:
+// 버튼 누르러 다가오면 전신이 프레임에서 빠져 비활성화되는 딜레마 때문 (사용자 피드백).
+const HOLD_MS = 2000;
+
 export function PlacementStage({ onNext }: { onNext: () => void }) {
   const [ready, setReady] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const onNextRef = useRef(onNext);
+  onNextRef.current = onNext;
 
   const onFeatures = useCallback(
     (_features: PoseFeatures, _t: number, frame: PoseFrame) => {
@@ -34,6 +38,24 @@ export function PlacementStage({ onNext }: { onNext: () => void }) {
   );
   const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
 
+  // 전신이 잡힌 동안만 진행바를 채우고, 다 차면 자동 진행. 빠지면 리셋.
+  useEffect(() => {
+    if (!ready) {
+      setProgress(0);
+      return;
+    }
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = () => {
+      const p = Math.min(1, (performance.now() - t0) / HOLD_MS);
+      setProgress(p);
+      if (p >= 1) onNextRef.current();
+      else raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [ready]);
+
   return (
     <div className="bg-dark-canvas relative flex min-h-screen flex-col items-center justify-center px-6">
       <div className="absolute top-6 right-8">
@@ -41,7 +63,7 @@ export function PlacementStage({ onNext }: { onNext: () => void }) {
       </div>
 
       <div
-        className={`border-dark-line relative flex h-105 w-full max-w-2xl items-center justify-center overflow-hidden rounded-2xl border border-dashed ${DARK_STRIPE}`}
+        className={`border-dark-line relative flex h-105 w-full max-w-2xl items-center justify-center overflow-hidden rounded-2xl border ${ready ? "border-brand-400" : "border-dashed"} ${DARK_STRIPE}`}
       >
         <video
           ref={videoRef}
@@ -67,19 +89,30 @@ export function PlacementStage({ onNext }: { onNext: () => void }) {
         화면에서 <b className="text-brand-300 font-bold">약 2m</b> 떨어져,
         옆으로 <b className="text-brand-300 font-bold">45°</b> 돌아 서주세요.
         <br />
-        {ready
-          ? "전신이 잡혔어요 — 준비되면 눌러요."
-          : "머리부터 발끝까지 화면에 들어와야 정확히 봐줄 수 있어요."}
+        머리부터 발끝까지 화면에 들어오면{" "}
+        <b className="text-brand-300 font-bold">자동으로 시작</b>해요.
       </p>
 
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={!ready}
-        className={buttonClass("primary", "mt-8 px-8 py-3.5")}
-      >
-        자세 잡았어요
-      </button>
+      {/* 버튼 대신 자동 진행 인디케이터 */}
+      <div className="mt-8 flex h-14 flex-col items-center justify-center gap-2">
+        {ready ? (
+          <>
+            <span className="text-brand-300 text-base font-bold">
+              전신이 잡혔어요! 곧 시작해요…
+            </span>
+            <div className="bg-dark-line h-1.5 w-56 overflow-hidden rounded-full">
+              <span
+                className="bg-brand-500 block h-full rounded-full"
+                style={{ width: `${Math.round(progress * 100)}%` }}
+              />
+            </div>
+          </>
+        ) : (
+          <span className="text-dark-ink-muted text-base">
+            전신이 화면에 들어오면 자동으로 시작해요
+          </span>
+        )}
+      </div>
     </div>
   );
 }
