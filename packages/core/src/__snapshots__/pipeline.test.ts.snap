@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`runSquatPipeline > fixture JSON을 돌려 이벤트 스냅샷을 회귀 검증한다 1`] = `
+[
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "good_rep",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "good_rep",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 3,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 3,
+    "type": "knee_shallow",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 3,
+    "type": "tempo_too_fast",
+  },
+]
+`;
