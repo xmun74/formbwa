@@ -38,14 +38,13 @@ export function IntroView() {
             자세 코칭 서비스
           </span>
           <h1 className="text-ink text-2xl font-extrabold tracking-tight">
-            집에서 하는 운동에
+            집에서 하는 운동,
             <br />
-            자세를 봐주는 눈
+            자세까지 봐드릴게요
           </h1>
           <p className="text-ink-soft mt-5 text-md leading-relaxed text-pretty">
-            캐릭터 코치의 시범을 따라 하면, 웹캠이 내 자세를 실시간으로 읽고 그
-            순간 바로 교정해줘요. 유튜브 홈트처럼 보되, 코치가 나를 마주
-            봐줍니다.
+            캐릭터 코치의 시범을 따라 하면, 웹캠이 자세를 실시간으로 읽고 그
+            순간 바로 교정해줘요. 집에서도 자세를 코칭 받아보세요.
           </p>
           <div className="mt-8 flex justify-end gap-3.5">
             <Link
