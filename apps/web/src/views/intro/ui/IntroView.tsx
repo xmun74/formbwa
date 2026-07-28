@@ -33,9 +33,9 @@ export function IntroView() {
     <AppShell>
       <PosePreload />
 
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-gutter py-17.5 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="mx-auto grid max-w-6xl items-center gap-10 px-gutter pt-16 pb-14 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <span className="bg-brand-100 text-brand-700 mb-5.5 inline-flex items-center gap-2 rounded-full px-3.5 py-1.75 text-sm font-semibold">
+          <span className="bg-brand-100 text-brand-700 inline-flex items-center gap-2 rounded-full px-3.5 py-1.75 text-sm font-semibold">
             <Image
               src={LogoSvg}
               alt="폼봐 로고"
@@ -45,16 +45,16 @@ export function IntroView() {
             />
             홈 트레이닝 자세 코칭 서비스
           </span>
-          <h1 className="text-ink text-2xl font-extrabold tracking-tight">
+          <h1 className="text-ink mt-6 text-[clamp(2.1rem,3.8vw,3rem)] leading-[1.2] font-extrabold tracking-tight">
             집에서 하는 운동,
             <br />
             자세까지 봐드릴게요
           </h1>
-          <p className="text-ink-soft mt-5 text-md leading-relaxed text-pretty">
-            캐릭터 코치의 시범을 따라 하면, 웹캠이 자세를 실시간으로 읽고 그
-            순간 바로 교정해줘요. 집에서도 자세를 코칭 받아보세요.
+          <p className="text-ink-soft mt-6 max-w-md text-lg leading-relaxed text-pretty">
+            캐릭터 코치의 시범을 따라 하면, <br />
+            웹캠이 자세를 실시간으로 읽고 그 순간 바로 교정해줘요.
           </p>
-          <div className="mt-8 flex justify-end gap-3.5">
+          <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
             <Link
               href="/exercises"
               className={buttonClass("primary", "px-8 py-4 text-lg")}
@@ -65,13 +65,13 @@ export function IntroView() {
         </div>
 
         {/* 히어로 일러스트 */}
-        <div className="border-line relative overflow-hidden rounded-2xl border">
+        <div className="ring-line/60 relative overflow-hidden rounded-3xl shadow-[0_30px_70px_-35px] shadow-brand-900/50 ring-1">
           <Image
             src={heroImg}
             alt="공원에서 스트레칭하는 캐릭터 코치"
             priority
             placeholder="blur"
-            className="h-auto w-fit"
+            className="h-auto w-full"
           />
         </div>
       </section>
