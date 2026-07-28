@@ -7,6 +7,7 @@ import { PosePreload } from "./PosePreload";
 import poseWatch from "../assets/pose-watch.png";
 import poseVoice from "../assets/pose-voice.png";
 import posePrivacy from "../assets/pose-privacy.png";
+import LogoSvg from "@/shared/ui/logo/Logo.svg";
 
 const FEATURES: { img: StaticImageData; title: string; body: string }[] = [
   {
@@ -34,8 +35,14 @@ export function IntroView() {
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-gutter py-17.5 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <span className="bg-brand-100 text-brand-700 mb-5.5 inline-flex items-center gap-2 rounded-full px-3.5 py-1.75 text-sm font-semibold">
-            <span className="bg-brand-500 size-1.75 rounded-full" />홈 트레이닝
-            자세 코칭 서비스
+            <Image
+              src={LogoSvg}
+              alt="폼봐 로고"
+              width={12}
+              height={12}
+              priority
+            />
+            홈 트레이닝 자세 코칭 서비스
           </span>
           <h1 className="text-ink text-2xl font-extrabold tracking-tight">
             집에서 하는 운동,
