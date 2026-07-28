@@ -52,7 +52,7 @@
 - [x] **`@repo/design-tokens` 패키지** — 색·간격·타이포(티셔츠 스케일)·radius를 플랫폼 중립 TS로 단일화 (RN 대비 초기 분리). 무빌드(`@repo/core` 패턴)
 - [x] **TS → `theme.css` 생성기** (`gen` 스크립트, tsx) — Tailwind v4 `@theme static` 방출, 결과 CSS는 커밋. `globals.css`가 `@import`
 - [x] **하드코딩 값 → 스케일 이전** — 컴포넌트의 `text-[..px]`·`rounded-[..px]`를 `text-*`·`rounded-*` 유틸리티로 (히어로 clamp·이모지·실루엣 플레이스홀더는 예외). base=14
-- [x] **공용 UI 셸** — `shared/ui`에 `app-shell`(고정 헤더+스크롤 영역)·`site-header`·`exit-button`·`Logo`(브랜드 SVG 마크)·`Button`. 아이콘은 `lucide-react`
+- [x] **공용 UI 셸** — `shared/ui`에 `app-shell`(고정 헤더+스크롤 영역)·`header`·`footer`(브랜드+운동 면책+저작권, 라이트 화면 공용)·`exit-button`·`Logo`(브랜드 SVG 마크)·`Button`. 아이콘은 `lucide-react`
 - [ ] RN 타깃 시 생성기에 hex 출력(OKLCH→hex) 추가 — 4단계
 
 > 색 토큰은 Claude Design 원본 값 그대로. 타이포/radius는 신규 스케일이라 기본 `text-*`가 소폭 변함(의도).
@@ -100,7 +100,7 @@
   - 도구: MakeHuman(CC0) + 모캡(무료 티어 **비상업 주의**) + Blender. 투명 영상 금지(호환·깜빡임)
   - 매니페스트에 영상 경로 추가 (mp3와 같은 방식, 하드코딩 금지)
 - [x] **`/` 인트로 + `/exercises` 운동 목록 + `/start` 설정 화면 (UI 완료)** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/exercises`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`(`views/workout-setup`)는 닉네임 입력 + 준비물 안내(2m·측면 45°) + 캐릭터 카드(리치) + "운동 시작"(→ `/prepare`)
-  - **UI는 목 데이터로 완성**. 실 캐릭터 에셋·음성·카메라 고지 위치 조정은 M4 본체에서
+  - **UI는 목 데이터로 완성**. 실 캐릭터 에셋(코치 시범 영상)·음성은 M4 본체에서. `/` 피처 카드엔 클레이 캐릭터 일러스트(`views/intro/assets/pose-*.png`, 장식용) 적용, 하단 공용 `footer`에 운동 면책 고지(PRD §10)
   - M2에서 라우트 골격·운동 store(entities/workout)는 이미 섬 — 여기선 화면 내용을 채움
   - 운동 목록은 **부위별 구조를 미리** 세워 3단계 종목 추가(F3-3) 때 화면 재작업 없게. 선택 종목은 entities/workout에 저장
   - 프리로드 (TRD-FE §9.1): `/` 진입 시 모델·WASM(store 보관) / `/start` 캐릭터 선택 시 mp3
@@ -111,7 +111,7 @@
 
 - [x] entities/workout 스토어 + 세트 종료 요약 화면 (F1-6) — 운동 중 회수·품질·결함을 집계(`views/workout/model/setResult.ts`), "세트 끝내기" → `store.setResult` → `/summary`가 실제값 표시(회수·자세 정확도·상위 지적 포인트·운동 시간). 지적 없으면 포인트 카드 숨김. `/summary` 직접 방문 시엔 기본 목(데모용)
   - 총평은 임시 템플릿 — 2단계 AI 리포트(F2-3)에서 캐릭터 톤 총평으로 교체
-- [ ] ~~카메라 처리 방식 고지 + 운동 면책 문구~~ → **M4 랜딩으로 이동** (PRD §10이 "첫 화면에 명시"를 요구, TRD-FE §8은 권한 요청 직전을 요구)
+- [x] 카메라 처리 방식 고지 + 운동 면책 문구 → **랜딩(`/`)에 배치 완료** (PRD §10 "첫 화면에 명시"). 카메라 고지는 히어로 서브라인+🔒 피처, 운동 면책은 하단 푸터. `/start`엔 권한 요청 직전 재고지(TRD-FE §8) 유지
 - [ ] 판정 튜닝 라운드 1 — 지인 ~5명 테스트, fixture 보강 (**촬영·사람 필요**)
 
 ### M6. 검증 (~1주 — 사람 모집·인터뷰라 AI로 단축 불가)

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SiteHeader } from "@/shared/ui/site-header";
+import { Header } from "@/shared/ui/header";
 
 /**
  * 라이트 화면 공용 레이아웃 — 상단 고정 헤더 + 그 아래 스크롤 영역.
@@ -12,7 +12,7 @@ import { SiteHeader } from "@/shared/ui/site-header";
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen flex-col">
-      <SiteHeader />
+      <Header />
       <div className="flex-1 overflow-y-scroll">{children}</div>
     </div>
   );
