@@ -4,6 +4,7 @@ import { buttonClass } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 import { Footer } from "@/shared/ui/footer";
 import { PosePreload } from "./PosePreload";
+import heroImg from "../assets/hero.png";
 import poseWatch from "../assets/pose-watch.png";
 import poseVoice from "../assets/pose-voice.png";
 import posePrivacy from "../assets/pose-privacy.png";
@@ -63,18 +64,15 @@ export function IntroView() {
           </div>
         </div>
 
-        {/* 시범 영상 플레이스홀더 (실제 영상은 M4) */}
-        <div className="border-line relative flex h-95 items-end justify-center overflow-hidden rounded-2xl border bg-[repeating-linear-gradient(135deg,var(--color-brand-50)_0_14px,var(--color-canvas)_14px_28px)]">
-          <span className="text-ink-muted bg-surface/80 absolute top-4 left-4 rounded-md px-2 py-1 font-mono text-xs">
-            코치 시범 영상 · 히어로 루프
-          </span>
-          <span className="bg-brand-200 -mb-px h-80 w-32.5 rounded-t-[60px]" />
-          <div className="bg-surface text-ink absolute right-5.5 bottom-5.5 flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold shadow-[0_8px_20px_-10px] shadow-brand-900/40">
-            <span className="bg-brand-500 grid size-7.5 place-items-center rounded-full text-sm text-white">
-              ✓
-            </span>
-            방금 자세 좋았어요!
-          </div>
+        {/* 히어로 일러스트 */}
+        <div className="border-line relative overflow-hidden rounded-2xl border">
+          <Image
+            src={heroImg}
+            alt="공원에서 스트레칭하는 캐릭터 코치"
+            priority
+            placeholder="blur"
+            className="h-auto w-fit"
+          />
         </div>
       </section>
 
