@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": ["NODE_ENV", "NAVER_SITE_VERIFICATION"],
   "globalPassThroughEnv": ["PORT"],
   "tasks": {
     "build": {
