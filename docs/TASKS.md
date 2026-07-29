@@ -23,7 +23,7 @@
   - 스토리는 컴포넌트 옆에 배치 (`shared/ui/button/button.stories.tsx`) — FSD 슬라이스 응집도 유지
   - init 기본 애드온 중 chromatic(유료 SaaS)·onboarding·addon-vitest(브라우저 테스트, TRD 밖) 제거. Playwright E2E는 M11 몫
   - `preview.tsx`에서 `globals.css`+Pretendard 로드 필수 — layout.tsx를 안 거치므로 안 하면 Tailwind·폰트가 스토리에 미적용
-- [x] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 (빈 페이지 배포 확인)
+- [x] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 → **프로덕션 라이브**: 커스텀 도메인 `formbwa.site`(가비아 구입·Vercel 연결, HTTPS 자동, www→apex 308 리다이렉트)
   - CI는 루트에서 `turbo lint check-types test build` — M1의 `apps/be`가 추가돼도 워크플로 수정 불필요 (turbo가 워크스페이스 그래프로 자동 포함). be 테스트에 Postgres가 필요해지면 그때 `services:` 추가
   - Vercel은 Root Directory=`apps/web`만 지정하면 Ignored Build Step을 자동 설정한다. **`vercel.json`에 `ignoreCommand`를 두지 말 것** — install 이전 단계라 `npx turbo`가 바이너리를 통째로 받다가 배포가 멈춘다
 - [x] docs/에 PRD·TRD-FE·TRD-BE·TASKS 커밋
@@ -114,15 +114,17 @@
 - [x] 카메라 처리 방식 고지 + 운동 면책 문구 → **랜딩(`/`)에 배치 완료** (PRD §10 "첫 화면에 명시"). 카메라 고지는 히어로 서브라인+🔒 피처, 운동 면책은 하단 푸터. `/start`엔 권한 요청 직전 재고지(TRD-FE §8) 유지
 - [ ] 판정 튜닝 라운드 1 — 지인 ~5명 테스트, fixture 보강 (**촬영·사람 필요**)
 
-### M6. 검증 (~1주 — 사람 모집·인터뷰라 AI로 단축 불가)
+### M6. 검증 (~수일 — 본인 단독 검증)
 
-- [ ] 체험자 10명 확보 (링크 공유) + 인터뷰
-- [~] **GA4 계측** — 골격 완료: `@next/third-parties`의 `GoogleAnalytics`를 `app/layout`에 배선 + `shared/lib/analytics`(`track()` + `config.ts` 게이트). **활성 조건 = 프로덕션 빌드 + `NEXT_PUBLIC_GA_ID` 존재** → `next dev`에선 ID가 `.env.local`에 있어도 무동작(로컬 트래픽 오염 방지). turbo.json `globalEnv`에 `NODE_ENV` 선언. **남음**: 측정 ID 주입, 정식 동의 배너·개인정보처리방침(M11)
-  - ⏳ **퍼널 이벤트 배선은 의도적으로 맨 마지막**(서비스 완성 후, M6 체험자 배포 직전)에 한다 — UI/흐름이 아직 바뀌는 동안 배선하면 발화 지점이 흔들리고 중복 발화 위험. 배선 대상: `workout_started`(카메라 ready), `set_completed`(finishSet, `{reps, quality}`), `workout_exited`(ExitGuard 이탈), `camera_permission_denied`. `track()` 래퍼·타입은 이미 준비됨
+- [ ] **본인 단독 검증** — 배포된 `formbwa.site`를 직접 반복 사용하며 코칭 루프 점검(조명·거리·각도·복장 바꿔가며). **외부 체험자 모집·인터뷰는 하지 않음**(방향 전환)
+- [~] **GA4 계측** — 골격 완료: `@next/third-parties`의 `GoogleAnalytics`를 `app/layout`에 배선 + `shared/lib/analytics`(`track()` + `config.ts` 게이트). **활성 조건 = 프로덕션 빌드 + `NEXT_PUBLIC_GA_ID` 존재** → `next dev`에선 ID가 `.env.local`에 있어도 무동작(로컬 트래픽 오염 방지). turbo.json `globalEnv`에 `NODE_ENV` 선언. **측정 ID 주입 완료**(Vercel 프로덕션 env `NEXT_PUBLIC_GA_ID`) → `page_view` 퍼널 수집 중. **남음**: ① 퍼널 커스텀 이벤트 배선(아래, 맨 마지막) ② 정식 동의 배너·개인정보처리방침(M11)
+  - ⏳ **퍼널 이벤트 배선은 의도적으로 맨 마지막**(서비스 완성 후, 본인 검증 시작 직전)에 한다 — UI/흐름이 아직 바뀌는 동안 배선하면 발화 지점이 흔들리고 중복 발화 위험. 배선 대상: `workout_started`(카메라 ready), `set_completed`(finishSet, `{reps, quality}`), `workout_exited`(ExitGuard 이탈), `camera_permission_denied`. `track()` 래퍼·타입은 이미 준비됨
   - ⚠️ 프라이버시: 포즈 랜드마크·프레임·영상 등 카메라 원천 데이터는 GA에 **절대 전송 금지**(집계 수치만). "영상은 기기 안에서만" 약속과 일관
-- [~] **검색 등록·메타데이터** — 도메인 `formbwa.site`(가비아·Vercel 연결). **코드 완료**: `app/layout` 메타데이터 실화(title/description/`metadataBase`)·OG/트위터 카드(`app/opengraph-image.png`·`twitter-image.png` = hero 1200² 리사이즈)·`app/robots.ts`(플로우 prepare/workout/summary 제외)·`app/sitemap.ts`(`/`·`/exercises`·`/start`)·`metadata.verification`(env `GOOGLE_SITE_VERIFICATION`·`NAVER_SITE_VERIFICATION`)·`shared/config/site.ts`(SITE_URL 단일화). 검증기간에도 index 노출. **남음(외부)**: GSC(가비아 DNS TXT **도메인 속성** 권장)·네이버 서치어드바이저 등록 → verification 토큰 env 주입(HTML 태그 방식 시) → 사이트맵(`https://formbwa.site/sitemap.xml`) 제출, **도메인 정규화**(www→apex 리다이렉트, Vercel Domains)
-- [ ] PRD §8 지표 측정: 세트 완료율 60%+, "봐주는 느낌" 6/10+ (GA4 퍼널로 완료율·이탈 지점 정량화)
-- [ ] **go/no-go 결정**: 재방문 신호 확인 → 2단계 착수 / 미달 시 코칭 경험 개선 반복
+- [x] **검색 등록·메타데이터** — 도메인 `formbwa.site`(가비아·Vercel 연결). **코드**: `app/layout` 메타데이터 실화(title/description/`metadataBase`)·OG/트위터 카드(`app/opengraph-image.png`·`twitter-image.png`, 1200×624)·`app/robots.ts`(플로우 prepare/workout/summary 제외)·`app/sitemap.ts`(`/`·`/exercises`·`/start`)·`metadata.verification.other`(네이버, env `NAVER_SITE_VERIFICATION`)·`shared/config/site.ts`(SITE_URL 단일화). 검증기간에도 index 노출.
+  - **소유확인·제출 완료**: ✅ Google Search Console(가비아 DNS TXT 도메인 속성) + 사이트맵 제출. ✅ 네이버 서치어드바이저(HTML 태그, env 주입+재배포) + 사이트맵 제출. ✅ 도메인 정규화(www→apex 리다이렉트, Vercel Domains)
+  - 참고: 색인 반영은 크롤링 대기(수일). 정식 동의 배너·개인정보처리방침은 M11
+- [ ] **검증 지표(단독 기준)** — 판정 정확도(오탐/미탐 체감)·세트 완주 경험·주관적 "봐주는 느낌" 자기평가 중심. GA4는 본인 세션 퍼널(완료율·이탈 지점) 참고용(표본 1이라 통계보다 정성 관찰). (PRD §8도 단독 기준으로 정정 완료 — 판정 신뢰성·완주 경험·주관 만족)
+- [ ] **go/no-go 결정(본인 판단)**: 코칭이 실제로 쓸 만한가 → 2단계 착수 / 미흡하면 판정·UX 개선 반복
 
 ## 2단계 — 계정·기록·리포트 (목표 2주 내외, NestJS·Prisma 골격은 M1에서 완료)
 
@@ -139,7 +141,7 @@
 
 ### M8. 인프라·배포 (~2~3일 — 손작업 많아 AI 단축 제한적)
 
-- [ ] 도메인 구입 + web/api 서브도메인 DNS 구성 (쿠키 공유 전제조건)
+- [~] 도메인 구입 + web/api 서브도메인 DNS 구성 (쿠키 공유 전제조건) — **web은 1단계에서 선행 완료**(가비아 구입 → Vercel 연결, www→apex). **남음**: `api.` 서브도메인 DNS + 쿠키 공유 설정(EC2·인증 붙는 이 마일스톤에서)
 - [ ] EC2 프리티어 생성 — 보안그룹 443만 개방(SSH는 키+IP 제한), 스왑 2GB, 자동 보안 패치
 - [ ] `docker-compose.prod.yml` — nginx + be + db, Postgres 호스트 바인딩 금지 확인
 - [ ] certbot HTTPS 발급·자동 갱신
