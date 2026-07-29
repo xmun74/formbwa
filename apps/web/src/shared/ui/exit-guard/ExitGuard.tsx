@@ -1,5 +1,6 @@
 "use client";
 
+import { Dialog } from "@repo/ui";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -8,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
  * - `beforeunload`: 새로고침·탭 닫기 시 브라우저 기본 확인
  * - 뒤로가기 가로채기: 더미 히스토리 엔트리 + popstate → 화면 내 확인 모달
  * - [✕ 그만두기] 버튼: 같은 확인 모달 → 확인 시 `exitHref`로 이동
+ *
  */
 export function ExitGuard({ exitHref = "/exercises" }: { exitHref?: string }) {
   const router = useRouter();
@@ -40,47 +42,31 @@ export function ExitGuard({ exitHref = "/exercises" }: { exitHref?: string }) {
   }, [router, exitHref]);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="bg-dark-surface/70 text-dark-ink-soft hover:text-dark-ink rounded-full px-4 py-2 text-base transition-colors"
-      >
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger className="bg-dark-surface/70 text-dark-ink-soft hover:text-dark-ink rounded-full px-4 py-2 text-base transition-colors">
         ✕ 그만두기
-      </button>
+      </Dialog.Trigger>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 grid place-items-center bg-black/55 px-6"
-        >
-          <div className="bg-dark-surface border-dark-line w-full max-w-sm rounded-2xl border p-6 text-center">
-            <div className="text-dark-ink text-lg font-bold">
-              운동을 그만둘까요?
-            </div>
-            <p className="text-dark-ink-soft mt-2 text-base leading-relaxed">
-              지금 나가면 이번 세트 기록이 사라져요.
-            </p>
-            <div className="mt-6 flex gap-3">
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="border-dark-line text-dark-ink flex-1 rounded-xl border py-3 font-bold"
-              >
-                계속하기
-              </button>
-              <button
-                type="button"
-                onClick={confirmExit}
-                className="bg-brand-500 hover:bg-brand-600 flex-1 rounded-xl py-3 font-bold text-white transition-colors"
-              >
-                그만두기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      <Dialog.Content className="bg-dark-surface border-dark-line text-center">
+        <Dialog.Title className="text-dark-ink">
+          운동을 그만둘까요?
+        </Dialog.Title>
+        <Dialog.Description className="text-dark-ink-soft">
+          지금 나가면 이번 세트 기록이 사라져요.
+        </Dialog.Description>
+        <Dialog.Footer>
+          <Dialog.Close className="border-dark-line text-dark-ink flex-1 rounded-xl border py-3 font-bold">
+            계속하기
+          </Dialog.Close>
+          <button
+            type="button"
+            onClick={confirmExit}
+            className="bg-brand-500 hover:bg-brand-600 flex-1 rounded-xl py-3 font-bold text-white transition-colors"
+          >
+            그만두기
+          </button>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog>
   );
 }

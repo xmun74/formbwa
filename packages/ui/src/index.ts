@@ -10,3 +10,4 @@ export {
   CardFooter,
   type CardProps,
 } from "./card/Card";
+export { Dialog } from "./dialog/Dialog";
