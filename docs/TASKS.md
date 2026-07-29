@@ -85,7 +85,8 @@
 - [x] `squat-fsm.ts` — 상태머신 + 반복 카운트 (F1-1). 무릎각 히스테리시스, 회당 최저각·기울기·타이밍 누적
 - [x] `judge.ts` — 판정 규칙 → JudgeEvent (F1-2). **시범 영상과 분리**. confidence(precision 우선) + 우선순위 정렬(back_bent>knee_over_toe>knee_shallow)
 - [x] 입문자 그레이스 — `judge.ts`의 `graceReps`로 초반 회차 지적 억제(완주만 칭찬). 임계값은 튜닝 대상
-- [ ] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
+- [~] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
+  - ✅ **추출 도구 준비 완료** — `views/fixture-extract`(dev 라우트 `/dev/extract`, 프로덕션 404). 로컬 영상 드롭 → 브라우저 MediaPipe로 `PoseFrame[]` 추출 → `runSquatPipeline` 미리보기 → JSON 다운로드. 사용법 [docs/fixture-extraction.md](./fixture-extraction.md). 촬영하면 즉시 JSON화 가능
   - **정상 촬영본은 M4 시범 영상의 모캡 소스로도 재사용** (TRD-FE §5.4·§6.2) — 촬영은 한 번, 폼을 정확히 잡아 찍을 것
 - [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 22개는 완료(angle·fsm·judge·배치판정), fixture 회귀는 촬영 후
 

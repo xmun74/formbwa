@@ -38,6 +38,7 @@ yarn-error.log*
 *.pem
 
 /docs/PRIVATE.md
+/docs/fixture-extraction.md
 *.tsbuildinfo
 
 # 3D 실험 에셋 (Mixamo/Meshy 원본·변환물)

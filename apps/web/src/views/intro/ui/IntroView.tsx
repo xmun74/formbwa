@@ -4,7 +4,7 @@ import { buttonClass } from "@/shared/ui/button";
 import { AppShell } from "@/shared/ui/app-shell";
 import { Footer } from "@/shared/ui/footer";
 import { PosePreload } from "./PosePreload";
-import heroImg from "../assets/hero.png";
+import { HeroImage } from "./HeroImage";
 import poseWatch from "../assets/pose-watch.png";
 import poseVoice from "../assets/pose-voice.png";
 import posePrivacy from "../assets/pose-privacy.png";
@@ -33,7 +33,7 @@ export function IntroView() {
     <AppShell>
       <PosePreload />
 
-      <section className="mx-auto grid max-w-6xl items-center gap-10 px-gutter pt-16 pb-14 lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="mx-auto grid max-w-6xl items-center gap-6 lg:gap-1 px-gutter pt-16 pb-14 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <span className="bg-brand-100 text-brand-700 inline-flex items-center gap-2 rounded-full px-3.5 py-1.75 text-sm font-semibold">
             <Image
@@ -54,7 +54,7 @@ export function IntroView() {
             캐릭터 코치의 시범을 따라 하면, <br />
             웹캠이 자세를 실시간으로 읽고 그 순간 바로 교정해줘요.
           </p>
-          <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="mt-9 flex flex-wrap items-center justify-end lg:justify-start gap-x-5 gap-y-3">
             <Link
               href="/exercises"
               className={buttonClass("primary", "px-8 py-4 text-lg")}
@@ -64,19 +64,13 @@ export function IntroView() {
           </div>
         </div>
 
-        {/* 히어로 일러스트 */}
-        <div className="ring-line/60 relative overflow-hidden rounded-3xl shadow-[0_30px_70px_-35px] shadow-brand-900/50 ring-1">
-          <Image
-            src={heroImg}
-            alt="공원에서 스트레칭하는 캐릭터 코치"
-            priority
-            placeholder="blur"
-            className="h-auto w-full"
-          />
+        {/* 히어로 일러스트 (시간대별: 낮 / 노을) */}
+        <div className="w-ful h-[40svh] lg:h-[55svh] ring-line/60 relative overflow-hidden rounded-3xl shadow-[0_30px_70px_-35px] shadow-brand-900/50 ring-1">
+          <HeroImage />
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-5 px-gutter pb-16 sm:grid-cols-3">
+      <section className="mx-auto grid max-w-6xl gap-5 px-gutter pb-16 md:grid-cols-3">
         {FEATURES.map((f) => (
           <div
             key={f.title}
@@ -92,7 +86,6 @@ export function IntroView() {
                 className="object-contain"
               />
             </div>
-            {/* 투명 여백 안쪽으로 글자를 겹쳐 넣음 */}
             <div className="relative z-10 -ml-4 pt-3">
               <div className="mb-2 text-xl font-extrabold text-ink/80">
                 {f.title}
