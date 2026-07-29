@@ -23,30 +23,30 @@
 
 ## 2. 기술 스택
 
-| 레이어            | 선택                                                   | 비고                                                                                                                                                       |
-| ----------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Core              | React 19, TypeScript 6.x (strict)                      | 모노레포 전 워크스페이스 동일 버전 유지. TS 7(네이티브 포트)은 `typescript-eslint` 미지원(peer `<6.1.0`)이라 보류                                          |
-| 프레임워크        | Next.js (App Router)                                   | 서버 기능 최소 사용 — 라우팅·정적 서빙·OG 중심                                                                                                             |
-| 폴더 구조         | FSD (Feature-Sliced Design)                            | §3                                                                                                                                                         |
-| 스타일            | Tailwind CSS 4                                         | CSS-first config. `globals.css`는 `@repo/design-tokens/theme.css`를 `@import`                                                                              |
-| 디자인 토큰       | `@repo/design-tokens` (패키지)                         | 색·간격·타이포(티셔츠)·radius를 플랫폼 중립 TS로 단일화 → 생성기가 Tailwind `@theme` CSS 방출. RN 대비 초기 분리 (스펙: docs/superpowers/specs/2026-07-23) |
-| 서버 상태         | TanStack Query v5                                      | 기록/리포트 fetch·mutation                                                                                                                                 |
-| 클라이언트 상태   | Zustand                                                | 운동 상태머신 미러링. RN에서도 동일 사용                                                                                                                   |
-| HTTP              | Axios                                                  | 401 → refresh 재시도 인터셉터 (§7)                                                                                                                         |
-| 스키마 검증       | Zod                                                    | API 응답 검증. 폼 도입 시 React Hook Form과 병행                                                                                                           |
-| 포즈 추론         | `@mediapipe/tasks-vision`                              | `'use client'` + dynamic import (SSR 제외)                                                                                                                 |
-| 오버레이          | Canvas 2D                                              |                                                                                                                                                            |
-| 음성 재생         | 사전 생성 mp3 프리로드                                 | 제작 파이프라인은 §6.1, 폴백: Web Speech API                                                                                                               |
-| 시범 영상         | HTML5 `<video loop muted playsinline>` (사전 렌더 mp4) | 라이브 3D 아님 — §1·§6.2. 프로그레시브 재생                                                                                                                |
-| UI 문서화         | Storybook                                              | `shared/ui` 컴포넌트 대상 (widgets 승격 시 확대 — §3.2)                                                                                                    |
-| 차트              | recharts                                               | 3단계                                                                                                                                                      |
-| 테스트            | Vitest (core fixture 회귀) + Playwright (E2E)          | E2E는 `--use-fake-device-for-media-stream` 플래그로 카메라 대체                                                                                            |
-| Lint/Format       | ESLint + Prettier                                      | 공유 설정은 `packages/eslint-config`                                                                                                                       |
-| FSD 아키텍처 린트 | Steiger                                                | FSD 레이어·슬라이스 규칙 자동 검사 (§3)                                                                                                                    |
-| Git hooks         | Husky + lint-staged                                    | pre-commit: 변경 파일만 lint+format                                                                                                                        |
-| 커밋 규칙         | commitlint (Conventional Commits)                      | commit-msg 훅. `feat(core): ...` 형식                                                                                                                      |
-| 모노레포          | Turborepo + pnpm workspaces                            |                                                                                                                                                            |
-| CI/CD             | GitHub Actions + Vercel                                | CI에서 lint·steiger·test 재검증 (훅 우회 대비)                                                                                                             |
+| 레이어            | 선택                                                   | 비고                                                                                                              |
+| ----------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Core              | React 19, TypeScript 6.x (strict)                      | 모노레포 전 워크스페이스 동일 버전 유지. TS 7(네이티브 포트)은 `typescript-eslint` 미지원(peer `<6.1.0`)이라 보류 |
+| 프레임워크        | Next.js (App Router)                                   | 서버 기능 최소 사용 — 라우팅·정적 서빙·OG 중심                                                                    |
+| 폴더 구조         | FSD (Feature-Sliced Design)                            | §3                                                                                                                |
+| 스타일            | Tailwind CSS 4                                         | CSS-first config. `globals.css`는 `@repo/design-tokens/theme.css`를 `@import`                                     |
+| 디자인 토큰       | `@repo/design-tokens` (패키지)                         | 색·간격·타이포(티셔츠)·radius를 플랫폼 중립 TS로 단일화 → 생성기가 Tailwind `@theme` CSS 방출. RN 대비 초기 분리  |
+| 서버 상태         | TanStack Query v5                                      | 기록/리포트 fetch·mutation                                                                                        |
+| 클라이언트 상태   | Zustand                                                | 운동 상태머신 미러링. RN에서도 동일 사용                                                                          |
+| HTTP              | Axios                                                  | 401 → refresh 재시도 인터셉터 (§7)                                                                                |
+| 스키마 검증       | Zod                                                    | API 응답 검증. 폼 도입 시 React Hook Form과 병행                                                                  |
+| 포즈 추론         | `@mediapipe/tasks-vision`                              | `'use client'` + dynamic import (SSR 제외)                                                                        |
+| 오버레이          | Canvas 2D                                              |                                                                                                                   |
+| 음성 재생         | 사전 생성 mp3 프리로드                                 | 제작 파이프라인은 §6.1, 폴백: Web Speech API                                                                      |
+| 시범 영상         | HTML5 `<video loop muted playsinline>` (사전 렌더 mp4) | 라이브 3D 아님 — §1·§6.2. 프로그레시브 재생                                                                       |
+| UI 문서화         | Storybook                                              | `shared/ui` 컴포넌트 대상 (widgets 승격 시 확대 — §3.2)                                                           |
+| 차트              | recharts                                               | 3단계                                                                                                             |
+| 테스트            | Vitest (core fixture 회귀) + Playwright (E2E)          | E2E는 `--use-fake-device-for-media-stream` 플래그로 카메라 대체                                                   |
+| Lint/Format       | ESLint + Prettier                                      | 공유 설정은 `packages/eslint-config`                                                                              |
+| FSD 아키텍처 린트 | Steiger                                                | FSD 레이어·슬라이스 규칙 자동 검사 (§3)                                                                           |
+| Git hooks         | Husky + lint-staged                                    | pre-commit: 변경 파일만 lint+format                                                                               |
+| 커밋 규칙         | commitlint (Conventional Commits)                      | commit-msg 훅. `feat(core): ...` 형식                                                                             |
+| 모노레포          | Turborepo + pnpm workspaces                            |                                                                                                                   |
+| CI/CD             | GitHub Actions + Vercel                                | CI에서 lint·steiger·test 재검증 (훅 우회 대비)                                                                    |
 
 ## 3. 폴더 구조 — FSD
 

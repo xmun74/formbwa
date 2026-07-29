@@ -47,7 +47,7 @@
 
 > 배포(EC2)·인증 모듈은 2단계. 여기서는 로컬에서 도는 골격까지만.
 
-### M1.5. 디자인 시스템 — 토큰 패키지 (UI 1차와 함께 진행, 스펙: docs/superpowers/specs/2026-07-23-design-tokens-design.md)
+### M1.5. 디자인 시스템 — 토큰 패키지 (UI 1차와 함께 진행)
 
 - [x] **`@repo/design-tokens` 패키지** — 색·간격·타이포(티셔츠 스케일)·radius를 플랫폼 중립 TS로 단일화 (RN 대비 초기 분리). 무빌드(`@repo/core` 패턴)
 - [x] **TS → `theme.css` 생성기** (`gen` 스크립트, tsx) — Tailwind v4 `@theme static` 방출, 결과 CSS는 커밋. `globals.css`가 `@import`
@@ -86,7 +86,7 @@
 - [x] `judge.ts` — 판정 규칙 → JudgeEvent (F1-2). **시범 영상과 분리**. confidence(precision 우선) + 우선순위 정렬(back_bent>knee_over_toe>knee_shallow)
 - [x] 입문자 그레이스 — `judge.ts`의 `graceReps`로 초반 회차 지적 억제(완주만 칭찬). 임계값은 튜닝 대상
 - [~] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
-  - ✅ **추출 도구 준비 완료** — `views/fixture-extract`(dev 라우트 `/dev/extract`, 프로덕션 404). 로컬 영상 드롭 → 브라우저 MediaPipe로 `PoseFrame[]` 추출 → `runSquatPipeline` 미리보기 → JSON 다운로드. 사용법 [docs/fixture-extraction.md](./fixture-extraction.md). 촬영하면 즉시 JSON화 가능
+  - ✅ **추출 도구 준비 완료** — `views/fixture-extract`(dev 라우트 `/dev/extract`, 프로덕션 404). 로컬 영상 드롭 → 브라우저 MediaPipe로 `PoseFrame[]` 추출 → `runSquatPipeline` 미리보기 → JSON 다운로드. 촬영하면 즉시 JSON화 가능
   - **정상 촬영본은 M4 시범 영상의 모캡 소스로도 재사용** (TRD-FE §5.4·§6.2) — 촬영은 한 번, 폼을 정확히 잡아 찍을 것
 - [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 22개는 완료(angle·fsm·judge·배치판정), fixture 회귀는 촬영 후
 
@@ -172,7 +172,7 @@
 
 ## 3단계 — 리텐션 (착수 시 상세화)
 
-개요: 대시보드·스트릭 (F3-1, F3-2) → 종목 추가: core FSM 확장 (F3-3) → 캐릭터 추가 (F3-4) → 모바일 브라우저 최적화 → **오운완 공유 페이지 (F3-5)**: 세트 리포트 공유 링크 `/r/:id`, SSR + 동적 OG 이미지 + 메타태그 (바이럴 루프 + SSR/SEO 경험 확보 — PRIVATE.md §5.1)
+개요: 대시보드·스트릭 (F3-1, F3-2) → 종목 추가: core FSM 확장 (F3-3) → 캐릭터 추가 (F3-4) → 모바일 브라우저 최적화 → **오운완 공유 페이지 (F3-5)**: 세트 리포트 공유 링크 `/r/:id`, SSR + 동적 OG 이미지 + 메타태그 (바이럴 루프 + SSR/SEO 경험 확보)
 
 ## 4단계 — RN 앱·수익화 (착수 시 상세화)
 

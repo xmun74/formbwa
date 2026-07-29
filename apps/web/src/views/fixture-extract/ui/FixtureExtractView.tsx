@@ -16,7 +16,7 @@ import { preloadPoseModel } from "@/shared/lib/pose";
  * fixture 추출 도구 (dev 전용, TRD-FE §5.4) — 로컬 스쿼트 영상 → 랜드마크 시퀀스 JSON.
  * 브라우저에서 MediaPipe로 프레임별 관절을 뽑아 `PoseFrame[]`로 저장하고,
  * 바로 `runSquatPipeline`을 돌려 감지 결과(회수·결함)를 미리 보여준다.
- * 영상은 업로드/전송 없이 브라우저 안에서만 처리된다. 사용법: docs/fixture-extraction.md
+ * 영상은 업로드/전송 없이 브라우저 안에서만 처리된다.
  */
 
 // 오버레이용 골격 연결 (추적 확인용)
@@ -210,7 +210,7 @@ export function FixtureExtractView() {
       </h1>
       <p className="text-ink-soft mt-2 text-base leading-relaxed">
         스쿼트 영상 → 랜드마크 시퀀스 JSON. 영상은 브라우저 안에서만 처리되며
-        업로드되지 않습니다. 사용법은 <code>docs/fixture-extraction.md</code>.
+        업로드되지 않습니다.
       </p>
 
       <div className="border-line bg-surface mt-6 grid gap-4 rounded-2xl border p-5">
