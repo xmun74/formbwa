@@ -17,6 +17,7 @@
     "@next/third-parties": "16.2.10",
     "@repo/core": "workspace:^",
     "@repo/design-tokens": "workspace:^",
+    "@repo/ui": "workspace:^",
     "@tanstack/react-query": "^5.101.2",
     "axios": "^1.18.1",
     "lucide-react": "^1.25.0",
