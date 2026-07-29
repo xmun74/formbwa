@@ -6,7 +6,11 @@ const meta = {
   title: "ui/Field",
   component: Field,
   parameters: { layout: "centered" },
-  args: { label: "닉네임을 입력해주세요", hint: "(선택)" },
+  args: {
+    label: "닉네임을 입력해주세요",
+    hint: "(선택)",
+    children: <Input placeholder="예: 민수" />,
+  },
   render: (args) => (
     <div className="w-80">
       <Field {...args}>

@@ -17,6 +17,7 @@
     "@repo/design-tokens": "workspace:^",
     "@repo/eslint-config": "workspace:^",
     "@repo/typescript-config": "workspace:^",
+    "@storybook/nextjs-vite": "^10.5.0",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.39.1",

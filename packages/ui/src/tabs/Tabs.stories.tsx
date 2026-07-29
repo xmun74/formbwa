@@ -6,6 +6,8 @@ const meta = {
   title: "ui/Tabs",
   component: Tabs,
   parameters: { layout: "centered" },
+  // children이 필수 — 스토리는 render로 제어하므로 더미 기본값.
+  args: { children: null },
 } satisfies Meta<typeof Tabs>;
 
 export default meta;

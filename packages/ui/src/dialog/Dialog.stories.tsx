@@ -8,6 +8,8 @@ const meta = {
   title: "ui/Dialog",
   component: Dialog,
   parameters: { layout: "centered" },
+  // Dialog는 open/onOpenChange/children이 필수 — 스토리는 render로 제어하므로 더미 기본값.
+  args: { open: false, onOpenChange: () => {}, children: null },
 } satisfies Meta<typeof Dialog>;
 
 export default meta;

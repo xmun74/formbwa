@@ -339,6 +339,9 @@ importers:
       "@repo/typescript-config":
         specifier: workspace:^
         version: link:../typescript-config
+      "@storybook/nextjs-vite":
+        specifier: ^10.5.0
+        version: 10.5.0(@babel/core@7.29.7)(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(esbuild@0.28.1)(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))
       "@types/react":
         specifier: 19.2.2
         version: 19.2.2
@@ -11272,6 +11275,14 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
+  "@joshwooding/vite-plugin-react-docgen-typescript@0.7.0(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))":
+    dependencies:
+      glob: 13.0.6
+      react-docgen-typescript: 2.4.0(typescript@6.0.3)
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+    optionalDependencies:
+      typescript: 6.0.3
+
   "@jridgewell/gen-mapping@0.3.13":
     dependencies:
       "@jridgewell/sourcemap-codec": 1.5.5
@@ -11933,6 +11944,17 @@ snapshots:
       - rollup
       - webpack
 
+  "@storybook/builder-vite@10.5.0(esbuild@0.28.1)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))":
+    dependencies:
+      "@storybook/csf-plugin": 10.5.0(esbuild@0.28.1)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))
+      storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
+      ts-dedent: 2.3.0
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+    transitivePeerDependencies:
+      - esbuild
+      - rollup
+      - webpack
+
   "@storybook/csf-plugin@10.5.0(esbuild@0.28.1)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(vite@8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1)(postcss@8.5.19))":
     dependencies:
       storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
@@ -11941,6 +11963,15 @@ snapshots:
       esbuild: 0.28.1
       vite: 8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
       webpack: 5.106.2(esbuild@0.28.1)(postcss@8.5.19)
+
+  "@storybook/csf-plugin@10.5.0(esbuild@0.28.1)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))":
+    dependencies:
+      storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
+      unplugin: 2.3.11
+    optionalDependencies:
+      esbuild: 0.28.1
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+      webpack: 5.106.2(esbuild@0.28.1)
 
   "@storybook/global@5.0.0": {}
 
@@ -11960,6 +11991,30 @@ snapshots:
       styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.0)
       vite: 8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
       vite-plugin-storybook-nextjs: 3.3.0(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+    optionalDependencies:
+      "@types/react": 19.2.2
+      "@types/react-dom": 19.2.2(@types/react@19.2.2)
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - "@babel/core"
+      - babel-plugin-macros
+      - esbuild
+      - rollup
+      - supports-color
+      - webpack
+
+  "@storybook/nextjs-vite@10.5.0(@babel/core@7.29.7)(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(esbuild@0.28.1)(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))":
+    dependencies:
+      "@storybook/builder-vite": 10.5.0(esbuild@0.28.1)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))
+      "@storybook/react": 10.5.0(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)
+      "@storybook/react-vite": 10.5.0(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(esbuild@0.28.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))
+      next: 16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
+      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.0)
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+      vite-plugin-storybook-nextjs: 3.3.0(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
     optionalDependencies:
       "@types/react": 19.2.2
       "@types/react-dom": 19.2.2(@types/react@19.2.2)
@@ -11996,6 +12051,31 @@ snapshots:
       storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
       tsconfig-paths: 4.2.0
       vite: 8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+    optionalDependencies:
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - "@types/react"
+      - "@types/react-dom"
+      - esbuild
+      - rollup
+      - supports-color
+      - webpack
+
+  "@storybook/react-vite@10.5.0(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(esbuild@0.28.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))":
+    dependencies:
+      "@joshwooding/vite-plugin-react-docgen-typescript": 0.7.0(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      "@rollup/pluginutils": 5.4.0
+      "@storybook/builder-vite": 10.5.0(esbuild@0.28.1)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.1))
+      "@storybook/react": 10.5.0(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)
+      empathic: 2.0.1
+      magic-string: 0.30.21
+      react: 19.2.0
+      react-docgen: 8.0.3
+      react-dom: 19.2.0(react@19.2.0)
+      resolve: 1.22.12
+      storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
+      tsconfig-paths: 4.2.0
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
     optionalDependencies:
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -16049,6 +16129,17 @@ snapshots:
       postcss: 8.5.19
     optional: true
 
+  terser-webpack-plugin@5.6.1(esbuild@0.28.1)(webpack@5.106.2(esbuild@0.28.1)):
+    dependencies:
+      "@jridgewell/trace-mapping": 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.3
+      terser: 5.49.0
+      webpack: 5.106.2(esbuild@0.28.1)
+    optionalDependencies:
+      esbuild: 0.28.1
+    optional: true
+
   terser-webpack-plugin@5.6.1(webpack@5.106.2):
     dependencies:
       "@jridgewell/trace-mapping": 0.3.31
@@ -16370,6 +16461,21 @@ snapshots:
       - supports-color
       - typescript
 
+  vite-plugin-storybook-nextjs@3.3.0(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(storybook@10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0))(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)):
+    dependencies:
+      "@next/env": 16.0.0
+      image-size: 2.0.2
+      magic-string: 0.30.21
+      module-alias: 2.3.4
+      next: 16.2.10(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      storybook: 10.5.0(@types/react@19.2.2)(prettier@3.7.4)(react@19.2.0)
+      ts-dedent: 2.3.0
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+      vite-tsconfig-paths: 5.1.4(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   vite-tsconfig-paths@5.1.4(typescript@6.0.3)(vite@8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)):
     dependencies:
       debug: 4.4.3
@@ -16377,6 +16483,17 @@ snapshots:
       tsconfck: 3.1.6(typescript@6.0.3)
     optionalDependencies:
       vite: 8.1.4(@types/node@22.15.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
+  vite-tsconfig-paths@5.1.4(typescript@6.0.3)(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)):
+    dependencies:
+      debug: 4.4.3
+      globrex: 0.1.2
+      tsconfck: 3.1.6(typescript@6.0.3)
+    optionalDependencies:
+      vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -16501,6 +16618,47 @@ snapshots:
       - lightningcss
       - postcss
       - uglify-js
+
+  webpack@5.106.2(esbuild@0.28.1):
+    dependencies:
+      "@types/eslint-scope": 3.7.7
+      "@types/estree": 1.0.8
+      "@types/json-schema": 7.0.15
+      "@webassemblyjs/ast": 1.14.1
+      "@webassemblyjs/wasm-edit": 1.14.1
+      "@webassemblyjs/wasm-parser": 1.14.1
+      acorn: 8.17.0
+      acorn-import-phases: 1.0.4(acorn@8.17.0)
+      browserslist: 4.28.6
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.21.6
+      es-module-lexer: 2.3.1
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      loader-runner: 4.3.2
+      mime-db: 1.54.0
+      neo-async: 2.6.2
+      schema-utils: 4.3.3
+      tapable: 2.3.3
+      terser-webpack-plugin: 5.6.1(esbuild@0.28.1)(webpack@5.106.2(esbuild@0.28.1))
+      watchpack: 2.5.2
+      webpack-sources: 3.5.1
+    transitivePeerDependencies:
+      - "@minify-html/node"
+      - "@swc/core"
+      - "@swc/css"
+      - "@swc/html"
+      - clean-css
+      - cssnano
+      - csso
+      - esbuild
+      - html-minifier-terser
+      - lightningcss
+      - postcss
+      - uglify-js
+    optional: true
 
   webpack@5.106.2(esbuild@0.28.1)(postcss@8.5.19):
     dependencies:
