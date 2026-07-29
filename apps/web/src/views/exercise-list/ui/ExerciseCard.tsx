@@ -1,3 +1,5 @@
+import { Badge } from "@repo/ui";
+
 import type { Exercise } from "../model/exercises";
 
 interface ExerciseCardProps {
@@ -61,13 +63,7 @@ export function ExerciseCard({
         >
           {exercise.name}
         </span>
-        {ready ? (
-          <></>
-        ) : (
-          <span className="bg-line text-ink-muted rounded-full px-2.5 py-1 text-xs font-medium">
-            준비 중
-          </span>
-        )}
+        {ready ? <></> : <Badge>준비 중</Badge>}
       </div>
     </button>
   );

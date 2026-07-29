@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { useWorkoutStore } from "@/entities/workout";
 import { primeSpeech } from "@/shared/lib/speech";
-import { Button } from "@repo/ui";
+import { Button, Input } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
@@ -53,12 +53,12 @@ export function WorkoutSetupView() {
               닉네임을 입력해주세요
               <span className="text-ink-muted font-normal"> (선택)</span>
             </span>
-            <input
+            <Input
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="예: 민수 (비워두면 '회원님'으로 불러요)"
               maxLength={10}
-              className="border-line focus:border-brand-400 bg-surface placeholder:text-ink-muted mt-2.5 w-full rounded-xl border px-4 py-3.5 text-base outline-none transition-colors"
+              className="mt-2.5"
             />
           </label>
 
