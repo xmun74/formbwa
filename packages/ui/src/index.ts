@@ -13,3 +13,11 @@ export {
 } from "./card/Card";
 export { Dialog } from "./dialog/Dialog";
 export { Tabs } from "./tabs/Tabs";
+export {
+  Text,
+  Heading,
+  textVariants,
+  type TextProps,
+  type HeadingProps,
+} from "./text/Text";
+export { Icon, type IconProps } from "./icon/Icon";

@@ -4,7 +4,7 @@
 >
 > 디자인 시스템 컴포넌트를 **작성/수정하기 전에 이 문서를 먼저 읽는다.** 사람과 AI 에이전트가 같은 규약에서 작동하도록 유지한다. 강한 컨벤션 = 예측 가능성: 규약을 따르면 새 컴포넌트도 결정론적으로 예측된다.
 >
-> _현재 컴포넌트: Button · Input · Badge · Card(합성) · Dialog·Tabs(상호작용 합성) · Field(몰큘). 토큰은 `@repo/design-tokens`._
+> _현재 컴포넌트: Button · Input · Badge · Card(합성) · Dialog·Tabs(상호작용 합성) · Field(몰큘) · Text/Heading·Icon(프리미티브). 토큰은 `@repo/design-tokens`._
 
 ## 계층
 
