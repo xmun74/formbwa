@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { useWorkoutStore } from "@/entities/workout";
-import { buttonClass } from "@/shared/ui/button";
+import { Button } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 
 import {
@@ -61,16 +61,15 @@ export function ExerciseListView() {
 
       {/* 우하단 플로팅 시작 버튼 */}
       <div className="fixed right-8 bottom-8 z-10">
-        <Link
-          href="/start"
-          onClick={() => setExercise(selected.name)}
-          className={buttonClass(
-            "primary",
-            "px-7 py-4 text-lg shadow-[0_16px_34px_-14px] shadow-brand-500/70",
-          )}
+        <Button
+          asChild
+          size="lg"
+          className="shadow-[0_16px_34px_-14px] shadow-brand-500/70"
         >
-          {selected.name}로 시작하기 →
-        </Link>
+          <Link href="/start" onClick={() => setExercise(selected.name)}>
+            {selected.name}로 시작하기 →
+          </Link>
+        </Button>
       </div>
     </AppShell>
   );

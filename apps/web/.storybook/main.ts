@@ -10,7 +10,11 @@ function getAbsolutePath(value: string) {
 
 const config: StorybookConfig = {
   // 스토리는 컴포넌트 옆에 둔다 — FSD 슬라이스 응집도 유지 (TRD-FE §3)
-  stories: ["../src/**/*.stories.@(ts|tsx)"],
+  // 디자인 시스템(@repo/ui) 컴포넌트 스토리도 포함
+  stories: [
+    "../src/**/*.stories.@(ts|tsx)",
+    "../../../packages/ui/src/**/*.stories.@(ts|tsx)",
+  ],
   addons: [
     getAbsolutePath("@storybook/addon-a11y"),
     getAbsolutePath("@storybook/addon-docs"),

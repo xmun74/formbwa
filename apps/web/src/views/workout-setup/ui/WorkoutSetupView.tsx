@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { useWorkoutStore } from "@/entities/workout";
 import { primeSpeech } from "@/shared/lib/speech";
-import { buttonClass } from "@/shared/ui/button";
+import { Button } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
@@ -102,13 +102,11 @@ export function WorkoutSetupView() {
             서비스는 의료·재활 목적이 아니며, 무리가 되면 즉시 중단하세요.
           </p>
 
-          <Link
-            href="/prepare"
-            onClick={commitAndStart}
-            className={buttonClass("primary", "mt-8 w-full py-4 text-lg")}
-          >
-            운동 시작
-          </Link>
+          <Button asChild size="lg" className="mt-8 w-full">
+            <Link href="/prepare" onClick={commitAndStart}>
+              운동 시작
+            </Link>
+          </Button>
         </aside>
       </div>
     </AppShell>

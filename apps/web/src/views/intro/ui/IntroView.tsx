@@ -1,6 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { buttonClass } from "@/shared/ui/button";
+import { Button } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 import { Footer } from "@/shared/ui/footer";
 import { PosePreload } from "./PosePreload";
@@ -55,12 +55,9 @@ export function IntroView() {
             웹캠이 자세를 실시간으로 읽고 그 순간 바로 교정해줘요.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-end lg:justify-start gap-x-5 gap-y-3">
-            <Link
-              href="/exercises"
-              className={buttonClass("primary", "px-8 py-4 text-lg")}
-            >
-              시작하기
-            </Link>
+            <Button asChild size="lg">
+              <Link href="/exercises">시작하기</Link>
+            </Button>
           </div>
         </div>
 
