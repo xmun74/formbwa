@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 import { Providers } from "./providers";
+import { GA_ID } from "@/shared/lib/analytics";
 
 export const metadata: Metadata = {
   title: "formbwa",
@@ -19,6 +21,7 @@ export default function RootLayout({
       <body className="bg-canvas text-ink font-sans">
         <Providers>{children}</Providers>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }
