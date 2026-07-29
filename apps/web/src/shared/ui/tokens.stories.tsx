@@ -1,3 +1,4 @@
+import { fontSize, radius, spacing } from "@repo/design-tokens";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useEffect, useState } from "react";
 
@@ -182,6 +183,81 @@ function Tokens() {
   );
 }
 
+/** 타이포 스케일 — 실제 토큰 값(@repo/design-tokens)을 인라인 스타일로 렌더 → 항상 코드와 일치. */
+function TypographyView() {
+  return (
+    <div className="bg-canvas min-h-screen p-8">
+      <h1 className="text-ink text-2xl font-bold">
+        타이포그래피 (티셔츠 스케일)
+      </h1>
+      <p className="text-ink-soft mt-2 mb-8 text-sm">
+        base=14. 크기/라인하이트는 `--text-*`.
+      </p>
+      <div className="flex flex-col gap-6">
+        {Object.entries(fontSize).map(([key, { size, lineHeight }]) => (
+          <div key={key} className="border-line/70 border-b pb-4">
+            <div className="text-ink-muted font-mono text-xs">
+              text-{key} · {size} / {lineHeight}
+            </div>
+            <div
+              className="text-ink mt-1"
+              style={{ fontSize: size, lineHeight }}
+            >
+              다람쥐 헌 쳇바퀴에 타고파
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** 간격 스케일 — 값만큼의 막대로 시각화. */
+function SpacingView() {
+  return (
+    <div className="bg-canvas min-h-screen p-8">
+      <h1 className="text-ink text-2xl font-bold">간격 (spacing)</h1>
+      <div className="mt-8 flex flex-col gap-3">
+        {Object.entries(spacing).map(([key, value]) => (
+          <div key={key} className="flex items-center gap-4">
+            <div className="text-ink-muted w-32 shrink-0 font-mono text-xs">
+              spacing-{key} · {value}
+            </div>
+            <div
+              className="bg-brand-400 h-4 rounded"
+              style={{ width: value }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** radius 스케일. */
+function RadiusView() {
+  return (
+    <div className="bg-canvas min-h-screen p-8">
+      <h1 className="text-ink text-2xl font-bold">모서리 (radius)</h1>
+      <div className="mt-8 flex flex-wrap gap-6">
+        {Object.entries(radius).map(([key, value]) => (
+          <div key={key} className="flex flex-col items-center gap-2">
+            <div
+              className="bg-brand-100 border-brand-300 size-20 border"
+              style={{ borderRadius: value }}
+            />
+            <div className="text-ink-muted font-mono text-xs">
+              radius-{key}
+              <br />
+              {value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const meta = {
   title: "shared/Design Tokens",
   component: Tokens,
@@ -193,3 +269,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Colors: Story = {};
+export const Typography: Story = { render: () => <TypographyView /> };
+export const Spacing: Story = { render: () => <SpacingView /> };
+export const Radius: Story = { render: () => <RadiusView /> };

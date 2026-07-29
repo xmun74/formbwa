@@ -12,3 +12,4 @@ export {
   type CardProps,
 } from "./card/Card";
 export { Dialog } from "./dialog/Dialog";
+export { Tabs } from "./tabs/Tabs";
