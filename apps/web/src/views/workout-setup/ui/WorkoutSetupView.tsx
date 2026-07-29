@@ -2,12 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
 import { useWorkoutStore } from "@/entities/workout";
 import { primeSpeech } from "@/shared/lib/speech";
-import { Button, Input } from "@repo/ui";
+import { Button, Field, Input } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
-
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
 import { SETUP_STEPS } from "../model/setup";
 import { CoachCard } from "./CoachCard";
@@ -32,7 +30,7 @@ export function WorkoutSetupView() {
   return (
     <AppShell>
       {/* 브레드크럼 */}
-      <header className="border-line-soft flex h-[62px] items-center gap-3 border-b px-11 text-base">
+      <header className="border-line-soft flex h-15.5 items-center gap-3 border-b px-11 text-base">
         <Link
           href="/exercises"
           className="text-ink-muted hover:text-ink transition-colors"
@@ -48,19 +46,14 @@ export function WorkoutSetupView() {
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">운동 준비</h1>
 
-          <label className="mt-8 block">
-            <span className="text-base font-bold">
-              닉네임을 입력해주세요
-              <span className="text-ink-muted font-normal"> (선택)</span>
-            </span>
+          <Field label="닉네임을 입력해주세요" hint="(선택)" className="mt-8">
             <Input
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="예: 민수 (비워두면 '회원님'으로 불러요)"
               maxLength={10}
-              className="mt-2.5"
             />
-          </label>
+          </Field>
 
           <div className="mt-7">
             <div className="text-base font-bold">코치를 골라주세요</div>
