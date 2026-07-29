@@ -1,6 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { Button } from "@repo/ui";
+import { Button, Card } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 import { Footer } from "@/shared/ui/footer";
 import { PosePreload } from "./PosePreload";
@@ -69,10 +69,7 @@ export function IntroView() {
 
       <section className="mx-auto grid max-w-6xl gap-5 px-gutter pb-16 md:grid-cols-3">
         {FEATURES.map((f) => (
-          <div
-            key={f.title}
-            className="border-line bg-surface flex rounded-2xl border py-5 pr-6"
-          >
+          <Card key={f.title} className="flex py-5 pr-6">
             <div className="relative size-32 shrink-0">
               <Image
                 src={f.img}
@@ -91,7 +88,7 @@ export function IntroView() {
                 {f.body}
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </section>
 

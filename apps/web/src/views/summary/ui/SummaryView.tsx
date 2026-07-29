@@ -3,7 +3,7 @@
 import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { displayName, useWorkoutStore } from "@/entities/workout";
-import { Button } from "@repo/ui";
+import { Button, Card } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 
 const POINT_CLASS: Record<string, string> = {
@@ -113,7 +113,7 @@ export function SummaryView() {
         </div>
 
         {result.points.length > 0 && (
-          <div className="border-line bg-surface mt-4 rounded-2xl border p-6">
+          <Card className="mt-4 p-6">
             <div className="text-brand-700 text-base font-bold">
               가장 많이 나온 포인트
             </div>
@@ -127,7 +127,7 @@ export function SummaryView() {
                 </span>
               ))}
             </div>
-          </div>
+          </Card>
         )}
 
         {/* 코치 총평 */}
