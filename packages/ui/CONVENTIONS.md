@@ -17,7 +17,8 @@
 - 컴포넌트: `packages/ui/src/<name>/<Name>.tsx`, 슬라이스 배럴 `index.ts`에서 **named export**.
 - slots 스타일: `<name>/<name>.styles.ts` (tailwind-variants 설정 분리).
 - **공개 API**: `@repo/ui` 배럴로만 import. 내부 파일 직접 import 금지.
-- 스토리: 컴포넌트 옆(`<Name>.stories.tsx`).
+- 스토리: 컴포넌트 옆(`<Name>.stories.tsx`), import는 `@storybook/react-vite`.
+- **Storybook은 이 패키지가 소유** — `packages/ui/.storybook`(react-vite + Tailwind v4 자립). `pnpm --filter @repo/ui storybook`으로 실행, `build-storybook`으로 정적 빌드.
 
 ## 컴포넌트 API
 

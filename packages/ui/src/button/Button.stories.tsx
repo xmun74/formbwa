@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "./Button";
 
 const meta = {
@@ -8,7 +7,10 @@ const meta = {
   parameters: { layout: "centered" },
   args: { children: "세트 시작" },
   argTypes: {
-    variant: { control: "inline-radio", options: ["primary", "secondary", "ghost"] },
+    variant: {
+      control: "inline-radio",
+      options: ["primary", "secondary", "ghost"],
+    },
     size: { control: "inline-radio", options: ["md", "lg"] },
   },
 } satisfies Meta<typeof Button>;

@@ -19,10 +19,10 @@
 - [x] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
   - `@repo/eslint-config`는 base/next-js/core + fsd export. lint-staged는 워크스페이스별 `.lintstagedrc.json` (루트 일괄 실행 시 eslint 설정을 못 찾아 전 커밋이 실패함)
   - Steiger: `fsd/segments-by-purpose`는 `src/app/**`만 예외 — Next 라우팅 디렉터리를 겸해서 `providers.tsx`가 세그먼트로 오인됨 (TRD-FE §3.1)
-- [x] Storybook 셋업 (`@storybook/nextjs-vite`)
-  - 스토리는 컴포넌트 옆에 배치 (`shared/ui/button/button.stories.tsx`) — FSD 슬라이스 응집도 유지
+- [x] Storybook 셋업 — **`@repo/ui`가 소유**(`packages/ui/.storybook`, **`@storybook/react-vite`**: 디자인 시스템은 순수 React라 Next 프리셋 불필요). 초기엔 apps/web(`@storybook/nextjs-vite`)에 뒀다가 디자인 시스템 구축 때 이전
+  - 스토리는 컴포넌트 옆에 배치 (`packages/ui/src/<name>/<Name>.stories.tsx`) — 응집도 유지
   - init 기본 애드온 중 chromatic(유료 SaaS)·onboarding·addon-vitest(브라우저 테스트, TRD 밖) 제거. Playwright E2E는 M11 몫
-  - `preview.tsx`에서 `globals.css`+Pretendard 로드 필수 — layout.tsx를 안 거치므로 안 하면 Tailwind·폰트가 스토리에 미적용
+  - `preview.tsx`+`.storybook/globals.css`로 **Tailwind v4 자립**(tailwindcss + `@repo/design-tokens/theme.css` + `@source ../src`) + Pretendard 로드. `@tailwindcss/vite`를 viteFinal에 추가
 - [x] GitHub Actions CI (lint·steiger·test) + Vercel 배포 파이프라인 → **프로덕션 라이브**: 커스텀 도메인 `formbwa.site`(가비아 구입·Vercel 연결, HTTPS 자동, www→apex 308 리다이렉트)
   - CI는 루트에서 `turbo lint check-types test build` — M1의 `apps/be`가 추가돼도 워크플로 수정 불필요 (turbo가 워크스페이스 그래프로 자동 포함). be 테스트에 Postgres가 필요해지면 그때 `services:` 추가
   - Vercel은 Root Directory=`apps/web`만 지정하면 Ignored Build Step을 자동 설정한다. **`vercel.json`에 `ignoreCommand`를 두지 말 것** — install 이전 단계라 `npx turbo`가 바이너리를 통째로 받다가 배포가 멈춘다

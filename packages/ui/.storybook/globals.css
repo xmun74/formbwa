@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* 디자인 토큰 @repo/design-tokens (색, 간격, 타이포, radius) */
+@import "@repo/design-tokens/theme.css";
+
+/* 이 패키지 소스의 Tailwind 클래스를 스캔 (컴포넌트 + 스토리) */
+@source "../src";

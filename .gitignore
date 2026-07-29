@@ -39,6 +39,7 @@ yarn-error.log*
 
 /docs/private/
 *.tsbuildinfo
+storybook-static
 
 # 3D 실험 에셋 (Mixamo/Meshy 원본·변환물)
 /3d-assets

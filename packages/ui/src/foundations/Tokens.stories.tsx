@@ -1,10 +1,9 @@
 import { fontSize, radius, spacing } from "@repo/design-tokens";
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect, useState } from "react";
 
 /**
  * 디자인 토큰 문서 — `globals.css`의 `@theme`를 그대로 비춘다.
- *
  * 값을 하드코딩하지 않고 실제 CSS 변수를 런타임에 읽는다. 하드코딩하면
  * globals.css를 고칠 때마다 문서가 어긋나고, 어긋난 문서는 없느니만 못하다.
  */
@@ -259,7 +258,7 @@ function RadiusView() {
 }
 
 const meta = {
-  title: "shared/Design Tokens",
+  title: "Foundations/Design Tokens",
   component: Tokens,
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof Tokens>;
