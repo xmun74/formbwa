@@ -1,51 +1,42 @@
 /**
- * 색 토큰 — 플랫폼 중립 값 (단일 진실).
- * 브랜드는 OKLCH(웹 authoring), 뉴트럴·다크·액센트는 hex.
- * 값은 apps/web globals.css에서 1:1 이관. 생성기가 `--color-<name>`으로 방출.
- *
- * ⚠️ RN은 oklch 미지원 → RN 타깃이 생기면 생성기에 hex 변환 출력을 추가한다.
+ * 의미(semantic) 색 토큰 — **의도 기반**, `primitive`를 참조한다 (2계층의 상위).
+ * 생성기가 이 객체를 `--color-*`로 방출한다 (Tailwind `bg-surface`·`text-ink`…).
+ * 브랜드 스케일은 코드에서 직접 쓰므로(`text-brand-700`) 스케일째 노출한다.
+ * 원시 값은 `primitives.ts`. 여기선 **어떤 의도에 어떤 primitive를 쓰는지**만 정한다.
+ * 값은 원본 — 변경 금지.
  */
+import { primitive } from "./primitives";
+
+const { brand, neutral, neutralDark } = primitive;
+
 export const colors = {
-  // 브랜드 그린 (#12b394 = brand-500), hue 174 고정. 흰 글씨는 brand-600부터.
-  brand: {
-    50: "oklch(0.982 0.016 174)", // #effdf8
-    100: "oklch(0.955 0.034 174)", // #daf8ee
-    200: "oklch(0.912 0.062 174)", // #b8f0df
-    300: "oklch(0.845 0.1 174)", // #81e2c7
-    400: "oklch(0.755 0.128 174)", // #3ccaa9
-    500: "oklch(0.685 0.128 174)", // #11b394 — 원색
-    600: "oklch(0.549 0.108 174)", // #00856d — 버튼(흰 글씨 4.6)
-    700: "oklch(0.485 0.088 174)", // #106f5b — 강조 텍스트
-    800: "oklch(0.4 0.072 174)", // #0b5445
-    900: "oklch(0.315 0.055 174)", // #083a2f
-    950: "oklch(0.235 0.04 174)", // #04241d
-  },
+  brand, // 브랜드 스케일 직접 노출 (액션·강조에 단계별 사용)
 
   // 뉴트럴 (라이트)
-  canvas: "#f7fbfa", // 페이지 배경
-  surface: "#ffffff", // 카드
-  "surface-sunken": "#fbfdfc", // 비활성 카드
-  line: "#e8f0ed", // 기본 보더
-  "line-soft": "#eef4f2", // 헤더 구분선
-  ink: "#16302a", // 본문
-  "ink-soft": "#5f746e", // 보조 텍스트
-  "ink-muted": "#7b8f89", // 흐린 텍스트·라벨
+  canvas: neutral[50], // 페이지 배경
+  surface: neutral[0], // 카드
+  "surface-sunken": neutral[25], // 비활성 카드
+  line: neutral[200], // 기본 보더
+  "line-soft": neutral[100], // 헤더 구분선
+  ink: neutral[900], // 본문
+  "ink-soft": neutral[600], // 보조 텍스트
+  "ink-muted": neutral[500], // 흐린 텍스트·라벨
 
   // 다크 (운동 화면)
-  "dark-canvas": "#0e2420",
-  "dark-surface": "#12302a",
-  "dark-surface-2": "#16362f",
-  "dark-line": "#24463d",
-  "dark-ink": "#eaf5f1",
-  "dark-ink-soft": "#a7c4bc",
-  "dark-ink-muted": "#7fa89c",
+  "dark-canvas": neutralDark[900],
+  "dark-surface": neutralDark[850],
+  "dark-surface-2": neutralDark[800],
+  "dark-line": neutralDark[700],
+  "dark-ink": neutralDark[50],
+  "dark-ink-soft": neutralDark[300],
+  "dark-ink-muted": neutralDark[400],
 
-  // 액센트 — 캐릭터·상태
-  "coach-warm": "#ffe1d6",
-  "coach-cool": "#dcefff",
-  "point-coral": "#fdeee9",
-  "point-coral-ink": "#d0724d",
-  "point-amber": "#fdf6e3",
-  "point-amber-ink": "#b78a1f",
-  live: "#ff6b6b",
+  // 액센트·상태 — 스케일 없는 leaf (raw semantic)
+  "coach-warm": "#ffe1d6", // 캐릭터 웜
+  "coach-cool": "#dcefff", // 캐릭터 쿨
+  "point-coral": "#fdeee9", // 지적 포인트 배경
+  "point-coral-ink": "#d0724d", // 지적 포인트 텍스트
+  "point-amber": "#fdf6e3", // 주의 포인트 배경
+  "point-amber-ink": "#b78a1f", // 주의 포인트 텍스트
+  live: "#ff6b6b", // 실시간 인디케이터
 } as const;
