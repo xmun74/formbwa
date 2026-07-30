@@ -1,7 +1,13 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/shared/config";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  siteJsonLd,
+} from "@/shared/config";
 import { GA_ID } from "@/shared/lib/analytics";
+import { JsonLd } from "@/shared/ui/json-ld";
 import { Providers } from "./providers";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
@@ -46,6 +52,7 @@ export default function RootLayout({
     <html lang="ko">
       {/* 순수 흑백을 쓰지 않는다 — 뉴트럴은 전부 민트 색상환으로 틴트 (globals.css @theme) */}
       <body className="bg-canvas text-ink font-sans">
+        <JsonLd data={siteJsonLd} />
         <Providers>{children}</Providers>
       </body>
       {GA_ID && <GoogleAnalytics gaId={GA_ID} />}

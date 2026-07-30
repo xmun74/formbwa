@@ -132,6 +132,7 @@
   - **소유확인·제출 완료**: ✅ Google Search Console(가비아 DNS TXT 도메인 속성) + 사이트맵 제출. ✅ 네이버 서치어드바이저(HTML 태그, env 주입+재배포) + 사이트맵 제출.
   - **도메인 정규화 = apex(`formbwa.site`) 단일** — Vercel에서 apex를 Primary로, `www`→apex 308. 서빙 호스트 = `metadata.canonical`·sitemap·robots `host`·`SITE_URL`이 전부 apex로 일치(검증 완료). ⚠️ 한때 Vercel이 반대(apex→www)로 드리프트해 정규 신호가 모순됐던 걸 재정렬함
   - **파비콘**: `app/favicon.ico`(256² ico) apex에서 200 직접 응답 = 정상. 구글 검색결과에 지구본이 떴던 건 위 정규 호스트 드리프트 + 신규 도메인 반영 지연 탓 — 방향 재정렬 후 Search Console 재크롤 요청, SERP 아이콘 반영은 수일~수주 대기(선택: `app/icon.svg`를 `Logo.svg`로 추가해 탭 아이콘 선명화)
+  - **구조화 데이터(JSON-LD)**: `shared/config/jsonLd.ts` + 서버 컴포넌트 `shared/ui/json-ld`(`<script type="application/ld+json">`, `<` 이스케이프). 전역 `Organization`+`WebSite`(layout), 랜딩 `SoftwareApplication`(page, `HealthApplication`/`offers` 무료). **정직 원칙: 리뷰 0이라 aggregateRating(별점) 미포함**(조작=스팸 정책). Product/HowTo/FAQ는 비적합·구글 리치결과 폐지로 제외. 목적은 리치 스니펫이 아니라 **엔티티·AI 검색 인용**. `Organization.logo` = `public/logo.svg`(=`Logo.svg` 복사, 크롤 가능 URL). 빌드 산출 HTML에 3종 서버 렌더 검증. 배포 후 **Rich Results Test/Schema validator**로 확인
   - 참고: 색인 반영은 크롤링 대기(수일). 정식 동의 배너·개인정보처리방침은 M11
 - [ ] **검증 지표(단독 기준)** — 판정 정확도(오탐/미탐 체감)·세트 완주 경험·주관적 "봐주는 느낌" 자기평가 중심. GA4는 본인 세션 퍼널(완료율·이탈 지점) 참고용(표본 1이라 통계보다 정성 관찰). (PRD §8도 단독 기준으로 정정 완료 — 판정 신뢰성·완주 경험·주관 만족)
 - [ ] **go/no-go 결정(본인 판단)**: 코칭이 실제로 쓸 만한가 → 2단계 착수 / 미흡하면 판정·UX 개선 반복
