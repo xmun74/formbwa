@@ -11,6 +11,7 @@ import {
   type PoseFeatures,
   type PoseFrame,
 } from "@repo/core";
+import { track } from "@/shared/lib/analytics";
 import { preloadPoseModel } from "./poseModel";
 
 export type CameraStatus = "loading" | "ready" | "denied" | "error";
@@ -145,6 +146,7 @@ export function useCameraPose({ onFeatures, fps = 20 }: UseCameraPoseOptions) {
         const denied =
           e instanceof DOMException && e.name === "NotAllowedError";
         setStatus(denied ? "denied" : "error");
+        if (denied) track("camera_permission_denied");
       }
     };
 

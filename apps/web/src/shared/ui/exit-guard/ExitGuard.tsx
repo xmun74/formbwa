@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Dialog } from "@repo/ui";
+import { track } from "@/shared/lib/analytics";
 
 /**
  * 운동 이탈 가드 (TRD-FE §4) — 다크 화면(/prepare·/workout)에서 실수 이탈을 막는다.
@@ -38,6 +39,7 @@ export function ExitGuard({ exitHref = "/exercises" }: { exitHref?: string }) {
 
   const confirmExit = useCallback(() => {
     setOpen(false);
+    track("workout_exited");
     router.push(exitHref);
   }, [router, exitHref]);
 

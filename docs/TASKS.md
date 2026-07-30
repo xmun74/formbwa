@@ -124,8 +124,9 @@
 ### M6. 검증 (~수일 — 본인 단독 검증)
 
 - [ ] **본인 단독 검증** — 배포된 `formbwa.site`를 직접 반복 사용하며 코칭 루프 점검(조명·거리·각도·복장 바꿔가며). **외부 체험자 모집·인터뷰는 하지 않음**(방향 전환)
-- [~] **GA4 계측** — 골격 완료: `@next/third-parties`의 `GoogleAnalytics`를 `app/layout`에 배선 + `shared/lib/analytics`(`track()` + `config.ts` 게이트). **활성 조건 = 프로덕션 빌드 + `NEXT_PUBLIC_GA_ID` 존재** → `next dev`에선 ID가 `.env.local`에 있어도 무동작(로컬 트래픽 오염 방지). turbo.json `globalEnv`에 `NODE_ENV` 선언. **측정 ID 주입 완료**(Vercel 프로덕션 env `NEXT_PUBLIC_GA_ID`) → `page_view` 퍼널 수집 중. **남음**: ① 퍼널 커스텀 이벤트 배선(아래, 맨 마지막) ② 정식 동의 배너·개인정보처리방침(M11)
-  - ⏳ **퍼널 이벤트 배선은 의도적으로 맨 마지막**(서비스 완성 후, 본인 검증 시작 직전)에 한다 — UI/흐름이 아직 바뀌는 동안 배선하면 발화 지점이 흔들리고 중복 발화 위험. 배선 대상: `workout_started`(카메라 ready), `set_completed`(finishSet, `{reps, quality}`), `workout_exited`(ExitGuard 이탈), `camera_permission_denied`. `track()` 래퍼·타입은 이미 준비됨
+- [x] **GA4 계측** — 골격 완료: `@next/third-parties`의 `GoogleAnalytics`를 `app/layout`에 배선 + `shared/lib/analytics`(`track()` + `config.ts` 게이트). **활성 조건 = 프로덕션 빌드 + `NEXT_PUBLIC_GA_ID` 존재** → `next dev`에선 ID가 `.env.local`에 있어도 무동작(로컬 트래픽 오염 방지). turbo.json `globalEnv`에 `NODE_ENV` 선언. **측정 ID 주입 완료**(Vercel 프로덕션 env `NEXT_PUBLIC_GA_ID`) → `page_view` 퍼널 수집 중. **1단계 GA4 범위(골격+측정 ID+퍼널 배선)는 완료.** 정식 동의 배너·개인정보처리방침은 2단계 M11 소유(아래).
+  - **퍼널 이벤트 배선 완료**(UI/흐름 안정된 시점 = 본인 검증 직전): `workout_started`(`WorkoutView` 카메라 ready effect), `set_completed`(`finishSet`, `{reps, quality}`), `workout_exited`(`ExitGuard.confirmExit` — /prepare·/workout 공용), `camera_permission_denied`(`useCameraPose` 거부 감지 — 카메라 쓰는 곳이 운동 플로우뿐이라 훅 1곳에서 화면 무관 계측, /prepare 선-거부까지 포착)
+    - 원천 데이터(랜드마크·프레임)는 파라미터에 안 넣음 — 집계 수치만(`track()` 래퍼 주석 원칙 준수). 로컬(`next dev`)·GA_ID 없으면 무동작
   - ⚠️ 프라이버시: 포즈 랜드마크·프레임·영상 등 카메라 원천 데이터는 GA에 **절대 전송 금지**(집계 수치만). "영상은 기기 안에서만" 약속과 일관
 - [x] **검색 등록·메타데이터** — 도메인 `formbwa.site`(가비아·Vercel 연결). **코드**: `app/layout` 메타데이터 실화(title/description/`metadataBase`)·OG/트위터 카드(`app/opengraph-image.png`·`twitter-image.png`, 1200×624)·`app/robots.ts`(플로우 prepare/workout/summary 제외)·`app/sitemap.ts`(`/`·`/exercises`·`/start`)·`metadata.verification.other`(네이버, env `NAVER_SITE_VERIFICATION`)·`shared/config/site.ts`(SITE_URL 단일화). 검증기간에도 index 노출.
   - **소유확인·제출 완료**: ✅ Google Search Console(가비아 DNS TXT 도메인 속성) + 사이트맵 제출. ✅ 네이버 서치어드바이저(HTML 태그, env 주입+재배포) + 사이트맵 제출. ✅ 도메인 정규화(www→apex 리다이렉트, Vercel Domains)
@@ -172,7 +173,7 @@
 ### M11. 2단계 마무리 (~1일)
 
 - [ ] 회원 탈퇴 (기록 hard delete — TRD-BE §8)
-- [ ] 개인정보처리방침·이용약관 페이지 (카메라 미전송 명시)
+- [ ] 개인정보처리방침, 이용약관 페이지 (카메라 미전송 + **GA4 분석 사용 고지** 한 줄). **정식 동의 배너는 생략** — 한국어 전용/first-party 집계 GA(광고 개인화/원천 데이터 전송 없음, GA4 기본 IP 미저장)라 GDPR/PIPA 어느 쪽도 블로킹 배너를 강제하지 않음. EU 트래픽/행동 광고/규모 확대 시 재검토
 - [ ] 최소 모니터링 — uptime 체크 + 에러 알림 (무료 티어)
 - [ ] E2E: 로그인 → 운동 → 저장 → 리포트 플로우 Playwright 1본
 

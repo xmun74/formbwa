@@ -13,6 +13,7 @@ import {
   type PoseFeatures,
 } from "@repo/core";
 import { displayName, useWorkoutStore } from "@/entities/workout";
+import { track } from "@/shared/lib/analytics";
 import { useCameraPose } from "@/shared/lib/pose";
 import { cancelSpeech, speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
@@ -102,6 +103,7 @@ export function WorkoutView() {
   useEffect(() => {
     if (status !== "ready" || startAnnouncedRef.current) return;
     startAnnouncedRef.current = true;
+    track("workout_started");
     setCaption(personalize("시작해볼게요!", nameRef.current));
     if (voiceOnRef.current)
       speak(personalize("시작해볼게요!", nameRef.current));
@@ -116,6 +118,7 @@ export function WorkoutView() {
         durationMs: performance.now() - startMsRef.current,
       }),
     );
+    track("set_completed", { reps, quality });
     router.push("/summary");
   };
 
