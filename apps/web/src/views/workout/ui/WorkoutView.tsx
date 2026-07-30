@@ -16,7 +16,7 @@ import { displayName, useWorkoutStore } from "@/entities/workout";
 import { useCameraPose } from "@/shared/lib/pose";
 import { cancelSpeech, speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
-import { pickLine } from "../model/mnemonics";
+import { personalize, pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
 import { DARK_STRIPE } from "../model/workout";
 
@@ -35,6 +35,10 @@ export function WorkoutView() {
   const { exerciseName, setNo, coach, nickname, standingKneeAngle } =
     useWorkoutStore();
   const setResult = useWorkoutStore((s) => s.setResult);
+  // 표시 이름(비면 "회원"). 운동 중엔 안 바뀌지만 onFeatures 클로저용으로 ref에도 보관
+  const name = displayName(nickname);
+  const nameRef = useRef(name);
+  nameRef.current = name;
   const panel = `border-dark-line relative overflow-hidden rounded-2xl border ${DARK_STRIPE}`;
 
   const standing = standingKneeAngle ?? DEFAULT_STANDING_KNEE_ANGLE;
@@ -55,7 +59,10 @@ export function WorkoutView() {
 
   const [reps, setReps] = useState(0);
   const [goodReps, setGoodReps] = useState(0);
-  const [caption, setCaption] = useState("자세를 잡고 시작해요");
+  const [caption, setCaption] = useState(() =>
+    personalize("자세를 잡고 시작해요", name),
+  );
+  const startAnnouncedRef = useRef(false);
   const [voiceOn, setVoiceOn] = useState(true);
   const voiceOnRef = useRef(voiceOn);
   voiceOnRef.current = voiceOn;
@@ -79,7 +86,8 @@ export function WorkoutView() {
     if (clipKey) {
       const line = pickLine(coachIdRef.current, clipKey);
       if (line) {
-        setCaption(line);
+        // 자막엔 이름을 얹고(§6.1), 실시간 음성엔 이름 없이 원문만 발화
+        setCaption(personalize(line, nameRef.current));
         if (voiceOnRef.current) speak(line);
       }
     }
@@ -89,6 +97,15 @@ export function WorkoutView() {
   useEffect(() => cancelSpeech, []);
 
   const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
+
+  // 세트 시작 이름 호명 — 카메라 준비되면 1회. 비-실시간이라 런타임 TTS 허용(§6.1)
+  useEffect(() => {
+    if (status !== "ready" || startAnnouncedRef.current) return;
+    startAnnouncedRef.current = true;
+    setCaption(personalize("시작해볼게요!", nameRef.current));
+    if (voiceOnRef.current)
+      speak(personalize("시작해볼게요!", nameRef.current));
+  }, [status]);
 
   const finishSet = () => {
     setResult(
@@ -200,9 +217,7 @@ export function WorkoutView() {
               )}
             </button>
             <div>
-              <div className="text-dark-ink-muted text-xs">
-                {displayName(nickname)}님
-              </div>
+              <div className="text-dark-ink-muted text-xs">{coach.name}</div>
               <div className="text-dark-ink text-lg font-bold">{caption}</div>
             </div>
           </div>

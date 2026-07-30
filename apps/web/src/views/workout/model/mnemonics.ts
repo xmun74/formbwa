@@ -39,3 +39,12 @@ export function pickLine(coachId: string, clipKey: string): string | null {
   if (!lines || lines.length === 0) return null;
   return lines[Math.floor(Math.random() * lines.length)]!;
 }
+
+/**
+ * 자막 개인화 — 대사 앞에 이름을 얹는다 (F1-9, TRD-FE §6.1).
+ * 텍스트라 비용/지연 0으로 자막은 항상 개인화. **음성은 이걸 쓰지 않는다** —
+ * 실시간 교정 음성엔 이름을 넣지 않고, 이름 호명은 세트 경계에서만(WorkoutView).
+ */
+export function personalize(line: string, name: string): string {
+  return `${name}님, ${line}`;
+}
