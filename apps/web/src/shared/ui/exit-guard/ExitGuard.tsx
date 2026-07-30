@@ -1,8 +1,8 @@
 "use client";
 
-import { Dialog } from "@repo/ui";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { Dialog } from "@repo/ui";
 
 /**
  * 운동 이탈 가드 (TRD-FE §4) — 다크 화면(/prepare·/workout)에서 실수 이탈을 막는다.

@@ -1,5 +1,4 @@
 import { forwardRef, type HTMLAttributes } from "react";
-
 import { tv, type VariantProps } from "../lib/tv";
 
 /** 작은 상태·라벨 뱃지 (tailwind-variants — tone/size 변형). */
@@ -19,8 +18,7 @@ export const badgeVariants = tv({
 });
 
 export interface BadgeProps
-  extends HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
+  extends HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {}
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   { tone, size, className, ...props },

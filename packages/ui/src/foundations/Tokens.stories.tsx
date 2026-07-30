@@ -1,6 +1,6 @@
-import { fontSize, radius, spacing } from "@repo/design-tokens";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect, useState } from "react";
+import { fontSize, radius, spacing } from "@repo/design-tokens";
 
 /**
  * 디자인 토큰 문서 — `globals.css`의 `@theme`를 그대로 비춘다.

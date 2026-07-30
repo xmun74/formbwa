@@ -1,17 +1,16 @@
 "use client";
 
 import {
-  type ButtonHTMLAttributes,
   createContext,
   forwardRef,
-  type HTMLAttributes,
-  type KeyboardEvent,
-  type ReactNode,
   useContext,
   useId,
   useState,
+  type ButtonHTMLAttributes,
+  type HTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
 } from "react";
-
 import { tv } from "../lib/tv";
 
 /**
@@ -103,7 +102,8 @@ const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
       const i = items.indexOf(e.currentTarget);
       let next = -1;
       if (e.key === "ArrowRight") next = (i + 1) % items.length;
-      else if (e.key === "ArrowLeft") next = (i - 1 + items.length) % items.length;
+      else if (e.key === "ArrowLeft")
+        next = (i - 1 + items.length) % items.length;
       else if (e.key === "Home") next = 0;
       else if (e.key === "End") next = items.length - 1;
       if (next >= 0) {

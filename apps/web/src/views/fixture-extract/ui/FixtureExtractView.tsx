@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import {
   estimateStandingAngle,
   LM,
@@ -8,8 +9,6 @@ import {
   type JudgeEventType,
   type PoseFrame,
 } from "@repo/core";
-import { useRef, useState } from "react";
-
 import { preloadPoseModel } from "@/shared/lib/pose";
 
 /**

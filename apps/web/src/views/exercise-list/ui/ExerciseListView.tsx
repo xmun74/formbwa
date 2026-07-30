@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
-import { useWorkoutStore } from "@/entities/workout";
 import { Button } from "@repo/ui";
+import { useWorkoutStore } from "@/entities/workout";
 import { AppShell } from "@/shared/ui/app-shell";
-
 import {
   ALL_EXERCISES,
   DEFAULT_EXERCISE,

@@ -1,5 +1,4 @@
 import { Badge } from "@repo/ui";
-
 import type { Exercise } from "../model/exercises";
 
 interface ExerciseCardProps {

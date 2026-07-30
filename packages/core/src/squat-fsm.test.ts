@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-
 import { DEFAULT_SQUAT_CONFIG, SquatFSM } from "./squat-fsm";
 import type { PoseFeatures } from "./types";
 

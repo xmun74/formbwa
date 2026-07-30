@@ -1,7 +1,7 @@
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import tailwindcss from "@tailwindcss/vite";
 import type { StorybookConfig } from "@storybook/react-vite";
+import tailwindcss from "@tailwindcss/vite";
 
 /** 모노레포에서 애드온 경로를 절대경로로 해석 (pnpm strict node_modules 대응) */
 function getAbsolutePath(value: string): string {

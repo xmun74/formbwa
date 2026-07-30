@@ -3,12 +3,12 @@ import Link from "next/link";
 import { Button, Card } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 import { Footer } from "@/shared/ui/footer";
-import { PosePreload } from "./PosePreload";
-import { HeroImage } from "./HeroImage";
-import poseWatch from "../assets/pose-watch.png";
-import poseVoice from "../assets/pose-voice.png";
-import posePrivacy from "../assets/pose-privacy.png";
 import LogoSvg from "@/shared/ui/logo/Logo.svg";
+import posePrivacy from "../assets/pose-privacy.png";
+import poseVoice from "../assets/pose-voice.png";
+import poseWatch from "../assets/pose-watch.png";
+import { HeroImage } from "./HeroImage";
+import { PosePreload } from "./PosePreload";
 
 const FEATURES: { img: StaticImageData; title: string; body: string }[] = [
   {

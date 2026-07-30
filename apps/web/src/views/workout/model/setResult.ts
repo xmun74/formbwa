@@ -1,5 +1,4 @@
 import type { JudgeEventType } from "@repo/core";
-
 import type { SetResult } from "@/entities/workout";
 
 /**

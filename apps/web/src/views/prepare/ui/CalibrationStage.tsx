@@ -1,7 +1,7 @@
 "use client";
 
-import type { PoseFeatures } from "@repo/core";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { PoseFeatures } from "@repo/core";
 import { useWorkoutStore } from "@/entities/workout";
 import { useCameraPose } from "@/shared/lib/pose";
 import { ExitGuard } from "@/shared/ui/exit-guard";

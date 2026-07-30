@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import type { Metadata } from "next";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/shared/config";
+import { GA_ID } from "@/shared/lib/analytics";
+import { Providers } from "./providers";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
-import { Providers } from "./providers";
-import { GA_ID } from "@/shared/lib/analytics";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/shared/config";
 
 const TITLE = `${SITE_NAME} — 집에서 하는 운동, 자세까지 봐드릴게요`;
 

@@ -1,15 +1,13 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   isFullBodyInFrame,
   type PoseFeatures,
   type PoseFrame,
 } from "@repo/core";
-import { useCallback, useEffect, useRef, useState } from "react";
-
 import { useCameraPose } from "@/shared/lib/pose";
 import { ExitGuard } from "@/shared/ui/exit-guard";
-
 import { DARK_STRIPE } from "../model/prepare";
 
 const STATUS_TEXT = {

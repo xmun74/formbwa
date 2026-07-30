@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-
 import sampleSquat from "./__fixtures__/sample-squat.json";
 import { estimateStandingAngle, runSquatPipeline } from "./pipeline";
 import { LM, type Landmark, type PoseFrame } from "./types";

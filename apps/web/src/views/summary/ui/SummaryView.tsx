@@ -2,8 +2,8 @@
 
 import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { displayName, useWorkoutStore } from "@/entities/workout";
 import { Button, Card } from "@repo/ui";
+import { displayName, useWorkoutStore } from "@/entities/workout";
 import { AppShell } from "@/shared/ui/app-shell";
 
 const POINT_CLASS: Record<string, string> = {

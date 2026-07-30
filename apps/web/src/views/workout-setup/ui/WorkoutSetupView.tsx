@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Button, Field, Input } from "@repo/ui";
 import { useWorkoutStore } from "@/entities/workout";
 import { primeSpeech } from "@/shared/lib/speech";
-import { Button, Field, Input } from "@repo/ui";
 import { AppShell } from "@/shared/ui/app-shell";
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
 import { SETUP_STEPS } from "../model/setup";

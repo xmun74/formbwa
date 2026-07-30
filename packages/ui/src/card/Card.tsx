@@ -1,5 +1,4 @@
 import { forwardRef, type HTMLAttributes } from "react";
-
 import type { VariantProps } from "../lib/tv";
 import { cardStyles } from "./card.styles";
 
@@ -30,7 +29,11 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
 export const CardHeader = forwardRef<HTMLDivElement, DivProps>(
   function CardHeader({ className, ...props }, ref) {
     return (
-      <div ref={ref} className={cardStyles().header({ className })} {...props} />
+      <div
+        ref={ref}
+        className={cardStyles().header({ className })}
+        {...props}
+      />
     );
   },
 );
@@ -47,7 +50,11 @@ export const CardBody = forwardRef<HTMLDivElement, DivProps>(function CardBody(
 export const CardFooter = forwardRef<HTMLDivElement, DivProps>(
   function CardFooter({ className, ...props }, ref) {
     return (
-      <div ref={ref} className={cardStyles().footer({ className })} {...props} />
+      <div
+        ref={ref}
+        className={cardStyles().footer({ className })}
+        {...props}
+      />
     );
   },
 );

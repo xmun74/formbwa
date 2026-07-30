@@ -1,17 +1,16 @@
 "use client";
 
 import {
-  type ButtonHTMLAttributes,
   createContext,
   forwardRef,
-  type HTMLAttributes,
-  type ReactNode,
   useContext,
   useEffect,
   useId,
   useRef,
+  type ButtonHTMLAttributes,
+  type HTMLAttributes,
+  type ReactNode,
 } from "react";
-
 import { tv } from "../lib/tv";
 
 /**
@@ -121,7 +120,12 @@ const DialogTitle = forwardRef<
 >(function DialogTitle({ className, ...props }, ref) {
   const { titleId } = useDialogCtx();
   return (
-    <h2 ref={ref} id={titleId} className={dialog().title({ className })} {...props} />
+    <h2
+      ref={ref}
+      id={titleId}
+      className={dialog().title({ className })}
+      {...props}
+    />
   );
 });
 

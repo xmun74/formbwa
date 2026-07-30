@@ -1,5 +1,4 @@
 import { sendGAEvent } from "@next/third-parties/google";
-
 import { GA_ID } from "./config";
 
 /**

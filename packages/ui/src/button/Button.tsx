@@ -1,6 +1,5 @@
 import { Slot } from "@radix-ui/react-slot";
-import { type ButtonHTMLAttributes, forwardRef } from "react";
-
+import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { tv, type VariantProps } from "../lib/tv";
 
 /**
@@ -26,14 +25,18 @@ export const buttonVariants = tv({
 });
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   /** true면 자식 요소에 버튼 스타일을 위임 (Slot) — `<Button asChild><Link/></Button>` */
   asChild?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ variant, size, asChild = false, className, ...props }, ref) {
+  function Button(
+    { variant, size, asChild = false, className, ...props },
+    ref,
+  ) {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp

@@ -1,5 +1,8 @@
 "use client";
 
+import { Volume2, VolumeX } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Coach,
   DEFAULT_SQUAT_CONFIG,
@@ -9,16 +12,13 @@ import {
   type JudgeEventType,
   type PoseFeatures,
 } from "@repo/core";
-import { Volume2, VolumeX } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { displayName, useWorkoutStore } from "@/entities/workout";
 import { useCameraPose } from "@/shared/lib/pose";
 import { cancelSpeech, speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
-import { DARK_STRIPE } from "../model/workout";
 import { pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
+import { DARK_STRIPE } from "../model/workout";
 
 // /prepare 캘리브레이션 미측정 시 기본값
 const DEFAULT_STANDING_KNEE_ANGLE = 170;

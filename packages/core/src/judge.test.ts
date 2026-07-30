@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-
 import { defaultJudgeConfig, judgeRep } from "./judge";
 import type { JudgeEventType, RepMetric } from "./types";
 
