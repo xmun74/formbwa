@@ -10,7 +10,7 @@ function getAbsolutePath(value: string): string {
 
 const config: StorybookConfig = {
   // 디자인 시스템 컴포넌트 옆 스토리 (framework-agnostic: react-vite. @repo/ui는 Next 미사용)
-  stories: ["../src/**/*.stories.@(ts|tsx)"],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(ts|tsx)"],
   addons: [
     getAbsolutePath("@storybook/addon-a11y"),
     getAbsolutePath("@storybook/addon-docs"),

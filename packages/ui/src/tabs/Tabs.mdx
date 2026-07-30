@@ -1,0 +1,35 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+import * as TabsStories from "./Tabs.stories";
+
+<Meta of={TabsStories} />
+
+# Tabs
+
+**상호작용 합성** — Context로 활성 탭을 공유(`"use client"`), **닷 노테이션** API.
+ARIA tabs 패턴(role tablist/tab/tabpanel, **roving tabindex + 화살표/Home/End 키**).
+
+## 사용법
+
+uncontrolled(`defaultValue`) 또는 controlled(`value`/`onValueChange`). **클라이언트 트리 안에서** 소비.
+
+```tsx
+"use client";
+import { Tabs } from "@repo/ui";
+
+<Tabs defaultValue="squat">
+  <Tabs.List>
+    <Tabs.Trigger value="squat">스쿼트</Tabs.Trigger>
+    <Tabs.Trigger value="pushup">푸시업</Tabs.Trigger>
+  </Tabs.List>
+  <Tabs.Content value="squat">하체 기본…</Tabs.Content>
+  <Tabs.Content value="pushup">상체…</Tabs.Content>
+</Tabs>;
+```
+
+<Canvas of={TabsStories.Default} />
+
+## 언제 쓰나
+
+- ✅ 같은 맥락의 콘텐츠를 **한 화면에서 전환**할 때.
+- ✅ **클라이언트 트리 안에서만** 소비.
+- ❌ 페이지 이동엔 부적합 — 링크/라우팅을 쓴다.

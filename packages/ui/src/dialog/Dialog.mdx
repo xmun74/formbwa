@@ -1,0 +1,40 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+import * as DialogStories from "./Dialog.stories";
+
+<Meta of={DialogStories} />
+
+# Dialog
+
+**상호작용 합성** — Context로 open 상태를 공유(`"use client"`), **닷 노테이션** API.
+네이티브 `<dialog>` 기반이라 **포커스 트랩·ESC 닫기·포커스 복원**을 웹 표준으로 제공한다.
+
+## 사용법
+
+controlled(open/onOpenChange). **클라이언트 컴포넌트 안에서** 소비한다.
+
+```tsx
+"use client";
+import { Dialog, buttonVariants } from "@repo/ui";
+
+const [open, setOpen] = useState(false);
+
+<Dialog open={open} onOpenChange={setOpen}>
+  <Dialog.Trigger className={buttonVariants()}>그만두기</Dialog.Trigger>
+  <Dialog.Content>
+    <Dialog.Title>운동을 그만둘까요?</Dialog.Title>
+    <Dialog.Description>지금 나가면 기록이 사라져요.</Dialog.Description>
+    <Dialog.Footer>
+      <Dialog.Close>계속하기</Dialog.Close>
+      <button onClick={confirmExit}>그만두기</button>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog>;
+```
+
+<Canvas of={DialogStories.Confirm} />
+
+## 언제 쓰나
+
+- ✅ 확인/경고 등 사용자의 결정을 **막아야** 할 때.
+- ✅ **클라이언트 트리 안에서만** 소비 — Context+닷 노테이션이라 서버 컴포넌트에서 직접 쓰면 깨짐.
+- ❌ 비차단 알림엔 부적합(토스트/배너 사용).

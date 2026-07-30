@@ -19,6 +19,7 @@
 - **공개 API**: `@repo/ui` 배럴로만 import. 내부 파일 직접 import 금지.
 - 스토리: 컴포넌트 옆(`<Name>.stories.tsx`), import는 `@storybook/react-vite`.
 - **Storybook은 이 패키지가 소유** — `packages/ui/.storybook`(react-vite + Tailwind v4 자립). `pnpm --filter @repo/ui storybook`으로 실행, `build-storybook`으로 정적 빌드.
+- **문서**: 전 컴포넌트 **autodocs**(설명은 JSDoc, props 표는 타입에서 자동). 합성(Field/Card/Dialog/Tabs)은 `<Name>.mdx`로 **조립 예시 + do/don't** 추가(Astryx bestPractices 정신).
 
 ## 컴포넌트 API
 

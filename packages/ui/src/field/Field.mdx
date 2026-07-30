@@ -1,0 +1,44 @@
+import { Canvas, Controls, Meta } from "@storybook/addon-docs/blocks";
+import * as FieldStories from "./Field.stories";
+
+<Meta of={FieldStories} />
+
+# Field
+
+Label + control + 도움말/에러를 묶는 **폼 필드 몰큘**. `useId`로 label·control·설명의
+접근성(id/htmlFor/aria-describedby, error 시 aria-invalid)을 자동 연결한다.
+상태가 없어 **서버 컴포넌트로도 렌더**된다.
+
+## 사용법
+
+단일 control(예: `<Input>`)을 **자식**으로 넘긴다. Field가 자식에 id·aria를 주입한다.
+
+```tsx
+import { Field, Input } from "@repo/ui";
+
+<Field label="닉네임을 입력해주세요" hint="(선택)">
+  <Input value={v} onChange={(e) => setV(e.target.value)} maxLength={10} />
+</Field>;
+
+// 도움말 / 에러
+<Field label="닉네임" helper="비워두면 '회원님'으로 불러요">
+  <Input … />
+</Field>
+<Field label="닉네임" error="10자 이하로 입력해주세요">
+  <Input … />
+</Field>
+```
+
+<Canvas of={FieldStories.WithHelper} />
+<Canvas of={FieldStories.WithError} />
+
+## 언제 쓰나
+
+- ✅ label이 필요한 폼 입력 — label-input 연결·aria를 자동으로.
+- ✅ 도움말/에러 텍스트가 필요할 때 (`helper`/`error`).
+- ❌ 자식으로 **여러 control**을 넣지 않는다 (단일 control 전제).
+- ❌ label 없는 단독 입력엔 굳이 쓰지 않는다 — `<Input>` 직접.
+
+## Props
+
+<Controls />

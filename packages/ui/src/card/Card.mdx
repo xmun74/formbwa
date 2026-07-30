@@ -1,0 +1,36 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+import * as CardStories from "./Card.stories";
+
+<Meta of={CardStories} />
+
+# Card
+
+**named-export 합성** 컴포넌트(`Card`/`CardHeader`/`CardBody`/`CardFooter`).
+Context가 없어 **서버 컴포넌트로도 렌더**된다(RSC-safe). tv slots로 파트별 스타일.
+
+## 사용법
+
+```tsx
+import { Card, CardHeader, CardBody, CardFooter } from "@repo/ui";
+
+<Card elevated>
+  <CardHeader>
+    <h3 className="text-lg font-bold">셋업 안내</h3>
+  </CardHeader>
+  <CardBody>웹캠을 켜고 2m 물러서세요.</CardBody>
+  <CardFooter>준비되면 시작</CardFooter>
+</Card>;
+
+// 단순 컨테이너로만: 서브컴포넌트 없이
+<Card className="p-6">…</Card>;
+```
+
+<Canvas of={CardStories.Composed} />
+<Canvas of={CardStories.Elevated} />
+
+## 언제 쓰나
+
+- ✅ 구획된 콘텐츠(제목/본문/푸터) → 서브컴포넌트로 조립.
+- ✅ 단순 카드 컨테이너 → `Card`만 + `className`.
+- ❌ 닷 노테이션(`Card.Header`) 아님 — **named export**(서버 안전).
+- ❌ 전체가 클릭되는 인터랙티브 카드엔 부적합(그건 `<button>`).
