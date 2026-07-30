@@ -54,7 +54,7 @@
 - [x] **하드코딩 값 → 스케일 이전** — 컴포넌트의 `text-[..px]`·`rounded-[..px]`를 `text-*`·`rounded-*` 유틸리티로 (히어로 clamp·이모지·실루엣 플레이스홀더는 예외). base=14
 - [x] **공용 UI 셸** — `shared/ui`에 `app-shell`(고정 헤더+스크롤 영역)·`header`·`footer`(브랜드+운동 면책+저작권, 라이트 화면 공용)·`exit-button`·`Logo`(브랜드 SVG 마크). 앱 전용 셸(프리미티브 Button 등은 아래 `@repo/ui`로 이관)
 - [x] **`@repo/ui` 컴포넌트 라이브러리** — **tailwind-variants(+slots) + `cn`(clsx+tailwind-merge)**. 프리미티브(Button·Input·Badge·Text·Icon) + 표현 합성 Card(named export·RSC-safe) + 몰큘 Field(useId+cloneElement a11y) + 상호작용 합성 Dialog·Tabs(닷 노테이션·Context·네이티브 dialog/ARIA a11y). 아이콘은 라이브러리 무관 SVG 래퍼(소비처가 `lucide-react`). 규약 `packages/ui/CONVENTIONS.md`
-  - **자립 Storybook**(`@storybook/react-vite` + Tailwind 자립) — 전 컴포넌트 autodocs + 합성 4종 MDX. 별도 Vercel 배포 대상(Root=`packages/ui`, Output=`storybook-static`)
+  - **자립 Storybook**(`@storybook/react-vite` + Tailwind 자립) — 전 컴포넌트 autodocs + 합성 4종 MDX. **Vercel 배포 완료** (별도 프로젝트, Root=`packages/ui`, Output=`storybook-static`)
   - **Vitest + Testing Library** 컴포넌트 테스트(상호작용·a11y 중심, 7파일 26개). Input·Badge는 순수 표현이라 스킵
 - [ ] RN 타깃 시 생성기에 hex 출력(OKLCH→hex) 추가 — 4단계
 

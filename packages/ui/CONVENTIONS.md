@@ -19,7 +19,7 @@
 - **공개 API**: `@repo/ui` 배럴로만 import. 내부 파일 직접 import 금지.
 - 스토리: 컴포넌트 옆(`<Name>.stories.tsx`), import는 `@storybook/react-vite`.
 - 테스트: 컴포넌트 옆(`<Name>.test.tsx`), **Vitest + Testing Library**(jsdom). **상호작용·a11y 로직이 있는 것 우선**(Dialog 개폐·Tabs 키보드·Field aria 연결·Button asChild). 순수 표현 컴포넌트는 선택.
-- **Storybook은 이 패키지가 소유** — `packages/ui/.storybook`(react-vite + Tailwind v4 자립). `pnpm --filter @repo/ui storybook`으로 실행, `build-storybook`으로 정적 빌드.
+- **Storybook은 이 패키지가 소유** — `packages/ui/.storybook`(react-vite + Tailwind v4 자립). `pnpm --filter @repo/ui storybook`으로 실행, `build-storybook`으로 정적 빌드. **디자인시스템 링크: https://ds.formbwa.site** (Vercel, push 자동 배포).
 - **문서**: 전 컴포넌트 **autodocs**(설명은 JSDoc, props 표는 타입에서 자동). 합성(Field/Card/Dialog/Tabs)은 `<Name>.mdx`로 **조립 예시 + do/don't** 추가(Astryx bestPractices 정신).
 
 ## 컴포넌트 API
