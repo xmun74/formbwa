@@ -7,8 +7,8 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "storybook": "turbo run storybook --filter=web",
-    "build-storybook": "turbo run build-storybook --filter=web",
+    "storybook": "turbo run storybook --filter=@repo/ui",
+    "build-storybook": "turbo run build-storybook --filter=@repo/ui",
     "prepare": "husky",
     "steiger": "steiger ./apps/web/src"
   },

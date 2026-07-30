@@ -1,158 +1,99 @@
-# Turborepo starter
+<div align="center">
+  <img src="./apps/web/src/shared/ui/logo/Logo.svg" alt="폼봐" width="72" />
 
-This Turborepo starter is maintained by the Turborepo core team.
+### 폼봐 (formbwa)
 
-## Using this example
+---
 
-Run the following command:
+웹캠이 내 자세를 실시간으로 봐주는 홈 트레이닝 코치
 
-```sh
-npx create-turbo@latest
+[![CI](https://github.com/xmun74/formbwa/actions/workflows/ci.yml/badge.svg)](https://github.com/xmun74/formbwa/actions/workflows/ci.yml)
+
+🔗 **서비스**: <https://formbwa.site> &nbsp;|&nbsp; 🎨 **디자인 시스템**: <https://ds.formbwa.site>
+
+</div>
+
+---
+
+## 1. 소개
+
+캐릭터 코치의 시범을 따라 하면, **웹캠이 자세를 실시간으로 읽어 그 순간 교정**해주는 홈 트레이닝 서비스. 유튜브 홈트처럼 보되, 그 영상이 나를 마주 보고 자세를 잡아준다.
+
+- 타깃: 홈트 입문자(20~30대)
+- 한국어 전용, 데스크톱 우선, **영상은 기기 안에서만 처리(저장, 전송 없음)**
+- 1단계는 **스쿼트**부터. 포즈 인식은 온디바이스(MediaPipe)
+
+## 2. 폴더 구조
+
+```
+formbwa/
+├── apps/
+│   ├── web/   # Next.js 프론트엔드 (App Router, FSD)
+│   └── be/    # NestJS 백엔드 (Prisma, Postgres)
+├── packages/
+│   ├── core/              # 판정 엔진 — 프레임워크 무관 순수 TS
+│   ├── ui/                # 디자인 시스템 — 컴포넌트 + Storybook
+│   ├── design-tokens/     # 디자인 토큰 — TS → Tailwind @theme
+│   ├── eslint-config/     # 공유 ESLint 설정
+│   └── typescript-config/ # 공유 tsconfig
+└── docs/      # PRD, TRD-FE, TRD-BE, TASKS
 ```
 
-## What's inside?
+## 3. 기술 스택
 
-This Turborepo includes the following packages/apps:
+| 영역          | 핵심                                                 | 상세                                  |
+| ------------- | ---------------------------------------------------- | ------------------------------------- |
+| **Frontend**  | Next.js(App Router), Tailwind v4, MediaPipe          | [apps/web/README](apps/web/README.md) |
+| **Backend**   | NestJS, Prisma, Postgres                             | [apps/be/README](apps/be/README.md)   |
+| 판정 엔진     | `@repo/core` (순수 TS, 웹↔RN 재사용)                 | —                                     |
+| 디자인 시스템 | `@repo/ui` (tailwind-variants) + Storybook           | <https://ds.formbwa.site>             |
+| 디자인 토큰   | `@repo/design-tokens` (TS → Tailwind theme)          | —                                     |
+| 모노레포, 툴  | Turborepo, pnpm, TypeScript, ESLint/Prettier, Vitest | —                                     |
 
-### Apps and Packages
+## 4. Frontend — `apps/web`
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- Next.js App Router 기반 웹 클라이언트.
+- 카메라, 포즈 추론, 판정, 화면을 담당한다.
+- FSD(Feature-Sliced Design) 구조.
+- 상세 설계: [TRD-FE](docs/TRD-FE.md) | 실행/명령어: [apps/web/README](apps/web/README.md)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## 5. Backend — `apps/be`
 
-### Utilities
+- NestJS + Prisma 기반 API 서버
+- 계정, 기록, 리포트(2단계).
+- 현재는 헬스체크 + 스키마 골격.
+- 상세 설계: [TRD-BE](docs/TRD-BE.md) | 실행/명령어: [apps/be/README](apps/be/README.md)
 
-This Turborepo has some additional tools already setup for you:
+## 6. Packages
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+| 패키지                    | 역할                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `@repo/core`              | 각도, FSM, 판정 로직. React/DOM 무의존 순수 TS(웹→RN 재사용). Vitest 회귀                                                |
+| `@repo/ui`                | 디자인 시스템 컴포넌트. tailwind-variants + `cn`, 자립 Storybook, 테스트. 규약 [CONVENTIONS](packages/ui/CONVENTIONS.md) |
+| `@repo/design-tokens`     | 색, 간격, 타이포, radius → Tailwind `@theme` 생성                                                                        |
+| `@repo/eslint-config`     | base/next-js/react/core/nest/fsd ESLint 프리셋                                                                           |
+| `@repo/typescript-config` | 공유 `tsconfig` 베이스                                                                                                   |
 
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## 7. 시작하기
 
 ```sh
-turbo build --filter=docs
+# 요구사항: Node 20+, pnpm 9
+pnpm install
+
+pnpm dev                    # 전체 개발 서버 (web:3000, be:4000)
+pnpm --filter web dev       # 프론트만
+pnpm --filter be start:dev  # 백엔드만 (Postgres 필요: docker compose up -d)
+pnpm storybook              # 디자인 시스템 (localhost:6006)
+
+pnpm build                  # 전체 빌드
+pnpm lint                   # 린트
+pnpm check-types            # 타입 체크
+turbo run test              # 테스트
 ```
 
-Without global `turbo`:
+## 8. 문서
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- [PRD](docs/PRD.md) — 기획 명세서
+- [TRD-FE](docs/TRD-FE.md) — 프론트엔드 기술 설계
+- [TRD-BE](docs/TRD-BE.md) — 백엔드 기술 설계
+- [TASKS](docs/TASKS.md) — 작업 진행 순서 계획

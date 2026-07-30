@@ -254,5 +254,5 @@ interface CoachDecision {
 
 ## 11. 배포
 
-- Vercel (1~2단계 Hobby — 비상업 한정, 상업화 시 Pro 또는 Cloudflare Pages 재검토)
+- Vercel
 - 커스텀 도메인의 web 서브도메인 사용 (쿠키 공유 요건 — TRD-BE 참조)

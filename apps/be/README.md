@@ -1,98 +1,60 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# apps/be — 백엔드
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- NestJS + Prisma 기반 API 서버. **계정, 기록, 리포트(2단계)**를 담당한다.
+- 현재(1단계)는 배포, 인증 전으로, **헬스체크 + DB 스키마 골격**까지 로컬에서 도는 상태.
+- 상세 설계는 [docs/TRD-BE.md](../../docs/TRD-BE.md).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 스택
 
-## Description
+- **NestJS**, TypeScript
+- **Prisma 7** — 드라이버 어댑터 필수(`@prisma/adapter-pg`), 클라이언트는 `src/generated/prisma`에 생성
+- **PostgreSQL** — 로컬은 `docker-compose.yml`
+- **class-validator** — 입력 검증 파이프
+- 포트 **4000** (web dev 서버가 3000 점유)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 폴더 구조
 
-## Project setup
-
-```bash
-$ pnpm install
+```
+apps/be/
+├── src/
+│   ├── main.ts            # 부트스트랩 (포트 4000, 검증 파이프)
+│   ├── health/            # 헬스체크 — $queryRaw로 DB까지 왕복 확인
+│   ├── prisma/            # PrismaService (어댑터 연결)
+│   └── generated/prisma/  # Prisma 생성 클라이언트 (gitignore)
+├── prisma/                # schema.prisma, 마이그레이션
+├── prisma.config.ts       # datasource URL
+├── test/                  # e2e
+└── Dockerfile             # turbo prune 기반 (빌드 확인용, 배포는 2단계)
 ```
 
-## Compile and run the project
+## Quick Start
 
-```bash
-# development
-$ pnpm run start
+```sh
+# 레포 루트에서 의존성 설치 (postinstall이 prisma generate 실행)
+pnpm install
 
-# watch mode
-$ pnpm run start:dev
+# 1) 로컬 Postgres 기동
+docker compose up -d
 
-# production mode
-$ pnpm run start:prod
+# 2) .env 에 DATABASE_URL 설정 후 마이그레이션
+pnpm --filter be exec prisma migrate dev
+
+# 3) 개발 서버 (http://localhost:4000)
+pnpm --filter be start:dev
+
+# 헬스체크
+curl http://localhost:4000/health   # DB 죽어 있으면 500
 ```
 
-## Run tests
+> `postinstall: prisma generate`가 필수 — 생성물이 gitignore라 CI엔 없으므로 install 때 생성한다.
 
-```bash
-# unit tests
-$ pnpm run test
+## 명령어
 
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| 명령                             | 설명                             |
+| -------------------------------- | -------------------------------- |
+| `pnpm --filter be start:dev`     | 개발 서버 (watch, 4000)          |
+| `pnpm --filter be build`         | 빌드 (`nest build`)              |
+| `pnpm --filter be start:prod`    | 빌드 결과 실행                   |
+| `pnpm --filter be lint`          | ESLint                           |
+| `pnpm --filter be test`          | 유닛 테스트 (Jest)               |
+| `pnpm --filter be exec prisma …` | Prisma CLI(마이그레이션, studio) |
