@@ -9,8 +9,6 @@ interface ExerciseCardProps {
 
 /**
  * 종목 카드 — 썸네일(현재는 실루엣 플레이스홀더, 실제 이미지는 M4) + 이름 + 상태 배지.
- * ready만 클릭 가능. 선택 시 브랜드 보더 + 초록 썸네일.
- * '준비 중'은 disabled + 흐린 처리.
  */
 export function ExerciseCard({
   exercise,
@@ -40,13 +38,13 @@ export function ExerciseCard({
       {/* 썸네일 플레이스홀더 */}
       <div
         className={[
-          "mb-3 flex h-[150px] items-center justify-center rounded-xl",
+          "mb-3 flex h-37.5 items-center justify-center rounded-xl",
           selected ? "bg-brand-50" : "bg-[#eef2f0]",
         ].join(" ")}
       >
         <span
           className={[
-            "h-[62px] w-11 rounded-t-3xl",
+            "h-15.5 w-11 rounded-t-3xl",
             selected ? "bg-brand-300" : "bg-[#d4dcd9]",
           ].join(" ")}
         />
