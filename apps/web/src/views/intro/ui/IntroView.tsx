@@ -1,6 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Button, Card } from "@repo/ui";
+import { ROUTES } from "@/shared/config";
 import { AppShell } from "@/shared/ui/app-shell";
 import { Footer } from "@/shared/ui/footer";
 import LogoSvg from "@/shared/ui/logo/Logo.svg";
@@ -56,7 +57,7 @@ export function IntroView() {
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-end lg:justify-start gap-x-5 gap-y-3">
             <Button asChild size="lg">
-              <Link href="/exercises">시작하기</Link>
+              <Link href={ROUTES.ROUTINE}>시작하기</Link>
             </Button>
           </div>
         </div>

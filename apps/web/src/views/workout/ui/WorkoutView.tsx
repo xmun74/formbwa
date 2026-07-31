@@ -13,6 +13,7 @@ import {
   type PoseFeatures,
 } from "@repo/core";
 import { displayName, useWorkoutStore } from "@/entities/workout";
+import { ROUTES } from "@/shared/config";
 import { track } from "@/shared/lib/analytics";
 import { useCameraPose } from "@/shared/lib/pose";
 import { cancelSpeech, speak } from "@/shared/lib/speech";
@@ -119,7 +120,7 @@ export function WorkoutView() {
       }),
     );
     track("set_completed", { reps, quality });
-    router.push("/summary");
+    router.push(ROUTES.SUMMARY);
   };
 
   return (

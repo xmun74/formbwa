@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Dialog } from "@repo/ui";
+import { ROUTES } from "@/shared/config";
 import { track } from "@/shared/lib/analytics";
 
 /**
@@ -12,7 +13,11 @@ import { track } from "@/shared/lib/analytics";
  * - [✕ 그만두기] 버튼: 같은 확인 모달 → 확인 시 `exitHref`로 이동
  *
  */
-export function ExitGuard({ exitHref = "/exercises" }: { exitHref?: string }) {
+export function ExitGuard({
+  exitHref = ROUTES.ROUTINE,
+}: {
+  exitHref?: string;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 

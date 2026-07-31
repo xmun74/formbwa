@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/shared/config";
+import { ROUTES, SITE_URL } from "@/shared/config";
 
 /**
  * /robots.txt 자동 생성. 공개 콘텐츠는 크롤 허용, 운동 진행 플로우는 제외
@@ -9,8 +9,8 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: "/",
-      disallow: ["/prepare", "/workout", "/summary"],
+      allow: ROUTES.HOME,
+      disallow: [ROUTES.PREPARE, ROUTES.WORKOUT, ROUTES.SUMMARY],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

@@ -11,14 +11,14 @@
 - [x] Turborepo + pnpm workspaces 초기화 (`apps/web`, `packages/core`, 공유 config 골격)
 - [x] `apps/web` Next.js 앱 생성 — App Router, TypeScript strict, Tailwind CSS 4
 - [x] 기본 라이브러리 설치·프로바이더 구성 — TanStack Query, Zustand, Axios 인스턴스(`shared/api`), Zod
-- [x] FSD 레이어 스캐폴딩 (app/views/shared — TRD-FE §3.1. widgets/features/entities는 §3.2 승격 기준 충족 시 생성, 미리 만들지 않음)
+- [x] FSD 레이어 스캐폴딩 (루트 app/ + src의 app·views·shared — Next 라우팅은 루트 app/으로 분리, TRD-FE §3.1. widgets/features/entities는 §3.2 승격 기준 충족 시 생성, 미리 만들지 않음)
 - [x] `packages/core` 골격 + Vitest 셋업 (빈 테스트 1개로 파이프라인 확인)
 - [x] eslint 경계 규칙 — FSD 레이어 단방향 import + `packages/core`의 react/next/DOM import 금지
   - [x] core의 DOM 차단 — `packages/core/tsconfig.json`의 `lib: ["ES2022"]`로 DOM 타입 자체 제거 (eslint 규칙보다 확실). 검증: `document` 사용 시 TS2584
   - [x] FSD 레이어 단방향 import — `eslint-plugin-boundaries` v7 (`@repo/eslint-config/fsd`). 슬라이스 간 cross-import는 Steiger 담당(0-7)
 - [x] DX 셋업 — ESLint+Prettier 공유 설정, Steiger(FSD 린트), Husky+lint-staged(pre-commit), commitlint(Conventional Commits)
   - `@repo/eslint-config`는 base/next-js/core + fsd export. lint-staged는 워크스페이스별 `.lintstagedrc.json` (루트 일괄 실행 시 eslint 설정을 못 찾아 전 커밋이 실패함)
-  - Steiger: `fsd/segments-by-purpose`는 `src/app/**`만 예외 — Next 라우팅 디렉터리를 겸해서 `providers.tsx`가 세그먼트로 오인됨 (TRD-FE §3.1)
+  - Steiger: fsd/segments-by-purpose는 src/app/\*\*만 예외 — app 레이어의 관례 세그먼트명(providers)을 steiger 0.7이 잡음(라우팅은 루트 app/으로 분리돼 스캔 밖). FSD 공식 with-nextjs 분리 구조
 - [x] Storybook 셋업 — **`@repo/ui`가 소유**(`packages/ui/.storybook`, **`@storybook/react-vite`**: 디자인 시스템은 순수 React라 Next 프리셋 불필요). 초기엔 apps/web(`@storybook/nextjs-vite`)에 뒀다가 디자인 시스템 구축 때 이전
   - 스토리는 컴포넌트 옆에 배치 (`packages/ui/src/<name>/<Name>.stories.tsx`) — 응집도 유지
   - init 기본 애드온 중 chromatic(유료 SaaS)·onboarding·addon-vitest(브라우저 테스트, TRD 밖) 제거. Playwright E2E는 M11 몫
@@ -62,9 +62,9 @@
 
 ### M2. 라우트 골격 + 포즈 파이프라인 + 운동 화면 (F1-5, F1-7, F1-8) (~2~3일)
 
-- [x] **6라우트 골격 (UI shell 완료)** — `/`(intro) → `/exercises`(exercise-list) → `/start`(workout-setup) → `/prepare`(prepare) → `/workout`(workout) → `/summary`(summary) (TRD-FE §3.1). 6개 화면 UI가 목 데이터로 모두 서 있음
+- [x] **6라우트 골격 (UI shell 완료)** — `/`(intro) → `/routine`(exercise-list) → `/start`(workout-setup) → `/prepare`(prepare) → `/workout`(workout) → `/summary`(summary) (TRD-FE §3.1). 6개 화면 UI가 목 데이터로 모두 서 있음
   - 준비/운동/요약을 **별도 라우트로 분리** (밝은 준비·몰입 다크 운동·밝은 결과). `/prepare`는 배치→캘리브 내부 2상태. 카메라·포즈·판정 로직은 아래 항목들
-- [x] **`entities/workout` store (Zustand persist)** — 닉네임·선택 코치·선택 종목·세트 결과를 localStorage 통째 영속 → 새로고침에도 단계 유지. /exercises 종목·/start 닉네임·코치를 쓰고 /workout·/summary가 읽게 배선 (브라우저 검증 완료). shared/config 목 제거
+- [x] **`entities/workout` store (Zustand persist)** — 닉네임·선택 코치·선택 종목·세트 결과를 localStorage 통째 영속 → 새로고침에도 단계 유지. /routine 종목·/start 닉네임·코치를 쓰고 /workout·/summary가 읽게 배선 (브라우저 검증 완료). shared/config 목 제거
   - steiger가 `@/` 별칭을 못 풀어 entities를 insignificant로 오탐 → `steiger.config.ts`에서 `insignificant-slice`를 `entities/**`에 한해 예외 (스캔 루트 src 유지)
 - [x] **`shared/lib/pose` 모델 로더 = 인메모리** — `PoseLandmarker` 싱글턴(클라이언트 dynamic import, WASM·모델 CDN). 도메인 아닌 리소스라 entity와 분리. 여러 번 불러도 1회만 로드, 실패 시 재시도
   - 오디오 프리로드는 M4(mp3)로 미룸
@@ -73,7 +73,7 @@
 - [x] Canvas 랜드마크 오버레이 (F1-7) — 상체+양다리 골격 선/점 (`useCameraPose` 내부)
 - [x] 전신 바운딩 박스 체크 + 배치 가이드 (F1-5) — core `isFullBodyInFrame`, `/prepare` 배치에서 전신 잡히면 "자세 잡았어요" 활성
 - [x] 기립 캘리브레이션 3초 → 기준값 저장 (F1-5) — `/prepare` 캘리브에서 무릎각 중앙값을 `entities/workout.standingKneeAngle`에 저장 → `/workout` FSM·판정이 사용(미측정 시 기본 170)
-- [x] **이탈 가드 (`ExitGuard`)** — `beforeunload` + 뒤로가기 가로채 확인 모달, [✕ 그만두기] → `/exercises` (TRD-FE §4). 다크 화면 공용(`shared/ui/exit-guard`), 브라우저 검증 완료
+- [x] **이탈 가드 (`ExitGuard`)** — `beforeunload` + 뒤로가기 가로채 확인 모달, [✕ 그만두기] → `/routine` (TRD-FE §4). 다크 화면 공용(`shared/ui/exit-guard`), 브라우저 검증 완료
 - [x] **운동 화면 실배선** — 좌: 실제 `<video>` + 오버레이 + **실시간 반복 카운트·자세 품질%·자막**(core FSM·judge). 우: 코치 시범 플레이스홀더(실영상 M4). 입문자 중심 위계
   - ⚠️ **웹캠 실검증은 로컬에서 사용자가** (이 환경엔 카메라 없음). 헤드리스에선 크래시 없이 상태 메시지로 폴백 확인
   - 자막은 판정 이벤트 → 텍스트 임시 매핑(`model/caption.ts`), 음성은 M4(coach.ts)
@@ -103,7 +103,7 @@
   - 정상 스쿼트 촬영(M3 fixture 겸용) → 마커리스 모캡 → **인체 비율 캐릭터(얼굴=코치)** 리타겟 → 단색/스튜디오 배경 렌더 → mp4 루프
   - 도구: MakeHuman(CC0) + 모캡(무료 티어 **비상업 주의**) + Blender. 투명 영상 금지(호환·깜빡임)
   - 매니페스트에 영상 경로 추가 (mp3와 같은 방식, 하드코딩 금지)
-- [x] **`/` 인트로 + `/exercises` 운동 목록 + `/start` 설정 화면 (UI 완료)** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/exercises`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`(`views/workout-setup`)는 닉네임 입력 + 준비물 안내(2m·측면 45°) + 캐릭터 카드(리치) + "운동 시작"(→ `/prepare`)
+- [x] **`/` 인트로 + `/routine` 운동 목록 + `/start` 설정 화면 (UI 완료)** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/routine`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`(`views/workout-setup`)는 닉네임 입력 + 준비물 안내(2m·측면 45°) + 캐릭터 카드(리치) + "운동 시작"(→ `/prepare`)
   - **UI는 목 데이터로 완성**. 실 캐릭터 에셋(코치 시범 영상)·음성은 M4 본체에서. `/` 피처 카드엔 클레이 캐릭터 일러스트(`views/intro/assets/pose-*.png`, 장식용) 적용, 하단 공용 `footer`에 운동 면책 고지(PRD §10)
   - M2에서 라우트 골격·운동 store(entities/workout)는 이미 섬 — 여기선 화면 내용을 채움
   - 운동 목록은 **부위별 구조를 미리** 세워 3단계 종목 추가(F3-3) 때 화면 재작업 없게. 선택 종목은 entities/workout에 저장
@@ -128,7 +128,7 @@
   - **퍼널 이벤트 배선 완료**(UI/흐름 안정된 시점 = 본인 검증 직전): `workout_started`(`WorkoutView` 카메라 ready effect), `set_completed`(`finishSet`, `{reps, quality}`), `workout_exited`(`ExitGuard.confirmExit` — /prepare·/workout 공용), `camera_permission_denied`(`useCameraPose` 거부 감지 — 카메라 쓰는 곳이 운동 플로우뿐이라 훅 1곳에서 화면 무관 계측, /prepare 선-거부까지 포착)
     - 원천 데이터(랜드마크·프레임)는 파라미터에 안 넣음 — 집계 수치만(`track()` 래퍼 주석 원칙 준수). 로컬(`next dev`)·GA_ID 없으면 무동작
   - ⚠️ 프라이버시: 포즈 랜드마크·프레임·영상 등 카메라 원천 데이터는 GA에 **절대 전송 금지**(집계 수치만). "영상은 기기 안에서만" 약속과 일관
-- [x] **검색 등록·메타데이터** — 도메인 `formbwa.site`(가비아·Vercel 연결). **코드**: `app/layout` 메타데이터 실화(title/description/`metadataBase`)·OG/트위터 카드(`app/opengraph-image.png`·`twitter-image.png`, 1200×624)·`app/robots.ts`(플로우 prepare/workout/summary 제외)·`app/sitemap.ts`(`/`·`/exercises`·`/start`)·`metadata.verification.other`(네이버, env `NAVER_SITE_VERIFICATION`)·`shared/config/site.ts`(SITE_URL 단일화). 검증기간에도 index 노출.
+- [x] **검색 등록·메타데이터** — 도메인 `formbwa.site`(가비아·Vercel 연결). **코드**: `app/layout` 메타데이터 실화(title/description/`metadataBase`)·OG/트위터 카드(`app/opengraph-image.png`·`twitter-image.png`, 1200×624)·`app/robots.ts`(플로우 prepare/workout/summary 제외)·`app/sitemap.ts`(`/`·`/routine`·`/start`)·`metadata.verification.other`(네이버, env `NAVER_SITE_VERIFICATION`)·`shared/config/site.ts`(SITE_URL 단일화). 검증기간에도 index 노출.
   - **소유확인·제출 완료**: ✅ Google Search Console(가비아 DNS TXT 도메인 속성) + 사이트맵 제출. ✅ 네이버 서치어드바이저(HTML 태그, env 주입+재배포) + 사이트맵 제출.
   - **도메인 정규화 = apex(`formbwa.site`) 단일** — Vercel에서 apex를 Primary로, `www`→apex 308. 서빙 호스트 = `metadata.canonical`·sitemap·robots `host`·`SITE_URL`이 전부 apex로 일치(검증 완료). ⚠️ 한때 Vercel이 반대(apex→www)로 드리프트해 정규 신호가 모순됐던 걸 재정렬함
   - **파비콘**: `app/favicon.ico`(256² ico) apex에서 200 직접 응답 = 정상. 구글 검색결과에 지구본이 떴던 건 위 정규 호스트 드리프트 + 신규 도메인 반영 지연 탓 — 방향 재정렬 후 Search Console 재크롤 요청, SERP 아이콘 반영은 수일~수주 대기(선택: `app/icon.svg`를 `Logo.svg`로 추가해 탭 아이콘 선명화)

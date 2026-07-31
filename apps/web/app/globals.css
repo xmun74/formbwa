@@ -5,7 +5,7 @@
 
 /* @repo/ui 컴포넌트의 Tailwind 클래스 스캔 — workspace 패키지(node_modules 심링크)는
    Tailwind v4 자동 감지에서 제외되므로 소스 경로를 명시한다. */
-@source "../../../../packages/ui/src";
+@source "../../../packages/ui/src";
 
 /* Tailwind preflight(@layer base) */
 @layer base {

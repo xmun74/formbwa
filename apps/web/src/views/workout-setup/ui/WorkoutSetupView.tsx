@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button, Field, Input } from "@repo/ui";
 import { useWorkoutStore } from "@/entities/workout";
+import { ROUTES } from "@/shared/config";
 import { primeSpeech } from "@/shared/lib/speech";
 import { AppShell } from "@/shared/ui/app-shell";
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
@@ -32,7 +33,7 @@ export function WorkoutSetupView() {
       {/* 브레드크럼 */}
       <header className="border-line-soft flex h-15.5 items-center gap-3 border-b px-11 text-base">
         <Link
-          href="/exercises"
+          href={ROUTES.ROUTINE}
           className="text-ink-muted hover:text-ink transition-colors"
         >
           ← 운동 목록
@@ -96,7 +97,7 @@ export function WorkoutSetupView() {
           </p>
 
           <Button asChild size="lg" className="mt-8 w-full">
-            <Link href="/prepare" onClick={commitAndStart}>
+            <Link href={ROUTES.PREPARE} onClick={commitAndStart}>
               운동 시작
             </Link>
           </Button>

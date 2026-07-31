@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@repo/ui";
 import { useWorkoutStore } from "@/entities/workout";
+import { ROUTES } from "@/shared/config";
 import { AppShell } from "@/shared/ui/app-shell";
 import {
   ALL_EXERCISES,
@@ -13,7 +14,7 @@ import {
 import { ExerciseCard } from "./ExerciseCard";
 
 /**
- * `/exercises` 운동 목록 (PRD §4-2) — 부위별 종목 그리드.
+ * `/routine` 운동 목록 (PRD §4-2) — 부위별 종목 그리드. (구 `/exercises`, 추후 루틴 빌더)
  * 종목을 고르면 우하단 플로팅 버튼이 "{종목}로 시작하기"로 바뀌고 `/start`로 이동.
  * 지금은 스쿼트만 선택 가능.
  */
@@ -64,7 +65,7 @@ export function ExerciseListView() {
           size="lg"
           className="shadow-[0_16px_34px_-14px] shadow-brand-500/70"
         >
-          <Link href="/start" onClick={() => setExercise(selected.name)}>
+          <Link href={ROUTES.START} onClick={() => setExercise(selected.name)}>
             {selected.name}로 시작하기 →
           </Link>
         </Button>

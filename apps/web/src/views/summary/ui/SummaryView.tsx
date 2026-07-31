@@ -4,6 +4,7 @@ import { Clock, RotateCcw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button, Card } from "@repo/ui";
 import { displayName, useWorkoutStore } from "@/entities/workout";
+import { ROUTES } from "@/shared/config";
 import { AppShell } from "@/shared/ui/app-shell";
 
 const POINT_CLASS: Record<string, string> = {
@@ -13,7 +14,7 @@ const POINT_CLASS: Record<string, string> = {
 
 /**
  * `/summary` 요약 (PRD §4-4) — 라이트 테마. 세트 결과 + 코치 총평.
- * "한 세트 더" → /workout, "다른 운동" → /exercises.
+ * "한 세트 더" → /workout, "다른 운동" → /routine.
  */
 export function SummaryView() {
   const router = useRouter();
@@ -150,14 +151,14 @@ export function SummaryView() {
           <Button
             variant="primary"
             className="px-10 py-3.5"
-            onClick={() => router.push("/workout")}
+            onClick={() => router.push(ROUTES.WORKOUT)}
           >
             한 세트 더
           </Button>
           <Button
             variant="secondary"
             className="px-10 py-3.5"
-            onClick={() => router.push("/exercises")}
+            onClick={() => router.push(ROUTES.ROUTINE)}
           >
             다른 운동
           </Button>

@@ -1,5 +1,6 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
+import { Providers } from "@/app";
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -8,7 +9,6 @@ import {
 } from "@/shared/config";
 import { GA_ID } from "@/shared/lib/analytics";
 import { JsonLd } from "@/shared/ui/json-ld";
-import { Providers } from "./providers";
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./globals.css";
 

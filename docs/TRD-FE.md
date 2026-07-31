@@ -55,24 +55,31 @@ FSD 공식 v2.1의 **"Start simple, extract when needed"** 원칙을 따른다. 
 
 ### 3.1 현재 구성 (1단계)
 
+FSD × Next App Router: **Next 라우팅은 루트 `app/`(라우트 파일=얇은 re-export), FSD 레이어는 `src/`**. FSD 공식 with-nextjs 분리 구조 — 루트 `app`이 `src/app`보다 우선이라 라우팅은 루트에서 하고 `src/app`은 FSD app 레이어로 쓴다. `pages` 레이어는 Next 예약어 충돌로 `views`.
+
 ```
-apps/web/src/
-├── app/          # Next.js 라우팅 + FSD app 레이어 (얇게 유지, 로직 금지)
-│   ├── page.tsx             # /          → views/intro
-│   ├── exercises/page.tsx   # /exercises → views/exercise-list (운동 목록)
-│   ├── start/page.tsx       # /start     → views/workout-setup (닉네임+코치)
-│   ├── prepare/page.tsx     # /prepare   → views/prepare (배치·캘리브)
-│   ├── workout/page.tsx     # /workout   → views/workout (운동)
-│   └── summary/page.tsx     # /summary   → views/summary (요약)
-├── views/        # FSD pages 레이어 (Next 예약어 충돌로 views 명명)
-└── shared/       # 앱 전용 ui/lib/api/config (토큰=@repo/design-tokens, 컴포넌트=@repo/ui 패키지)
+apps/web/
+├── app/                       # Next.js 라우팅 (라우트 파일 = 얇은 re-export)
+│   ├── (home)/page.tsx        # /          → views/intro
+│   ├── routine/page.tsx       # /routine   → views/exercise-list (운동 목록 → 추후 루틴 빌더)
+│   ├── start/page.tsx         # /start     → views/workout-setup (닉네임+코치)
+│   ├── (exercise)/            # 다크 몰입 플로우 route group (URL 미반영)
+│   │   ├── prepare/page.tsx   # /prepare   → views/prepare (배치·캘리브)
+│   │   └── workout/page.tsx   # /workout   → views/workout (운동)
+│   ├── summary/page.tsx       # /summary   → views/summary (요약)
+│   └── layout.tsx, globals.css, robots.ts, sitemap.ts, opengraph-image.png
+└── src/
+    ├── app/       # FSD app 레이어 — 전역 프로바이더(providers 세그먼트 + index 배럴)
+    ├── views/     # FSD pages 레이어 (Next 예약어 충돌로 views 명명)
+    └── shared/    # 앱 전용 ui/lib/api/config (라우트 상수 ROUTES·site, 토큰=@repo/design-tokens, 컴포넌트=@repo/ui 패키지)
 ```
 
-| 레이어    | 역할                                           | 슬라이스 예시                                                                                         |
-| --------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `app/`    | 라우팅, 전역 프로바이더(TanStack Query 등)     | 6라우트 `/`·`/exercises`·`/start`·`/prepare`·`/workout`·`/summary` → 각 view 위임                     |
-| `views/`  | 화면 조립 + **그 화면 전용** 로직·상태·UI 블록 | `intro`, `exercise-list`, `workout-setup`, `prepare`, `workout`, `summary`                            |
-| `shared/` | 앱 전용 ui/lib/api/config (비즈니스 로직 금지) | `shared/api`(Axios), `shared/ui`(앱 셸: header/footer/app-shell). 재사용 컴포넌트는 `@repo/ui` 패키지 |
+| 레이어      | 역할                                                | 슬라이스 예시                                                                                              |
+| ----------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| 루트 `app/` | Next 라우팅 (얇은 re-export)                        | 6라우트 `/`·`/routine`·`/start`·`/prepare`·`/workout`·`/summary` → 각 view 위임. 경로는 `ROUTES` 상수      |
+| `src/app/`  | FSD app 레이어 — 전역 프로바이더(TanStack Query 등) | `providers`(세그먼트) + `index.ts`(배럴). 루트 `app/layout`이 `@/app`으로 소비                             |
+| `views/`    | 화면 조립 + **그 화면 전용** 로직·상태·UI 블록      | `intro`, `exercise-list`, `workout-setup`, `prepare`, `workout`, `summary`                                 |
+| `shared/`   | 앱 전용 ui/lib/api/config (비즈니스 로직 금지)      | `shared/config`(ROUTES·site), `shared/api`(Axios), `shared/ui`(앱 셸). 재사용 컴포넌트는 `@repo/ui` 패키지 |
 
 ### 3.2 하위 레이어 승격 기준
 
@@ -106,7 +113,7 @@ apps/web/src/
 - 캘리브레이션: 시작 시 기립 자세 3초 → 사용자별 기준 각도·비율 저장 (원근 보정)
 - 카메라 가이드: 노트북 웹캠 기준 측면 45° 배치 안내, 전신 바운딩 박스 확인 후 시작 허용
 - **라우트 분리 + 준비 단계 내부 상태**: 준비(`/prepare`) → 운동(`/workout`) → 요약(`/summary`)을 **별도 라우트**로 둔다(밝은 준비·몰입 다크 운동·밝은 결과는 성격이 달라). 단 `/prepare` 안에서는 `placement`(배치) → `calibration`(3초)를 **내부 2상태 전환**으로 하고, 완료 시 `/workout`으로 이동한다. 라우트 간 상태(선택 코치·세트 결과)는 `entities/workout` store(§3.2)로 유지
-- **이탈 가드**: 다크 화면(`/prepare`·`/workout`)에서 운동 중단은 화면 내 [✕ 그만두기] 버튼으로 (→ `/exercises`). 뒤로가기·새로고침·탭 닫기 방어(`beforeunload` + 뒤로가기 가로채 "그만두시겠어요?")는 M2에서 추가
+- **이탈 가드**: 다크 화면(`/prepare`·`/workout`)에서 운동 중단은 화면 내 [✕ 그만두기] 버튼으로 (→ `/routine`). 뒤로가기·새로고침·탭 닫기 방어(`beforeunload` + 뒤로가기 가로채 "그만두시겠어요?")는 M2에서 추가
 
 ## 5. 코어 엔진 (packages/core)
 
@@ -230,7 +237,7 @@ interface CoachDecision {
 
 ### 9.1 프리로드 전략 — 라우트에 걸쳐 은폐
 
-라우트 체인(`/` → `/exercises` → `/start` → `/prepare` → `/workout` → `/summary`)이 로딩을 은폐하는 장치다. 사용자가 인트로를 읽고 운동·코치를 고르는 시간이 곧 다운로드 시간이 된다. **핵심 전제: 프리로드한 모델은 라우트가 바뀌어도 유지돼야 한다** — `shared/lib`의 **인메모리** 프리로드 훅/스토어에 인스턴스를 두면 Next SPA 특성상 라우트 전환에도 메모리에 남는다(모델은 도메인이 아니라 인프라라 entity와 분리 — §3.2). view 안에 두면 `/prepare`·`/workout` 진입 시 다시 받게 된다.
+라우트 체인(`/` → `/routine` → `/start` → `/prepare` → `/workout` → `/summary`)이 로딩을 은폐하는 장치다. 사용자가 인트로를 읽고 운동·코치를 고르는 시간이 곧 다운로드 시간이 된다. **핵심 전제: 프리로드한 모델은 라우트가 바뀌어도 유지돼야 한다** — `shared/lib`의 **인메모리** 프리로드 훅/스토어에 인스턴스를 두면 Next SPA 특성상 라우트 전환에도 메모리에 남는다(모델은 도메인이 아니라 인프라라 entity와 분리 — §3.2). view 안에 두면 `/prepare`·`/workout` 진입 시 다시 받게 된다.
 
 - **모델은 새로고침 시 재프리로드**(인메모리라 사라짐 — 재다운로드 캐시 성격이라 무방). 반면 **닉네임·종목·코치 선택값은 `entities/workout`의 localStorage 영속**(§3.2)이라 새로고침에도 단계가 유지된다. 즉 "새로고침 유지"의 주체는 인메모리가 아니라 **localStorage**다
 

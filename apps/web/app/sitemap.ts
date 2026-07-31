@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/shared/config";
+import { ROUTES, SITE_URL } from "@/shared/config";
 
 /**
  * /sitemap.xml 자동 생성 — 색인 대상 공개 페이지만.
@@ -9,19 +9,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
     {
-      url: `${SITE_URL}/`,
+      url: `${SITE_URL}${ROUTES.HOME}`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${SITE_URL}/exercises`,
+      url: `${SITE_URL}${ROUTES.ROUTINE}`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/start`,
+      url: `${SITE_URL}${ROUTES.START}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,

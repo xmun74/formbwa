@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ROUTES } from "@/shared/config";
 import { CalibrationStage } from "./CalibrationStage";
 import { PlacementStage } from "./PlacementStage";
 
@@ -18,5 +19,5 @@ export function PrepareView() {
   if (step === "placement") {
     return <PlacementStage onNext={() => setStep("calibration")} />;
   }
-  return <CalibrationStage onNext={() => router.push("/workout")} />;
+  return <CalibrationStage onNext={() => router.push(ROUTES.WORKOUT)} />;
 }
