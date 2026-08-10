@@ -4,7 +4,7 @@
  * fixture(랜드마크 시퀀스)를 넣어 스냅샷 회귀하거나, 녹화본을 오프라인 분석할 때 쓴다.
  */
 import { extractFeatures } from "./angle";
-import { defaultJudgeConfig, judgeRep } from "./judge";
+import { defaultJudgeConfig, judgeRep, type JudgeConfig } from "./judge";
 import { DEFAULT_SQUAT_CONFIG, SquatFSM } from "./squat-fsm";
 import type { JudgeEvent, PoseFrame } from "./types";
 
@@ -24,6 +24,8 @@ export function estimateStandingAngle(frames: PoseFrame[]): number {
 export interface PipelineOptions {
   /** 기립 무릎 각도(캘리브 결과). 없으면 프레임에서 추정 */
   standingKneeAngle?: number;
+  /** judge 설정 오버라이드. fixture 판정력 검증은 그레이스 없이(graceReps:0) 돌린다 */
+  judgeConfig?: Partial<JudgeConfig>;
 }
 
 /** 프레임 시퀀스를 파이프라인에 흘려 발생한 판정 이벤트를 순서대로 모은다. */
@@ -36,7 +38,7 @@ export function runSquatPipeline(
     standingKneeAngle: standing,
     ...DEFAULT_SQUAT_CONFIG,
   });
-  const judgeCfg = defaultJudgeConfig(standing);
+  const judgeCfg = { ...defaultJudgeConfig(standing), ...opts.judgeConfig };
 
   const events: JudgeEvent[] = [];
   for (const frame of frames) {

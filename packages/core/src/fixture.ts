@@ -39,6 +39,8 @@ export interface FixtureCheck {
 export const checkFixture = (fixture: SquatFixture): FixtureCheck => {
   const events = runSquatPipeline(fixture.frames, {
     standingKneeAngle: fixture.standingKneeAngle,
+    // 그레이스(입문자 배려)는 실제 앱용 — fixture는 판정력 자체를 검증하므로 끈다
+    judgeConfig: { graceReps: 0 },
   });
   const failures: string[] = [];
   const exp = fixture.expect;

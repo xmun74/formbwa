@@ -1,6 +1,66 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`fixture 회귀 하네스 > 'sample-squat.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
+exports[`fixture 회귀 하네스 > 'squat-back_bent.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
+[
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "back_bent",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "knee_shallow",
+  },
+  {
+    "confidence": 0.5566666666666666,
+    "repIndex": 1,
+    "type": "tempo_too_fast",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "back_bent",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "knee_shallow",
+  },
+  {
+    "confidence": 0.5566666666666666,
+    "repIndex": 2,
+    "type": "tempo_too_fast",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 3,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 0.9684786273720976,
+    "repIndex": 3,
+    "type": "back_bent",
+  },
+  {
+    "confidence": 0.9855322018789359,
+    "repIndex": 3,
+    "type": "knee_shallow",
+  },
+]
+`;
+
+exports[`fixture 회귀 하네스 > 'squat-good.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
 [
   {
     "confidence": 1,
@@ -30,12 +90,167 @@ exports[`fixture 회귀 하네스 > 'sample-squat.json' > 판정 이벤트 스�
   {
     "confidence": 1,
     "repIndex": 3,
+    "type": "good_rep",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 4,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 4,
+    "type": "good_rep",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 5,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 5,
+    "type": "good_rep",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 6,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 6,
+    "type": "good_rep",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 7,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 7,
+    "type": "good_rep",
+  },
+]
+`;
+
+exports[`fixture 회귀 하네스 > 'squat-knee_over_toe.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
+[
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "knee_over_toe",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "knee_over_toe",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 3,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 3,
+    "type": "knee_over_toe",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 4,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 4,
+    "type": "knee_over_toe",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 5,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 5,
+    "type": "knee_over_toe",
+  },
+]
+`;
+
+exports[`fixture 회귀 하네스 > 'squat-knee_shallow.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
+[
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "knee_shallow",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "knee_shallow",
+  },
+]
+`;
+
+exports[`fixture 회귀 하네스 > 'squat-tempo_too_fast.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
+[
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 0.8904619088550134,
+    "repIndex": 1,
+    "type": "knee_shallow",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 1,
+    "type": "tempo_too_fast",
+  },
+  {
+    "confidence": 1,
+    "repIndex": 2,
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 0.7976818042534475,
+    "repIndex": 2,
     "type": "knee_shallow",
   },
   {
     "confidence": 1,
     "repIndex": 3,
-    "type": "tempo_too_fast",
+    "type": "rep_counted",
+  },
+  {
+    "confidence": 0.9632493295574676,
+    "repIndex": 3,
+    "type": "knee_shallow",
   },
 ]
 `;
