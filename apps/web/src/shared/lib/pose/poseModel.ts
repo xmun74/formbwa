@@ -14,16 +14,19 @@ const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
 
 let modelPromise: Promise<PoseLandmarker> | null = null;
+let instance: PoseLandmarker | null = null; // 동기 close용 (dispose가 즉시 접근)
 
 async function createLandmarker(): Promise<PoseLandmarker> {
   const { FilesetResolver, PoseLandmarker } =
     await import("@mediapipe/tasks-vision");
   const vision = await FilesetResolver.forVisionTasks(WASM_ROOT);
-  return PoseLandmarker.createFromOptions(vision, {
+  const lm = await PoseLandmarker.createFromOptions(vision, {
     baseOptions: { modelAssetPath: MODEL_URL, delegate: "GPU" },
     runningMode: "VIDEO",
     numPoses: 1,
   });
+  instance = lm;
+  return lm;
 }
 
 /** 모델 프리로드 시작(또는 진행 중/완료된 프라미스 반환). 여러 번 불러도 1회만 로드. */
@@ -36,4 +39,15 @@ export function preloadPoseModel(): Promise<PoseLandmarker> {
     throw e;
   });
   return modelPromise;
+}
+
+/**
+ * 모델을 해제하고 WebGL 컨텍스트를 반환한다. **새로고침·페이지 이탈(pagehide) 시 호출.**
+ * 안 하면 GPU 컨텍스트가 새로고침마다 누적돼 브라우저 한계 초과로 점점 느려진다.
+ * 라우트 전환에는 부르지 않는다(§9.1 — 모델은 라우트 전환에 유지).
+ */
+export function disposePoseModel(): void {
+  instance?.close(); // 동기 — WebGL 컨텍스트 즉시 반환
+  instance = null;
+  modelPromise = null;
 }

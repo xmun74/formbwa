@@ -25,6 +25,7 @@ function formatDuration(ms: number): string {
 interface BuildArgs {
   reps: number;
   goodReps: number;
+  targetReps: number;
   faultCounts: Partial<Record<JudgeEventType, number>>;
   durationMs: number;
 }
@@ -32,6 +33,7 @@ interface BuildArgs {
 export function buildSetResult({
   reps,
   goodReps,
+  targetReps,
   faultCounts,
   durationMs,
 }: BuildArgs): SetResult {
@@ -57,7 +59,7 @@ export function buildSetResult({
 
   return {
     reps,
-    targetReps: reps,
+    targetReps,
     quality,
     durationLabel: formatDuration(durationMs),
     liveCaption: "",

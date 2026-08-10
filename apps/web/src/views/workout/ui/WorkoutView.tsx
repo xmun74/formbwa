@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Coach,
+  DEFAULT_COACH_CONFIG,
   DEFAULT_SQUAT_CONFIG,
   defaultJudgeConfig,
   judgeRep,
@@ -21,10 +22,25 @@ import { speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { personalize, pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
-import { DARK_STRIPE } from "../model/workout";
+import {
+  COUNTDOWN_FROM,
+  DARK_STRIPE,
+  REST_SECONDS,
+  SET_END_DELAY_MS,
+  SET_TARGET_REPS,
+} from "../model/workout";
 
 // /prepare 캘리브레이션 미측정 시 기본값
 const DEFAULT_STANDING_KNEE_ANGLE = 170;
+
+// 실사용 튜닝 (fixture 검증과 별개 — 라이브는 더 자주·바로 교정). core 기본값은 보수적이라 여기서 완화.
+const LIVE_GRACE_REPS = 0; // 첫 회부터 교정
+const LIVE_COACH_CONFIG = {
+  ...DEFAULT_COACH_CONFIG,
+  cooldownMs: 2500, // 1~2회마다 피드백
+  minConfidence: 0.72, // 어느 정도 틀리면 교정
+  suppressRepeat: false, // 같은 실수 반복해도 계속 교정 (변형 멘트)
+};
 
 const STATUS_TEXT = {
   loading: "카메라·모델 준비 중…",
@@ -35,9 +51,10 @@ const STATUS_TEXT = {
 
 export function WorkoutView() {
   const router = useRouter();
-  const { exerciseName, setNo, coach, nickname, standingKneeAngle } =
+  const { exerciseName, setNo, totalSets, coach, nickname, standingKneeAngle } =
     useWorkoutStore();
   const setResult = useWorkoutStore((s) => s.setResult);
+  const nextSet = useWorkoutStore((s) => s.nextSet);
   // 표시 이름(비면 "회원"). 운동 중엔 안 바뀌지만 onFeatures 클로저용으로 ref에도 보관
   const name = displayName(nickname);
   const nameRef = useRef(name);
@@ -50,9 +67,12 @@ export function WorkoutView() {
     standingKneeAngle: standing,
     ...DEFAULT_SQUAT_CONFIG,
   });
-  const judgeCfgRef = useRef(defaultJudgeConfig(standing));
+  const judgeCfgRef = useRef({
+    ...defaultJudgeConfig(standing),
+    graceReps: LIVE_GRACE_REPS,
+  });
   const coachRef = useRef<Coach | null>(null);
-  coachRef.current ??= new Coach();
+  coachRef.current ??= new Coach(LIVE_COACH_CONFIG);
   const coachIdRef = useRef(coach.id);
   coachIdRef.current = coach.id;
 
@@ -66,12 +86,22 @@ export function WorkoutView() {
     personalize("자세를 잡고 시작해요", name),
   );
   const startAnnouncedRef = useRef(false);
+  const lastLineRef = useRef<string | null>(null); // 직전 대사 — 연속 중복 멘트 방지
+  const finishedRef = useRef(false); // 세트 종료 1회 보장 (자동·수동 중복 방지)
   const [voiceOn, setVoiceOn] = useState(true);
   const voiceOnRef = useRef(voiceOn);
   voiceOnRef.current = voiceOn;
+  // 세트 흐름: 운동 중 vs 세트 간 휴식. resting 중엔 판정을 멈춘다.
+  const [phase, setPhase] = useState<"exercising" | "resting">("exercising");
+  const phaseRef = useRef(phase);
+  phaseRef.current = phase;
+  const [restLeft, setRestLeft] = useState(0);
   const quality = reps > 0 ? Math.round((goodReps / reps) * 100) : 0;
+  const remaining = Math.max(0, SET_TARGET_REPS - reps);
+  const countingDown = remaining > 0 && remaining <= COUNTDOWN_FROM;
 
   const onFeatures = useCallback((features: PoseFeatures, tMs: number) => {
+    if (phaseRef.current !== "exercising") return; // 휴식 중엔 판정 안 함
     const rep = fsmRef.current!.update(features, tMs);
     if (!rep) return;
     const events = judgeRep(rep, judgeCfgRef.current);
@@ -87,8 +117,9 @@ export function WorkoutView() {
     // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 + 임시 음성(Web Speech, M4에 mp3)
     const { clipKey } = coachRef.current!.decide(events, tMs);
     if (clipKey) {
-      const line = pickLine(coachIdRef.current, clipKey);
+      const line = pickLine(coachIdRef.current, clipKey, lastLineRef.current);
       if (line) {
+        lastLineRef.current = line; // 다음 발화에서 이 대사 중복 금지
         // 자막엔 이름을 얹고(§6.1), 실시간 음성엔 이름 없이 원문만 재생
         // (mp3 있으면 mp3, 없으면 Web Speech 폴백 — audioBus가 판단)
         setCaption(personalize(line, nameRef.current));
@@ -114,18 +145,67 @@ export function WorkoutView() {
       speak(personalize("시작해볼게요!", nameRef.current));
   }, [status]);
 
-  const finishSet = () => {
-    setResult(
-      buildSetResult({
-        reps,
-        goodReps,
-        faultCounts: faultCountsRef.current,
-        durationMs: performance.now() - startMsRef.current,
-      }),
-    );
+  // 다음 세트 시작 — 상태·엔진 리셋 후 다시 운동 (자동 진행)
+  const startNextSet = useCallback(() => {
+    nextSet();
+    fsmRef.current = new SquatFSM({
+      standingKneeAngle: standing,
+      ...DEFAULT_SQUAT_CONFIG,
+    });
+    coachRef.current = new Coach(LIVE_COACH_CONFIG);
+    faultCountsRef.current = {};
+    startMsRef.current = performance.now();
+    lastLineRef.current = null;
+    finishedRef.current = false;
+    setReps(0);
+    setGoodReps(0);
+    setCaption(personalize("다음 세트 시작!", nameRef.current));
+    setPhase("exercising");
+  }, [nextSet, standing]);
+
+  // 세트 완료 — 마지막 세트면 요약, 아니면 휴식 후 다음 세트. 멘트 여유 뒤 전환(오디오 안 잘리게).
+  const completeSet = useCallback(() => {
+    if (finishedRef.current) return; // 자동 완료와 수동 버튼 동시 방지
+    finishedRef.current = true;
+    const isLast = setNo >= totalSets;
     track("set_completed", { reps, quality });
-    router.push(ROUTES.SUMMARY);
-  };
+    setCaption(
+      personalize(isLast ? "마지막 세트 완료!" : `${setNo}세트 완료!`, name),
+    );
+    window.setTimeout(() => {
+      if (isLast) {
+        setResult(
+          buildSetResult({
+            reps,
+            goodReps,
+            targetReps: SET_TARGET_REPS,
+            faultCounts: faultCountsRef.current,
+            durationMs: performance.now() - startMsRef.current,
+          }),
+        );
+        router.push(ROUTES.SUMMARY);
+      } else {
+        setRestLeft(REST_SECONDS);
+        setPhase("resting");
+      }
+    }, SET_END_DELAY_MS);
+  }, [reps, goodReps, quality, name, setNo, totalSets, setResult, router]);
+
+  // 목표 횟수를 채우면 자동으로 세트 완료
+  useEffect(() => {
+    if (reps >= SET_TARGET_REPS) completeSet();
+  }, [reps, completeSet]);
+
+  // 휴식 카운트다운 → 0이면 다음 세트 자동 시작
+  useEffect(() => {
+    if (phase !== "resting") return;
+    if (restLeft <= 0) {
+      startNextSet();
+      return;
+    }
+    const t = window.setTimeout(() => setRestLeft((n) => n - 1), 1000);
+    return () => window.clearTimeout(t);
+  }, [phase, restLeft, startNextSet]);
 
   return (
     <div className="bg-dark-canvas flex min-h-screen flex-col">
@@ -133,20 +213,42 @@ export function WorkoutView() {
       <header className="flex h-14 shrink-0 items-center justify-between px-5">
         <div className="text-dark-ink flex items-center gap-2 text-base font-bold">
           <span className="bg-live size-2 rounded-full" />
-          {exerciseName} · {setNo}세트
+          {exerciseName} · {setNo}/{totalSets}세트
         </div>
         <div className="flex items-center gap-3 text-base">
           <span className="text-dark-ink-muted">{coach.name} 코치 중</span>
           <ExitGuard />
           <button
             type="button"
-            onClick={finishSet}
+            onClick={completeSet}
             className="bg-brand-500 hover:bg-brand-600 rounded-full px-4 py-2 font-bold text-white transition-colors"
           >
             세트 끝내기 →
           </button>
         </div>
       </header>
+
+      {/* 세트 간 휴식 — 카운트다운 끝나면 다음 세트 자동 시작 */}
+      {phase === "resting" && (
+        <div className="bg-dark-canvas/95 fixed inset-0 z-30 grid place-items-center backdrop-blur-sm">
+          <div className="text-center">
+            <div className="text-dark-ink text-3xl font-extrabold">
+              {setNo}세트 완료! 💪
+            </div>
+            <div className="text-dark-ink-soft mt-3 text-lg">다음 세트까지</div>
+            <div className="text-brand-300 mt-1 text-7xl font-extrabold tabular-nums">
+              {restLeft}
+            </div>
+            <button
+              type="button"
+              onClick={startNextSet}
+              className="bg-brand-500 hover:bg-brand-600 mt-6 rounded-full px-8 py-3 font-bold text-white transition-colors"
+            >
+              바로 시작
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 2패널 */}
       <div className="grid min-h-0 flex-1 grid-cols-[38fr_62fr] gap-3 px-3 pb-3">
@@ -178,9 +280,14 @@ export function WorkoutView() {
               <div className="text-dark-ink mt-1 text-5xl font-extrabold">
                 {reps}
                 <span className="text-dark-ink-muted ml-1 text-xl font-medium">
-                  회
+                  / {SET_TARGET_REPS}
                 </span>
               </div>
+              {countingDown && (
+                <div className="text-brand-300 text-base font-bold">
+                  {remaining}개 남았어요!
+                </div>
+              )}
             </div>
             <div className="w-35 bg-dark-surface/85 rounded-2xl px-4.5 py-3 backdrop-blur-sm flex flex-col gap-1">
               <div className="text-dark-ink-muted text-base">자세 품질</div>

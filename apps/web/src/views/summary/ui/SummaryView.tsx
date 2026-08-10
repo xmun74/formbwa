@@ -14,11 +14,12 @@ const POINT_CLASS: Record<string, string> = {
 
 /**
  * `/summary` 요약 (PRD §4-4) — 라이트 테마. 세트 결과 + 코치 총평.
- * "한 세트 더" → /workout, "다른 운동" → /routine.
+ * "다시 하기" → 1세트부터 /workout, "다른 운동" → /routine.
  */
 export function SummaryView() {
   const router = useRouter();
   const { nickname, coach, setNo, totalSets, result } = useWorkoutStore();
+  const resetSetNo = useWorkoutStore((s) => s.resetSetNo);
 
   const ringLength = 2 * Math.PI * 81; // r=81
   const ringOffset = ringLength * (1 - result.quality / 100);
@@ -151,9 +152,12 @@ export function SummaryView() {
           <Button
             variant="primary"
             className="px-10 py-3.5"
-            onClick={() => router.push(ROUTES.WORKOUT)}
+            onClick={() => {
+              resetSetNo(); // 처음(1세트)부터 다시
+              router.push(ROUTES.WORKOUT);
+            }}
           >
-            한 세트 더
+            다시 하기
           </Button>
           <Button
             variant="secondary"

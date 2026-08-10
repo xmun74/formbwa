@@ -33,11 +33,21 @@ export const MNEMONICS: Record<
   },
 };
 
-/** clipKey에 해당하는 캐릭터 대사 하나를 고른다 (변형 중 랜덤). 없으면 null. */
-export function pickLine(coachId: string, clipKey: string): string | null {
+/**
+ * clipKey에 해당하는 캐릭터 대사 하나를 고른다 (변형 중 랜덤).
+ * `exclude`(직전 대사)와 같은 문장은 피한다 — 연속 중복 멘트 방지.
+ * 변형이 직전 대사뿐이면 null(침묵)로 중복을 막는다. 없으면 null.
+ */
+export function pickLine(
+  coachId: string,
+  clipKey: string,
+  exclude?: string | null,
+): string | null {
   const lines = MNEMONICS[coachId as CoachId]?.[clipKey as SpeakEvent];
   if (!lines || lines.length === 0) return null;
-  return lines[Math.floor(Math.random() * lines.length)]!;
+  const pool = exclude ? lines.filter((l) => l !== exclude) : lines;
+  if (pool.length === 0) return null;
+  return pool[Math.floor(Math.random() * pool.length)]!;
 }
 
 /**

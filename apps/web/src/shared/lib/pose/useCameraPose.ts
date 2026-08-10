@@ -12,7 +12,7 @@ import {
   type PoseFrame,
 } from "@repo/core";
 import { track } from "@/shared/lib/analytics";
-import { preloadPoseModel } from "./poseModel";
+import { disposePoseModel, preloadPoseModel } from "./poseModel";
 
 export type CameraStatus = "loading" | "ready" | "denied" | "error";
 
@@ -91,6 +91,14 @@ export function useCameraPose({ onFeatures, fps = 20 }: UseCameraPoseOptions) {
   const onFeaturesRef = useRef(onFeatures);
   onFeaturesRef.current = onFeatures;
   const minInterval = 1000 / fps;
+
+  // 새로고침·페이지 이탈 시 WebGL 컨텍스트 반환 — 누적 누수로 점점 느려지는 것 방지.
+  // (라우트 전환은 pagehide가 아니라 모델이 유지됨 — §9.1)
+  useEffect(() => {
+    const onPageHide = () => disposePoseModel();
+    window.addEventListener("pagehide", onPageHide);
+    return () => window.removeEventListener("pagehide", onPageHide);
+  }, []);
 
   useEffect(() => {
     let stream: MediaStream | null = null;

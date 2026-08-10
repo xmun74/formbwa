@@ -44,6 +44,10 @@ interface WorkoutState {
   setExercise: (name: string) => void;
   setStandingKneeAngle: (deg: number) => void;
   setResult: (r: SetResult) => void;
+  /** 다음 세트로 (setNo 증가). 세트 자동 진행에서 호출 */
+  nextSet: () => void;
+  /** 세트 번호를 1로 (새 운동 세션 시작 시) */
+  resetSetNo: () => void;
   reset: () => void;
 }
 
@@ -55,7 +59,7 @@ const DEFAULT_COACH: WorkoutCoach = {
 
 const DEFAULT_RESULT: SetResult = {
   reps: 12,
-  targetReps: 12,
+  targetReps: 15,
   quality: 82,
   durationLabel: "3:20",
   liveCaption: "무릎 조금만 더 굽혀요 — 좋아요!",
@@ -83,8 +87,15 @@ export const useWorkoutStore = create<WorkoutState>()(
       setExercise: (name) => set({ exerciseName: name }),
       setStandingKneeAngle: (deg) => set({ standingKneeAngle: deg }),
       setResult: (r) => set({ result: r }),
+      nextSet: () => set((s) => ({ setNo: s.setNo + 1 })),
+      resetSetNo: () => set({ setNo: 1 }),
       reset: () =>
-        set({ nickname: "", coach: DEFAULT_COACH, exerciseName: "스쿼트" }),
+        set({
+          nickname: "",
+          coach: DEFAULT_COACH,
+          exerciseName: "스쿼트",
+          setNo: 1,
+        }),
     }),
     { name: "formbwa-workout" },
   ),

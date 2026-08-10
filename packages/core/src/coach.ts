@@ -13,11 +13,14 @@ import type { CoachDecision, JudgeEvent, JudgeEventType } from "./types";
 export interface CoachConfig {
   cooldownMs: number;
   minConfidence: number;
+  /** 직전과 같은 종류 이벤트 억제(로봇 반복 방지). false면 쿨다운만으로 빈도 조절 */
+  suppressRepeat: boolean;
 }
 
 export const DEFAULT_COACH_CONFIG: CoachConfig = {
   cooldownMs: 4000,
   minConfidence: 0.8,
+  suppressRepeat: true,
 };
 
 // 발화 우선순위 (앞일수록 먼저). rep_counted는 발화 대상 아님.
@@ -50,8 +53,8 @@ export class Coach {
     if (nowMs - this.lastSpokenMs < this.cfg.cooldownMs) {
       return { clipKey: null }; // 쿨다운
     }
-    if (pick.type === this.lastType) {
-      return { clipKey: null }; // 동일 이벤트 연속 발화 금지
+    if (this.cfg.suppressRepeat && pick.type === this.lastType) {
+      return { clipKey: null }; // 동일 이벤트 연속 발화 금지 (옵션)
     }
 
     this.lastSpokenMs = nowMs;
