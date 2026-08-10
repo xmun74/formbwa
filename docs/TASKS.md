@@ -76,6 +76,8 @@
 - [x] **이탈 가드 (`ExitGuard`)** — `beforeunload` + 뒤로가기 가로채 확인 모달, [✕ 그만두기] → `/routine` (TRD-FE §4). 다크 화면 공용(`shared/ui/exit-guard`), 브라우저 검증 완료
 - [x] **운동 화면 실배선** — 좌: 실제 `<video>` + 오버레이 + **실시간 반복 카운트·자세 품질%·자막**(core FSM·judge). 우: 코치 시범 플레이스홀더(실영상 M4). 입문자 중심 위계
   - ⚠️ **웹캠 실검증은 로컬에서 사용자가** (이 환경엔 카메라 없음). 헤드리스에선 크래시 없이 상태 메시지로 폴백 확인
+  - ✅ **세트 자동 진행**(라이브 피드백): 목표 15회(`SET_TARGET_REPS`) 채우면 → `SET_END_DELAY_MS`(멘트 안 잘리게) → 마지막 세트면 요약, 아니면 휴식 오버레이(`REST_SECONDS` 카운트다운, "바로 시작" 스킵) → 다음 세트 자동. 세트 전환 시 FSM·coach·rep·결함 리셋. `entities/workout`에 `nextSet`/`resetSetNo`, 상단바 `setNo/totalSets`. 마지막 5회는 HUD 카운트다운 강조
+  - ✅ **WebGL 컨텍스트 누수 수정** — `poseModel.disposePoseModel()`을 `useCameraPose`가 `pagehide`에 배선. 새로고침마다 GPU 컨텍스트가 누적돼 점점 느려지던 것 해결(라우트 전환엔 미발동, 모델 유지 §9.1)
   - 자막은 판정 이벤트 → 텍스트 임시 매핑(`model/caption.ts`), 음성은 M4(coach.ts)
   - GPU delegate 이슈 시 `poseModel.ts`의 `delegate: "GPU"` → `"CPU"`
   - 시범 mp4는 프로그레시브 재생 (전체 프리로드 없이 첫 프레임부터 — §9.1). 판정과 동기화하지 않음
@@ -103,7 +105,8 @@
 - [~] mp3 일괄 생성 스크립트 + 매니페스트 JSON + 프리로드
   - ✅ **재생 인프라 완성**(mp3 파일만 있으면 되게 선(先)구축): `shared/lib/audio` — 매니페스트 로더(`/audio/{coachId}/manifest.json`, clipKey→파일 후보) + **단일 채널 재생 `playClip`**(이전 재생 항상 중단) + `preloadCoachAudio`(/start 코치 선택 시). **매니페스트 없으면 Web Speech 자동 폴백** → 지금은 폴백만 돌고, mp3+매니페스트를 `public/audio/`에 드롭하면 코드 변경 0으로 mp3 재생 전환. 형식은 `public/audio/README.md`
   - ⏳ **남음**: ElevenLabs mp3 일괄 생성 스크립트 + manifest.json 작성(게이트 통과 후). 파일 드롭이 유일한 블로커
-- [x] `coach.ts` — **멘트 결정 정책 완료**(`packages/core/coach.ts`: 쿨다운 4초·우선순위·동일 이벤트 억제·confidence<0.8 침묵, 테스트 9개). `/workout`가 `playClip`으로 재생(mp3 우선·Web Speech 폴백). 이름 호명은 임의 텍스트라 세트 경계 런타임 TTS 유지 (F1-3, §6.1)
+- [x] `coach.ts` — **멘트 결정 정책 완료**(`packages/core/coach.ts`: 쿨다운·우선순위·`suppressRepeat`(동일 이벤트 억제)·confidence 침묵). `/workout`가 `playClip`으로 재생(mp3 우선·Web Speech 폴백). 이름 호명은 임의 텍스트라 세트 경계 런타임 TTS 유지 (F1-3, §6.1)
+  - ✅ **라이브 튜닝**(실사용 피드백): core 기본값은 보수적(그레이스 2·conf 0.8·쿨다운 4초·중복억제)으로 두고 **web(`WorkoutView`)에서 완화 주입** — graceReps 0(첫 회부터)·minConfidence 0.72·cooldown 2.5s·suppressRepeat false(자주 교정). **연속 중복 대사는 `pickLine(exclude)`로 직전 대사 제외**해 막음(변형 소진 시 침묵). fixture 검증(graceReps 0·기본 conf)과 앱 튜닝이 분리됨
 - [ ] **[게이트 후] 코치 시범 영상 제작** (F1-8, TRD-FE §6.2) — 캐릭터 확정 뒤 착수(그 전엔 M2 플레이스홀더)
   - 정상 스쿼트 촬영(M3 fixture 겸용) → 마커리스 모캡 → **인체 비율 캐릭터(얼굴=코치)** 리타겟 → 단색/스튜디오 배경 렌더 → mp4 루프
   - 도구: MakeHuman(CC0) + 모캡(무료 티어 **비상업 주의**) + Blender. 투명 영상 금지(호환·깜빡임)
@@ -121,7 +124,7 @@
 
 ### M5. 세트 요약·마무리 (F1-6) (~1일)
 
-- [x] entities/workout 스토어 + 세트 종료 요약 화면 (F1-6) — 운동 중 회수·품질·결함을 집계(`views/workout/model/setResult.ts`), "세트 끝내기" → `store.setResult` → `/summary`가 실제값 표시(회수·자세 정확도·상위 지적 포인트·운동 시간). 지적 없으면 포인트 카드 숨김. `/summary` 직접 방문 시엔 기본 목(데모용)
+- [x] entities/workout 스토어 + 세트 종료 요약 화면 (F1-6) — 운동 중 회수·품질·결함을 집계(`views/workout/model/setResult.ts`), 세트 완료(자동 또는 "세트 끝내기") → `store.setResult` → `/summary`가 실제값 표시(회수/목표·자세 정확도·상위 지적 포인트·운동 시간). 지적 없으면 포인트 카드 숨김. `/summary` 직접 방문 시엔 기본 목(데모용). 요약은 3세트 자동 진행의 **마지막 세트** 후 표시, "다시 하기"는 1세트부터(`resetSetNo`)
   - 총평은 임시 템플릿 — 2단계 AI 리포트(F2-3)에서 캐릭터 톤 총평으로 교체
 - [x] 카메라 처리 방식 고지 + 운동 면책 문구 → **랜딩(`/`)에 배치 완료** (PRD §10 "첫 화면에 명시"). 카메라 고지는 히어로 서브라인+🔒 피처, 운동 면책은 하단 푸터. `/start`엔 권한 요청 직전 재고지(TRD-FE §8) 유지
 - [ ] 판정 튜닝 라운드 1 — 지인 ~5명 테스트, fixture 보강 (**촬영·사람 필요**)
