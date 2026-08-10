@@ -80,7 +80,7 @@
   - GPU delegate 이슈 시 `poseModel.ts`의 `delegate: "GPU"` → `"CPU"`
   - 시범 mp4는 프로그레시브 재생 (전체 프리로드 없이 첫 프레임부터 — §9.1). 판정과 동기화하지 않음
 
-> M2는 코드상 완료. 남은 건 **웹캠 실검증**(사용자 로컬)과 **판정 임계값 튜닝**(M3 fixture 기반). 코치 시범 실영상은 M4.
+> M2는 코드상 완료. 웹캠 실검증(사용자 로컬)은 M6, **판정 튜닝 1R는 M3에서 실촬영 fixture로 완료**. 코치 시범 실영상은 M4.
 
 ### M3. 코어 엔진 (F1-1, F1-2) (~1주 — 병목은 코딩이 아니라 몸으로 하는 오탐 검증)
 
@@ -88,12 +88,13 @@
 - [x] `squat-fsm.ts` — 상태머신 + 반복 카운트 (F1-1). 무릎각 히스테리시스, 회당 최저각·기울기·타이밍 누적
 - [x] `judge.ts` — 판정 규칙 → JudgeEvent (F1-2). **시범 영상과 분리**. confidence(precision 우선) + 우선순위 정렬(back_bent>knee_over_toe>knee_shallow)
 - [x] 입문자 그레이스 — `judge.ts`의 `graceReps`로 초반 회차 지적 억제(완주만 칭찬). 임계값은 튜닝 대상
-- [~] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
-  - ✅ **추출 도구 준비 완료** — `views/fixture-extract`(dev 라우트 `/dev/extract`, 프로덕션 404). 로컬 영상 드롭 → 브라우저 MediaPipe로 `PoseFrame[]` 추출 → `runSquatPipeline` 미리보기 → JSON 다운로드. 촬영하면 즉시 JSON화 가능
-  - **정상 촬영본은 M4 시범 영상의 모캡 소스로도 재사용** (TRD-FE §5.4·§6.2) — 촬영은 한 번, 폼을 정확히 잡아 찍을 것
-- [~] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 완료(angle·fsm·judge·배치판정)
-  - ✅ **회귀 하네스 완성** — `checkFixture()`(core, 순수 함수) + `fixture.test.ts`. `__fixtures__/index.ts`의 `FIXTURES` 배열에 등록된 fixture를 전부 돌려 ① 판정 이벤트 **스냅샷 회귀** ② fixture의 `expect`(repCount·mustInclude·mustExclude)로 **의도 검증**. 촬영본은 `/dev/extract`로 JSON 추출 → 배럴에 한 줄 추가 → `expect` 선언이면 튜닝 시 자동 검증. 검증 함수는 웹 미리보기에서도 재사용 가능
-  - ⏳ **남음**: 실제 촬영본 fixture 투입(현재는 합성 sample 1개로 하네스 동작 확인). 촬영이 유일한 블로커
+- [x] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출
+  - ✅ **추출 도구** — `views/fixture-extract`(dev 라우트 `/dev/extract`, 프로덕션 404). 로컬 영상 드롭 → 브라우저 MediaPipe로 `PoseFrame[]` 추출 → 미리보기 → 하네스 포맷(`standingKneeAngle` 키) JSON 다운로드
+  - ✅ **실촬영본 5종 투입** — 정상 1 + 불량 4(knee_over_toe·knee_shallow·tempo·back_bent), `packages/core/src/__fixtures__/`. **정상 촬영본은 M4 시범 영상 모캡 소스로도 재사용** (TRD-FE §6.2)
+- [x] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 유닛 테스트(angle·fsm·judge·배치판정) + 실촬영 회귀
+  - ✅ **회귀 하네스** — `checkFixture()`(core 순수 함수) + `fixture.test.ts`. `FIXTURES` 배럴을 전부 돌려 ① 판정 이벤트 **스냅샷 회귀** ② `expect`(repCount·mustInclude·mustExclude) **의도 검증**. 검증 함수는 웹 미리보기 재사용
+  - ✅ **판정 튜닝 1R — 실촬영 5종 전부 통과**: 정상 오탐 0 + 결함 4종 각 검출. 핵심: fixture 검증은 `pipeline` `judgeConfig` 오버라이드로 **graceReps 0**(판정력만 봄), 실제 앱은 graceReps 2 유지. back_bent는 무릎 굽히며 상체 숙이는 폼으로 재촬영해야 rep 카운트+검출됨(무릎 미굽힘=스쿼트 아님)
+  - ⏳ **남음**: 조명·거리·복장 바꿔가며 fixture 보강(선택). 라이브 오탐/미탐 체감은 M6 본인 검증에서
 
 ### M4. 캐릭터·음성·시범 영상 (F1-3, F1-4, F1-8) (~3~4일)
 
