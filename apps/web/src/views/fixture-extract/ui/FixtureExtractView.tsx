@@ -181,10 +181,12 @@ export function FixtureExtractView() {
     const payload = {
       name: name || "fixture",
       note,
+      // 회귀 하네스(SquatFixture)가 바로 읽는 키. 캘리브값을 박제해 결정론 유지.
+      standingKneeAngle: Math.round(result.standing),
+      // ↓ 출처 추적용 메타 (하네스는 무시). expect는 촬영 의도를 알고 손으로 추가.
       sourceFile: fileName,
       capturedFps: fps,
       frameCount: result.frames.length,
-      estimatedStandingKneeAngle: Math.round(result.standing),
       extractedAt: new Date().toISOString(),
       frames: result.frames,
     };
@@ -323,11 +325,23 @@ export function FixtureExtractView() {
           >
             4. JSON 다운로드 → {name || "fixture"}.json
           </button>
-          <p className="text-ink-muted mt-3 text-sm leading-relaxed">
-            받은 파일을 <code>packages/core/src/__fixtures__/</code>에 넣고 회귀
-            테스트를 배선하면 됩니다. 반복 수·결함이 실제 영상과 맞는지 눈으로
-            먼저 검수하세요.
-          </p>
+          <div className="text-ink-muted mt-3 text-sm leading-relaxed">
+            반복 수·결함이 실제 영상과 맞는지 <b>눈으로 먼저 검수</b>한 뒤:
+            <ol className="mt-1 list-decimal pl-5">
+              <li>
+                받은 파일을 <code>packages/core/src/__fixtures__/</code>에 저장
+              </li>
+              <li>
+                촬영 의도를 <code>expect</code>에 추가 (예:{" "}
+                <code>{`"expect": { "repCount": 8, "mustExclude": ["back_bent"] }`}</code>
+                )
+              </li>
+              <li>
+                <code>__fixtures__/index.ts</code>의 <code>FIXTURES</code>에 한
+                줄 추가 → <code>pnpm --filter @repo/core test</code>
+              </li>
+            </ol>
+          </div>
         </div>
       )}
     </main>

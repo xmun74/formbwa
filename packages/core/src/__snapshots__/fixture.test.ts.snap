@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`runSquatPipeline > fixture JSON을 돌려 이벤트 스냅샷을 회귀 검증한다 1`] = `
+exports[`fixture 회귀 하네스 > 'sample-squat.json' > 판정 이벤트 스냅샷 (회귀 감지) 1`] = `
 [
   {
     "confidence": 1,

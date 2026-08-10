@@ -91,7 +91,9 @@
 - [~] fixture 수집 — 본인 촬영 정상/불량 스쿼트 영상에서 랜드마크 시퀀스 JSON 추출 (**촬영 필요**)
   - ✅ **추출 도구 준비 완료** — `views/fixture-extract`(dev 라우트 `/dev/extract`, 프로덕션 404). 로컬 영상 드롭 → 브라우저 MediaPipe로 `PoseFrame[]` 추출 → `runSquatPipeline` 미리보기 → JSON 다운로드. 촬영하면 즉시 JSON화 가능
   - **정상 촬영본은 M4 시범 영상의 모캡 소스로도 재사용** (TRD-FE §5.4·§6.2) — 촬영은 한 번, 폼을 정확히 잡아 찍을 것
-- [ ] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 22개는 완료(angle·fsm·judge·배치판정), fixture 회귀는 촬영 후
+- [~] Vitest 스냅샷 회귀 테스트 (fixture → 기대 이벤트) — 합성 데이터 유닛 테스트 완료(angle·fsm·judge·배치판정)
+  - ✅ **회귀 하네스 완성** — `checkFixture()`(core, 순수 함수) + `fixture.test.ts`. `__fixtures__/index.ts`의 `FIXTURES` 배열에 등록된 fixture를 전부 돌려 ① 판정 이벤트 **스냅샷 회귀** ② fixture의 `expect`(repCount·mustInclude·mustExclude)로 **의도 검증**. 촬영본은 `/dev/extract`로 JSON 추출 → 배럴에 한 줄 추가 → `expect` 선언이면 튜닝 시 자동 검증. 검증 함수는 웹 미리보기에서도 재사용 가능
+  - ⏳ **남음**: 실제 촬영본 fixture 투입(현재는 합성 sample 1개로 하네스 동작 확인). 촬영이 유일한 블로커
 
 ### M4. 캐릭터·음성·시범 영상 (F1-3, F1-4, F1-8) (~3~4일)
 

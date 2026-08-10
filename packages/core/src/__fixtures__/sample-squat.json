@@ -1,6 +1,10 @@
 {
   "name": "sample-squat (synthetic)",
   "note": "합성 데이터 — 실제 촬영본으로 교체. 3회(깊게2·얕게1)",
+  "expect": {
+    "repCount": 3,
+    "mustInclude": ["good_rep", "knee_shallow"]
+  },
   "frames": [
     {
       "landmarks": [

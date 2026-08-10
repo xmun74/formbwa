@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import sampleSquat from "./__fixtures__/sample-squat.json";
 import { estimateStandingAngle, runSquatPipeline } from "./pipeline";
 import { LM, type Landmark, type PoseFrame } from "./types";
 
@@ -32,12 +31,6 @@ function sequence(kneeAngles: number[]): PoseFrame[] {
   return kneeAngles.map((a, i) => buildFrame(a, i * 30));
 }
 
-interface Fixture {
-  name: string;
-  standingKneeAngle?: number;
-  frames: PoseFrame[];
-}
-
 describe("runSquatPipeline", () => {
   it("합성 스쿼트 3회를 3회로 센다", () => {
     const deep = [172, 150, 120, 95, 90, 110, 140, 172];
@@ -51,12 +44,6 @@ describe("runSquatPipeline", () => {
       160,
     );
   });
-
-  it("fixture JSON을 돌려 이벤트 스냅샷을 회귀 검증한다", () => {
-    const fixture = sampleSquat as unknown as Fixture;
-    const events = runSquatPipeline(fixture.frames, {
-      standingKneeAngle: fixture.standingKneeAngle,
-    });
-    expect(events).toMatchSnapshot();
-  });
 });
+
+// fixture JSON 스냅샷 회귀는 fixture.test.ts(하네스)가 담당한다.
