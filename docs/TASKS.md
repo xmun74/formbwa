@@ -99,8 +99,10 @@
 
 - [~] 멘트 스크립트 작성 — 2캐릭터 × 이벤트별 변형. 초안 작성 완료(`views/workout/model/mnemonics.ts`, 이벤트별 2변형, 자막에 이미 사용 중). 분량 확대(~30)·사투리 게이트 통과 후 확정은 남음
 - [ ] **[게이트] ElevenLabs 부산 사투리 품질 검증** — 미달 시 캐릭터 교체 (PRD §12)
-- [ ] mp3 일괄 생성 스크립트 + 매니페스트 JSON + 프리로드
-- [~] `coach.ts` — **멘트 결정 정책 완료**(`packages/core/coach.ts`: 쿨다운 4초·우선순위·동일 이벤트 억제·confidence<0.8 침묵, 테스트 9개). `/workout` 자막이 이미 이걸로 동작. **단일 오디오 채널 재생(mp3)만 남음** — mp3 파일 필요 (F1-3)
+- [~] mp3 일괄 생성 스크립트 + 매니페스트 JSON + 프리로드
+  - ✅ **재생 인프라 완성**(mp3 파일만 있으면 되게 선(先)구축): `shared/lib/audio` — 매니페스트 로더(`/audio/{coachId}/manifest.json`, clipKey→파일 후보) + **단일 채널 재생 `playClip`**(이전 재생 항상 중단) + `preloadCoachAudio`(/start 코치 선택 시). **매니페스트 없으면 Web Speech 자동 폴백** → 지금은 폴백만 돌고, mp3+매니페스트를 `public/audio/`에 드롭하면 코드 변경 0으로 mp3 재생 전환. 형식은 `public/audio/README.md`
+  - ⏳ **남음**: ElevenLabs mp3 일괄 생성 스크립트 + manifest.json 작성(게이트 통과 후). 파일 드롭이 유일한 블로커
+- [x] `coach.ts` — **멘트 결정 정책 완료**(`packages/core/coach.ts`: 쿨다운 4초·우선순위·동일 이벤트 억제·confidence<0.8 침묵, 테스트 9개). `/workout`가 `playClip`으로 재생(mp3 우선·Web Speech 폴백). 이름 호명은 임의 텍스트라 세트 경계 런타임 TTS 유지 (F1-3, §6.1)
 - [ ] **[게이트 후] 코치 시범 영상 제작** (F1-8, TRD-FE §6.2) — 캐릭터 확정 뒤 착수(그 전엔 M2 플레이스홀더)
   - 정상 스쿼트 촬영(M3 fixture 겸용) → 마커리스 모캡 → **인체 비율 캐릭터(얼굴=코치)** 리타겟 → 단색/스튜디오 배경 렌더 → mp4 루프
   - 도구: MakeHuman(CC0) + 모캡(무료 티어 **비상업 주의**) + Blender. 투명 영상 금지(호환·깜빡임)

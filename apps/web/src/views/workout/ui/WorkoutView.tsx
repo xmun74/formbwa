@@ -15,8 +15,9 @@ import {
 import { displayName, useWorkoutStore } from "@/entities/workout";
 import { ROUTES } from "@/shared/config";
 import { track } from "@/shared/lib/analytics";
+import { playClip, stopClip } from "@/shared/lib/audio";
 import { useCameraPose } from "@/shared/lib/pose";
-import { cancelSpeech, speak } from "@/shared/lib/speech";
+import { speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { personalize, pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
@@ -88,15 +89,18 @@ export function WorkoutView() {
     if (clipKey) {
       const line = pickLine(coachIdRef.current, clipKey);
       if (line) {
-        // 자막엔 이름을 얹고(§6.1), 실시간 음성엔 이름 없이 원문만 발화
+        // 자막엔 이름을 얹고(§6.1), 실시간 음성엔 이름 없이 원문만 재생
+        // (mp3 있으면 mp3, 없으면 Web Speech 폴백 — audioBus가 판단)
         setCaption(personalize(line, nameRef.current));
-        if (voiceOnRef.current) speak(line);
+        if (voiceOnRef.current) {
+          void playClip({ coachId: coachIdRef.current, clipKey, text: line });
+        }
       }
     }
   }, []);
 
-  // 화면 떠날 때 남은 음성 중단
-  useEffect(() => cancelSpeech, []);
+  // 화면 떠날 때 남은 재생(mp3·음성) 중단
+  useEffect(() => stopClip, []);
 
   const { videoRef, canvasRef, status } = useCameraPose({ onFeatures });
 
@@ -205,7 +209,7 @@ export function WorkoutView() {
               type="button"
               onClick={() => {
                 setVoiceOn((v) => !v);
-                cancelSpeech();
+                stopClip();
               }}
               aria-label={voiceOn ? "음성 끄기" : "음성 켜기"}
               className={`grid size-9 shrink-0 place-items-center rounded-full transition-colors ${

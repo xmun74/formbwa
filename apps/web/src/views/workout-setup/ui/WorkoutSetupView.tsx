@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button, Field, Input } from "@repo/ui";
 import { useWorkoutStore } from "@/entities/workout";
 import { ROUTES } from "@/shared/config";
+import { preloadCoachAudio } from "@/shared/lib/audio";
 import { primeSpeech } from "@/shared/lib/speech";
 import { AppShell } from "@/shared/ui/app-shell";
 import { COACHES, DEFAULT_COACH, type Coach } from "../model/coaches";
@@ -26,6 +27,7 @@ export function WorkoutSetupView() {
     const c = COACHES.find((x) => x.id === coachId) ?? DEFAULT_COACH;
     setStoreCoach({ id: c.id, name: c.name, emoji: c.emoji });
     primeSpeech(); // 이 클릭(제스처)에서 음성 자동재생 잠금 해제 → /workout 발화가 들리게
+    void preloadCoachAudio(c.id); // 선택 코치 mp3 프리로드 (매니페스트 없으면 no-op)
   };
 
   return (
