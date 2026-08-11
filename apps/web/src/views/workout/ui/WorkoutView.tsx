@@ -17,6 +17,7 @@ import { displayName, useWorkoutStore } from "@/entities/workout";
 import { ROUTES } from "@/shared/config";
 import { track } from "@/shared/lib/analytics";
 import { playClip, stopClip } from "@/shared/lib/audio";
+import { CoachDemo } from "@/shared/lib/coach-demo";
 import { useCameraPose } from "@/shared/lib/pose";
 import { speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
@@ -51,8 +52,15 @@ const STATUS_TEXT = {
 
 export function WorkoutView() {
   const router = useRouter();
-  const { exerciseName, setNo, totalSets, coach, nickname, standingKneeAngle } =
-    useWorkoutStore();
+  const {
+    exerciseName,
+    exerciseId,
+    setNo,
+    totalSets,
+    coach,
+    nickname,
+    standingKneeAngle,
+  } = useWorkoutStore();
   const setResult = useWorkoutStore((s) => s.setResult);
   const nextSet = useWorkoutStore((s) => s.nextSet);
   // 표시 이름(비면 "회원"). 운동 중엔 안 바뀌지만 onFeatures 클로저용으로 ref에도 보관
@@ -320,7 +328,14 @@ export function WorkoutView() {
           <span className="bg-brand-500/20 text-brand-300 absolute top-3 right-3 rounded-full px-3 py-1 text-sm font-bold">
             따라 하기
           </span>
-          <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-30 -translate-x-1/2 rounded-t-[60px]" />
+          {/* mp4 있으면 재생, 없으면 실루엣 플레이스홀더 (선구축) */}
+          <CoachDemo
+            characterId={coach.characterId}
+            exerciseId={exerciseId}
+            className="absolute inset-0 size-full object-cover"
+          >
+            <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-30 -translate-x-1/2 rounded-t-[60px]" />
+          </CoachDemo>
 
           <div className="border-dark-line bg-dark-surface-2 absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)]">
             <button

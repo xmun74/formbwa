@@ -8,6 +8,8 @@ import { persist } from "zustand/middleware";
  */
 export interface WorkoutCoach {
   id: "pt" | "busan";
+  /** 불투명·고정 id — 특징(이름·사투리·외형)이 바뀌어도 불변. 정체성은 시범 매니페스트에 (spec §4) */
+  characterId: "character1" | "character2";
   name: string;
   emoji: string;
 }
@@ -32,6 +34,8 @@ interface WorkoutState {
   nickname: string;
   coach: WorkoutCoach;
   exerciseName: string;
+  /** 운동 식별 slug — 루틴·core(판정)·시범이 공유 (spec §4). exerciseName은 표시용 */
+  exerciseId: string;
   setNo: number;
   totalSets: number;
   /** TODO(M3): 판정 파이프라인 결과로 채운다. 지금은 목 기본값. */
@@ -53,6 +57,7 @@ interface WorkoutState {
 
 const DEFAULT_COACH: WorkoutCoach = {
   id: "pt",
+  characterId: "character1",
   name: "열정 PT쌤",
   emoji: "🔥",
 };
@@ -77,6 +82,7 @@ export const useWorkoutStore = create<WorkoutState>()(
       nickname: "",
       coach: DEFAULT_COACH,
       exerciseName: "스쿼트",
+      exerciseId: "squat",
       setNo: 1,
       totalSets: 3,
       result: DEFAULT_RESULT,
@@ -94,6 +100,7 @@ export const useWorkoutStore = create<WorkoutState>()(
           nickname: "",
           coach: DEFAULT_COACH,
           exerciseName: "스쿼트",
+          exerciseId: "squat",
           setNo: 1,
         }),
     }),
