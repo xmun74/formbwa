@@ -9,17 +9,27 @@ import { DEFAULT_SQUAT_CONFIG, SquatFSM } from "./squat-fsm";
 import type { JudgeEvent, PoseFrame } from "./types";
 
 /**
- * 기립 무릎 각도 추정 — 다리를 가장 편 상태(=서있음)라 각도의 상위 백분위를 쓴다.
+ * 기립 무릎각 샘플 → 기준 기립각. 다리를 가장 편 상태가 서있음이라 상위 백분위(p90)를 쓴다.
+ * 자세 잡는 초반·미세 흔들림 프레임에 눌리는 중앙값보다 견고 — 저측정되면 깊이 목표(S−65)가
+ * 과하게 깊어져 정상 스쿼트가 knee_shallow로 오탐난다. 라이브 캘리브(/prepare)와 fixture 추정이
+ * 이 한 함수를 공유해 경로 불일치를 없앤다.
+ */
+export const standingAngleFromSamples = (angles: number[]): number => {
+  if (angles.length === 0) return 170;
+  const sorted = [...angles].sort((a, b) => a - b);
+  return sorted[Math.floor(sorted.length * 0.9)] ?? sorted[sorted.length - 1]!;
+};
+
+/**
+ * 기립 무릎 각도 추정 — 프레임에서 특징을 뽑아 상위 백분위를 쓴다.
  * (캘리브 없이 fixture를 돌릴 때의 기본값. /workout은 캘리브 결과를 직접 넘긴다.)
  */
-export function estimateStandingAngle(frames: PoseFrame[]): number {
-  const angles = frames
-    .map((f) => extractFeatures(f)?.kneeAngle)
-    .filter((a): a is number => a !== undefined)
-    .sort((a, b) => a - b);
-  if (angles.length === 0) return 170;
-  return angles[Math.floor(angles.length * 0.9)] ?? angles[angles.length - 1]!;
-}
+export const estimateStandingAngle = (frames: PoseFrame[]): number =>
+  standingAngleFromSamples(
+    frames
+      .map((f) => extractFeatures(f)?.kneeAngle)
+      .filter((a): a is number => a !== undefined),
+  );
 
 export interface PipelineOptions {
   /** 기립 무릎 각도(캘리브 결과). 없으면 프레임에서 추정 */
