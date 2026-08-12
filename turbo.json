@@ -18,6 +18,10 @@
     "test": {
       "dependsOn": ["^build"]
     },
+    "render-demos": {
+      "cache": false,
+      "passThroughEnv": ["BLENDER"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

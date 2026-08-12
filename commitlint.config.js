@@ -1,5 +1,14 @@
 // scope 목록 — commitlint 검사(scope-enum)와 cz-git 프롬프트 선택지가 공유하는 단일 소스.
-const scopes = ["web", "be", "core", "ui", "tokens", "config", "repo"];
+const scopes = [
+  "web",
+  "be",
+  "core",
+  "ui",
+  "tokens",
+  "config",
+  "repo",
+  "coach-assets",
+];
 
 /** @type {import("@commitlint/types").UserConfig} */
 export default {
