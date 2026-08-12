@@ -33,15 +33,17 @@ export function CalibrationStage({ onNext }: { onNext: () => void }) {
       // 서있음(다리 가장 편 상태)이라 상위 백분위를 기준각으로 — 중앙값은 초반·흔들림에 눌려
       // 저측정→깊이 오탐을 유발. fixture 추정과 같은 함수 공유(§5.3).
       const standing = standingAngleFromSamples(s);
-      // [depth-debug] 임시: 캘리브 기립각 분포. median≪p90이면 예전 중앙값 방식이 저측정했다는 근거.
-      const sorted = [...s].sort((a, b) => a - b);
-      console.log("[depth-debug] calib", {
-        samples: sorted.length,
-        stored: Math.round(standing),
-        median: Math.round(sorted[Math.floor(sorted.length / 2)]!),
-        min: Math.round(sorted[0]!),
-        max: Math.round(sorted[sorted.length - 1]!),
-      });
+      // [depth-debug] 임시(dev 전용): 캘리브 기립각 분포. median≪p90이면 예전 중앙값 저측정 근거.
+      if (process.env.NODE_ENV !== "production") {
+        const sorted = [...s].sort((a, b) => a - b);
+        console.log("[depth-debug] calib", {
+          samples: sorted.length,
+          stored: Math.round(standing),
+          median: Math.round(sorted[Math.floor(sorted.length / 2)]!),
+          min: Math.round(sorted[0]!),
+          max: Math.round(sorted[sorted.length - 1]!),
+        });
+      }
       setStanding(standing);
     }
     onNext();

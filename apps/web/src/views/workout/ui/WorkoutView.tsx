@@ -121,15 +121,17 @@ export function WorkoutView() {
     const rep = fsmRef.current!.update(features, tMs);
     if (!rep) return;
     const events = judgeRep(rep, judgeCfgRef.current);
-    // [depth-debug] 임시: 회당 깊이 판정 근거. shallow=true인데 몸으론 정상 깊이면 오탐.
-    console.log("[depth-debug] rep", {
-      idx: rep.repIndex,
-      S: standingRef.current,
-      minKnee: Math.round(rep.minKneeAngle),
-      target: Math.round(judgeCfgRef.current.depthTargetAngle),
-      bend: Math.round(standingRef.current - rep.minKneeAngle),
-      shallow: events.some((e) => e.type === "knee_shallow"),
-    });
+    // [depth-debug] 임시(dev 전용): 회당 깊이 판정 근거. shallow=true인데 몸으론 정상 깊이면 오탐.
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[depth-debug] rep", {
+        idx: rep.repIndex,
+        S: standingRef.current,
+        minKnee: Math.round(rep.minKneeAngle),
+        target: Math.round(judgeCfgRef.current.depthTargetAngle),
+        bend: Math.round(standingRef.current - rep.minKneeAngle),
+        shallow: events.some((e) => e.type === "knee_shallow"),
+      });
+    }
     setReps(rep.repIndex);
     const faults = events.filter(
       (e) => e.type !== "rep_counted" && e.type !== "good_rep",
