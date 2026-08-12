@@ -104,7 +104,21 @@ export const useWorkoutStore = create<WorkoutState>()(
           setNo: 1,
         }),
     }),
-    { name: "formbwa-workout" },
+    {
+      name: "formbwa-workout",
+      version: 1,
+      // 구버전 persist엔 coach.characterId가 없어 시범 영상이 안 뜸 → id로 매핑 (spec §4)
+      migrate: (persisted, version) => {
+        const s = persisted as Partial<WorkoutState> & {
+          coach?: Partial<WorkoutCoach>;
+        };
+        if (version < 1 && s.coach && !s.coach.characterId) {
+          s.coach.characterId =
+            s.coach.id === "busan" ? "character2" : "character1";
+        }
+        return s as WorkoutState;
+      },
+    },
   ),
 );
 
