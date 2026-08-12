@@ -42,6 +42,8 @@ const LIVE_COACH_CONFIG = {
   minConfidence: 0.72, // 어느 정도 틀리면 교정
   suppressRepeat: false, // 같은 실수 반복해도 계속 교정 (변형 멘트)
 };
+const QUIET_REPS_FOR_MOTIVATION = 4; // 연속 이만큼 멘트 없으면 동기부여
+const MOTIVATION_COOLDOWN_MS = 8000; // 동기부여 최소 간격(ms) — 결함 교정과 안 겹치게
 
 const STATUS_TEXT = {
   loading: "카메라·모델 준비 중…",
@@ -85,6 +87,10 @@ export function WorkoutView() {
   coachRef.current ??= new Coach(LIVE_COACH_CONFIG);
   const coachIdRef = useRef(coach.id);
   coachIdRef.current = coach.id;
+  const exerciseIdRef = useRef(exerciseId);
+  exerciseIdRef.current = exerciseId;
+  const quietStreakRef = useRef(0); // 연속 멘트 없는 회 수 (동기부여 트리거)
+  const lastMotivationMsRef = useRef(0);
 
   // 세트 종료 요약용 누적치 (리렌더 불필요 → ref)
   const faultCountsRef = useRef<Partial<Record<JudgeEventType, number>>>({});
@@ -133,17 +139,60 @@ export function WorkoutView() {
       faultCountsRef.current[f.type] =
         (faultCountsRef.current[f.type] ?? 0) + 1;
     }
-    // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 + 임시 음성(Web Speech, M4에 mp3)
+    // 멘트: 결함/칭찬 우선 (core Coach 쿨다운·우선순위·침묵)
     const { clipKey } = coachRef.current!.decide(events, tMs);
+    let spoke = false;
     if (clipKey) {
-      const line = pickLine(coachIdRef.current, clipKey, lastLineRef.current);
+      const line = pickLine(
+        coachIdRef.current,
+        exerciseIdRef.current,
+        clipKey,
+        lastLineRef.current,
+      );
       if (line) {
         lastLineRef.current = line; // 다음 발화에서 이 대사 중복 금지
         // 자막엔 이름을 얹고(§6.1), 실시간 음성엔 이름 없이 원문만 재생
-        // (mp3 있으면 mp3, 없으면 Web Speech 폴백 — audioBus가 판단)
         setCaption(personalize(line, nameRef.current));
         if (voiceOnRef.current) {
           void playClip({ coachId: coachIdRef.current, clipKey, text: line });
+        }
+        spoke = true;
+      }
+    }
+
+    // 동기부여: 결함/칭찬이 안 나온 회에만 — 마일스톤(절반·막판) or 조용할 때, 쿨다운 준수
+    if (spoke) {
+      quietStreakRef.current = 0;
+    } else {
+      quietStreakRef.current += 1;
+      const remaining = SET_TARGET_REPS - rep.repIndex;
+      const milestone =
+        rep.repIndex === Math.floor(SET_TARGET_REPS / 2) ||
+        remaining === 3 ||
+        remaining === 1;
+      const quiet = quietStreakRef.current >= QUIET_REPS_FOR_MOTIVATION;
+      if (
+        (milestone || quiet) &&
+        tMs - lastMotivationMsRef.current > MOTIVATION_COOLDOWN_MS
+      ) {
+        const line = pickLine(
+          coachIdRef.current,
+          exerciseIdRef.current,
+          "motivation",
+          lastLineRef.current,
+        );
+        if (line) {
+          lastLineRef.current = line;
+          lastMotivationMsRef.current = tMs;
+          quietStreakRef.current = 0;
+          setCaption(personalize(line, nameRef.current));
+          if (voiceOnRef.current) {
+            void playClip({
+              coachId: coachIdRef.current,
+              clipKey: "motivation",
+              text: line,
+            });
+          }
         }
       }
     }
@@ -159,9 +208,12 @@ export function WorkoutView() {
     if (status !== "ready" || startAnnouncedRef.current) return;
     startAnnouncedRef.current = true;
     track("workout_started");
-    setCaption(personalize("시작해볼게요!", nameRef.current));
-    if (voiceOnRef.current)
-      speak(personalize("시작해볼게요!", nameRef.current));
+    // 시작 시 올바른 자세 설명 (운동별 form_intro). 없으면 기본 멘트
+    const intro =
+      pickLine(coachIdRef.current, exerciseIdRef.current, "form_intro") ??
+      "시작해볼게요!";
+    setCaption(personalize(intro, nameRef.current));
+    if (voiceOnRef.current) speak(personalize(intro, nameRef.current));
   }, [status]);
 
   // 다음 세트 시작 — 상태·엔진 리셋 후 다시 운동 (자동 진행)
@@ -175,6 +227,8 @@ export function WorkoutView() {
     faultCountsRef.current = {};
     startMsRef.current = performance.now();
     lastLineRef.current = null;
+    quietStreakRef.current = 0;
+    lastMotivationMsRef.current = 0;
     finishedRef.current = false;
     setReps(0);
     setGoodReps(0);
