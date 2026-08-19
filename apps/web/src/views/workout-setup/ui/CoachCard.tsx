@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Coach } from "../model/coaches";
 
 const ACCENT_BG: Record<Coach["accent"], string> = {
@@ -29,11 +30,17 @@ export function CoachCard({ coach, selected, onSelect }: CoachCardProps) {
           : "border-line hover:border-brand-300",
       ].join(" ")}
     >
-      {/* 이미지 영역 (실제 코치 이미지는 M4) */}
+      {/* 코치 전신 클레이 포즈 (characterId로 경로 유도) */}
       <div
-        className={`${ACCENT_BG[coach.accent]} flex h-[132px] items-center justify-center`}
+        className={`${ACCENT_BG[coach.accent]} relative h-42 overflow-hidden`}
       >
-        <span className="text-[46px]">{coach.emoji}</span>
+        <Image
+          src={`/coaches/${coach.characterId}-pose.png`}
+          alt={coach.name}
+          fill
+          sizes="280px"
+          className="object-contain object-bottom"
+        />
       </div>
 
       {/* 본문 */}
@@ -41,7 +48,6 @@ export function CoachCard({ coach, selected, onSelect }: CoachCardProps) {
         <h3 className="text-ink text-xl font-extrabold tracking-tight">
           {coach.name}
         </h3>
-        <p className="text-brand-400 mt-1 text-xs font-bold">“{coach.quote}”</p>
 
         {/* 3지표 */}
         <div className="mt-4 grid grid-cols-3 gap-2">

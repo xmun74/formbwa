@@ -10,6 +10,9 @@
   "videos": {
     "character1": {
       "squat": "character1-squat.mp4"
+    },
+    "character2": {
+      "squat": "character2-squat.mp4"
     }
   }
 }

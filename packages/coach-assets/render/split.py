@@ -24,6 +24,15 @@ def log(m):
 
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
+
+# Blender 5.x FBX 임포터 버그 우회: 제거된 light.cycles.cast_shadow에 값을 넣다 크래시
+# (일부 image→3D FBX엔 라이트/카메라 포함) → 인스턴스에서 타입 얻어 더미 속성 등록.
+bpy.context.scene.render.engine = "CYCLES"
+_tmp_light = bpy.data.lights.new("__cs", "POINT")
+if not hasattr(type(_tmp_light.cycles), "cast_shadow"):
+    type(_tmp_light.cycles).cast_shadow = bpy.props.BoolProperty(default=True)
+bpy.data.lights.remove(_tmp_light)
+
 bpy.ops.import_scene.fbx(
     filepath=INPUT, automatic_bone_orientation=True, global_scale=100.0
 )
