@@ -1,0 +1,18 @@
+{
+  "characters": {
+    "character1": {
+      "displayName": "열정 PT쌤"
+    },
+    "character2": {
+      "displayName": "부산 코치"
+    }
+  },
+  "videos": {
+    "character1": {
+      "squat": "character1-squat.mp4"
+    },
+    "character2": {
+      "squat": "character2-squat.mp4"
+    }
+  }
+}

@@ -12,6 +12,8 @@ export interface CoachStat {
 
 export interface Coach {
   id: "pt" | "busan";
+  /** 불투명·고정 시범 캐릭터 id (spec §4). 특징이 바뀌어도 불변 */
+  characterId: "character1" | "character2";
   name: string;
   /** 아바타 이모지 (실제 이미지는 M4) */
   emoji: string;
@@ -23,6 +25,7 @@ export interface Coach {
 export const COACHES: Coach[] = [
   {
     id: "pt",
+    characterId: "character1",
     name: "열정 PT쌤",
     emoji: "🔥",
     accent: "warm",
@@ -35,6 +38,7 @@ export const COACHES: Coach[] = [
   },
   {
     id: "busan",
+    characterId: "character2",
     name: "부산 사투리 쌤",
     emoji: "🧢",
     accent: "cool",

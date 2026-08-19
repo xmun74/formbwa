@@ -26,7 +26,12 @@ export function WorkoutSetupView() {
   const commitAndStart = () => {
     setStoreNickname(nickname);
     const c = COACHES.find((x) => x.id === coachId) ?? DEFAULT_COACH;
-    setStoreCoach({ id: c.id, name: c.name, emoji: c.emoji });
+    setStoreCoach({
+      id: c.id,
+      characterId: c.characterId,
+      name: c.name,
+      emoji: c.emoji,
+    });
     resetSetNo(); // 새 운동 세션 → 1세트부터 (persist된 이전 setNo 초기화)
     primeSpeech(); // 이 클릭(제스처)에서 음성 자동재생 잠금 해제 → /workout 발화가 들리게
     void preloadCoachAudio(c.id); // 선택 코치 mp3 프리로드 (매니페스트 없으면 no-op)

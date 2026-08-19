@@ -17,10 +17,10 @@ import { displayName, useWorkoutStore } from "@/entities/workout";
 import { ROUTES } from "@/shared/config";
 import { track } from "@/shared/lib/analytics";
 import { playClip, stopClip } from "@/shared/lib/audio";
+import { CoachDemo } from "@/shared/lib/coach-demo";
 import { useCameraPose } from "@/shared/lib/pose";
-import { speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
-import { personalize, pickLine } from "../model/mnemonics";
+import { countdownLine, personalize, pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
 import {
   COUNTDOWN_FROM,
@@ -41,6 +41,8 @@ const LIVE_COACH_CONFIG = {
   minConfidence: 0.72, // 어느 정도 틀리면 교정
   suppressRepeat: false, // 같은 실수 반복해도 계속 교정 (변형 멘트)
 };
+const QUIET_REPS_FOR_MOTIVATION = 4; // 연속 이만큼 멘트 없으면 동기부여
+const MOTIVATION_COOLDOWN_MS = 8000; // 동기부여 최소 간격(ms) — 결함 교정과 안 겹치게
 
 const STATUS_TEXT = {
   loading: "카메라·모델 준비 중…",
@@ -51,8 +53,15 @@ const STATUS_TEXT = {
 
 export function WorkoutView() {
   const router = useRouter();
-  const { exerciseName, setNo, totalSets, coach, nickname, standingKneeAngle } =
-    useWorkoutStore();
+  const {
+    exerciseName,
+    exerciseId,
+    setNo,
+    totalSets,
+    coach,
+    nickname,
+    standingKneeAngle,
+  } = useWorkoutStore();
   const setResult = useWorkoutStore((s) => s.setResult);
   const nextSet = useWorkoutStore((s) => s.nextSet);
   // 표시 이름(비면 "회원"). 운동 중엔 안 바뀌지만 onFeatures 클로저용으로 ref에도 보관
@@ -62,6 +71,8 @@ export function WorkoutView() {
   const panel = `border-dark-line relative overflow-hidden rounded-2xl border ${DARK_STRIPE}`;
 
   const standing = standingKneeAngle ?? DEFAULT_STANDING_KNEE_ANGLE;
+  const standingRef = useRef(standing); // onFeatures(deps []) 클로저용 — [depth-debug]
+  standingRef.current = standing;
   const fsmRef = useRef<SquatFSM | null>(null);
   fsmRef.current ??= new SquatFSM({
     standingKneeAngle: standing,
@@ -75,6 +86,10 @@ export function WorkoutView() {
   coachRef.current ??= new Coach(LIVE_COACH_CONFIG);
   const coachIdRef = useRef(coach.id);
   coachIdRef.current = coach.id;
+  const exerciseIdRef = useRef(exerciseId);
+  exerciseIdRef.current = exerciseId;
+  const quietStreakRef = useRef(0); // 연속 멘트 없는 회 수 (동기부여 트리거)
+  const lastMotivationMsRef = useRef(0);
 
   // 세트 종료 요약용 누적치 (리렌더 불필요 → ref)
   const faultCountsRef = useRef<Partial<Record<JudgeEventType, number>>>({});
@@ -88,6 +103,7 @@ export function WorkoutView() {
   const startAnnouncedRef = useRef(false);
   const lastLineRef = useRef<string | null>(null); // 직전 대사 — 연속 중복 멘트 방지
   const finishedRef = useRef(false); // 세트 종료 1회 보장 (자동·수동 중복 방지)
+  const completedSetRef = useRef(false); // 한 세트라도 완료했는가 — 경계(0회)에서 끝낼 때 직전 결과 유지용
   const [voiceOn, setVoiceOn] = useState(true);
   const voiceOnRef = useRef(voiceOn);
   voiceOnRef.current = voiceOn;
@@ -105,6 +121,17 @@ export function WorkoutView() {
     const rep = fsmRef.current!.update(features, tMs);
     if (!rep) return;
     const events = judgeRep(rep, judgeCfgRef.current);
+    // [depth-debug] 임시(dev 전용): 회당 깊이 판정 근거. shallow=true인데 몸으론 정상 깊이면 오탐.
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[depth-debug] rep", {
+        idx: rep.repIndex,
+        S: standingRef.current,
+        minKnee: Math.round(rep.minKneeAngle),
+        target: Math.round(judgeCfgRef.current.depthTargetAngle),
+        bend: Math.round(standingRef.current - rep.minKneeAngle),
+        shallow: events.some((e) => e.type === "knee_shallow"),
+      });
+    }
     setReps(rep.repIndex);
     const faults = events.filter(
       (e) => e.type !== "rep_counted" && e.type !== "good_rep",
@@ -114,17 +141,76 @@ export function WorkoutView() {
       faultCountsRef.current[f.type] =
         (faultCountsRef.current[f.type] ?? 0) + 1;
     }
-    // 멘트 결정(쿨다운·우선순위·침묵) → 캐릭터 대사로 자막 + 임시 음성(Web Speech, M4에 mp3)
+
+    // 막판 카운트다운(남은 1~5회): 교정·동기부여보다 우선 — 코치가 세어준다
+    const remaining = SET_TARGET_REPS - rep.repIndex;
+    if (remaining >= 1 && remaining <= COUNTDOWN_FROM) {
+      const line = countdownLine(coachIdRef.current, remaining);
+      if (line) {
+        setCaption(line); // 숫자 구호라 이름은 얹지 않음
+        if (voiceOnRef.current) {
+          void playClip({
+            coachId: coachIdRef.current,
+            clipKey: `count${remaining}`,
+            text: line,
+          });
+        }
+        quietStreakRef.current = 0; // 카운트도 발화로 취급
+      }
+      return; // 이 회는 카운트만 (교정·동기부여 생략)
+    }
+
+    // 멘트: 결함/칭찬 우선 (core Coach 쿨다운·우선순위·침묵)
     const { clipKey } = coachRef.current!.decide(events, tMs);
+    let spoke = false;
     if (clipKey) {
-      const line = pickLine(coachIdRef.current, clipKey, lastLineRef.current);
+      const line = pickLine(
+        coachIdRef.current,
+        exerciseIdRef.current,
+        clipKey,
+        lastLineRef.current,
+      );
       if (line) {
         lastLineRef.current = line; // 다음 발화에서 이 대사 중복 금지
         // 자막엔 이름을 얹고(§6.1), 실시간 음성엔 이름 없이 원문만 재생
-        // (mp3 있으면 mp3, 없으면 Web Speech 폴백 — audioBus가 판단)
         setCaption(personalize(line, nameRef.current));
         if (voiceOnRef.current) {
           void playClip({ coachId: coachIdRef.current, clipKey, text: line });
+        }
+        spoke = true;
+      }
+    }
+
+    // 동기부여: 결함/칭찬이 안 나온 회에만 — 마일스톤(절반·막판) or 조용할 때, 쿨다운 준수
+    if (spoke) {
+      quietStreakRef.current = 0;
+    } else {
+      quietStreakRef.current += 1;
+      // 절반 지점 격려 (막판 1~5회는 위 카운트다운이 가져감)
+      const milestone = rep.repIndex === Math.floor(SET_TARGET_REPS / 2);
+      const quiet = quietStreakRef.current >= QUIET_REPS_FOR_MOTIVATION;
+      if (
+        (milestone || quiet) &&
+        tMs - lastMotivationMsRef.current > MOTIVATION_COOLDOWN_MS
+      ) {
+        const line = pickLine(
+          coachIdRef.current,
+          exerciseIdRef.current,
+          "motivation",
+          lastLineRef.current,
+        );
+        if (line) {
+          lastLineRef.current = line;
+          lastMotivationMsRef.current = tMs;
+          quietStreakRef.current = 0;
+          setCaption(personalize(line, nameRef.current));
+          if (voiceOnRef.current) {
+            void playClip({
+              coachId: coachIdRef.current,
+              clipKey: "motivation",
+              text: line,
+            });
+          }
         }
       }
     }
@@ -140,9 +226,19 @@ export function WorkoutView() {
     if (status !== "ready" || startAnnouncedRef.current) return;
     startAnnouncedRef.current = true;
     track("workout_started");
-    setCaption(personalize("시작해볼게요!", nameRef.current));
-    if (voiceOnRef.current)
-      speak(personalize("시작해볼게요!", nameRef.current));
+    // 시작 시 올바른 자세 설명 (운동별 form_intro). 없으면 기본 멘트
+    const intro =
+      pickLine(coachIdRef.current, exerciseIdRef.current, "form_intro") ??
+      "시작해볼게요!";
+    setCaption(personalize(intro, nameRef.current));
+    // mp3 있으면 form_intro mp3, 없으면 playClip 내부에서 Web Speech 폴백
+    if (voiceOnRef.current) {
+      void playClip({
+        coachId: coachIdRef.current,
+        clipKey: "form_intro",
+        text: intro,
+      });
+    }
   }, [status]);
 
   // 다음 세트 시작 — 상태·엔진 리셋 후 다시 운동 (자동 진행)
@@ -156,6 +252,8 @@ export function WorkoutView() {
     faultCountsRef.current = {};
     startMsRef.current = performance.now();
     lastLineRef.current = null;
+    quietStreakRef.current = 0;
+    lastMotivationMsRef.current = 0;
     finishedRef.current = false;
     setReps(0);
     setGoodReps(0);
@@ -167,22 +265,24 @@ export function WorkoutView() {
   const completeSet = useCallback(() => {
     if (finishedRef.current) return; // 자동 완료와 수동 버튼 동시 방지
     finishedRef.current = true;
+    completedSetRef.current = true;
     const isLast = setNo >= totalSets;
     track("set_completed", { reps, quality });
     setCaption(
       personalize(isLast ? "마지막 세트 완료!" : `${setNo}세트 완료!`, name),
     );
+    // 완료 시점의 세트 결과를 항상 저장 → 세트 경계에서 '세트 끝내기'를 눌러도 직전 세트가 요약에 남는다.
+    setResult(
+      buildSetResult({
+        reps,
+        goodReps,
+        targetReps: SET_TARGET_REPS,
+        faultCounts: faultCountsRef.current,
+        durationMs: performance.now() - startMsRef.current,
+      }),
+    );
     window.setTimeout(() => {
       if (isLast) {
-        setResult(
-          buildSetResult({
-            reps,
-            goodReps,
-            targetReps: SET_TARGET_REPS,
-            faultCounts: faultCountsRef.current,
-            durationMs: performance.now() - startMsRef.current,
-          }),
-        );
         router.push(ROUTES.SUMMARY);
       } else {
         setRestLeft(REST_SECONDS);
@@ -190,6 +290,29 @@ export function WorkoutView() {
       }
     }, SET_END_DELAY_MS);
   }, [reps, goodReps, quality, name, setNo, totalSets, setResult, router]);
+
+  // "세트 끝내기" 버튼 — 자동 완료(휴식→다음 세트)와 별개로, 현재 세트 기준으로 **즉시** 요약 화면으로.
+  // 지연·휴식 없이 바로 전환하고, 재생 중이던 멘트는 끊는다.
+  const finishNow = useCallback(() => {
+    if (finishedRef.current) return; // 자동 완료가 이미 돌았으면 중복 방지
+    finishedRef.current = true;
+    stopClip(); // 재생 중이던 멘트 즉시 중단
+    // 현재 세트에 기록이 있으면 그 값으로 요약을 만든다.
+    // 세트 경계(방금 완료→다음 세트 0회)에서 누르면 직전 완료 세트 결과를 그대로 유지한다.
+    if (reps > 0 || !completedSetRef.current) {
+      track("set_completed", { reps, quality });
+      setResult(
+        buildSetResult({
+          reps,
+          goodReps,
+          targetReps: SET_TARGET_REPS,
+          faultCounts: faultCountsRef.current,
+          durationMs: performance.now() - startMsRef.current,
+        }),
+      );
+    }
+    router.push(ROUTES.SUMMARY);
+  }, [reps, goodReps, quality, setResult, router]);
 
   // 목표 횟수를 채우면 자동으로 세트 완료
   useEffect(() => {
@@ -220,7 +343,7 @@ export function WorkoutView() {
           <ExitGuard />
           <button
             type="button"
-            onClick={completeSet}
+            onClick={finishNow}
             className="bg-brand-500 hover:bg-brand-600 rounded-full px-4 py-2 font-bold text-white transition-colors"
           >
             세트 끝내기 →
@@ -309,7 +432,14 @@ export function WorkoutView() {
           <span className="bg-brand-500/20 text-brand-300 absolute top-3 right-3 rounded-full px-3 py-1 text-sm font-bold">
             따라 하기
           </span>
-          <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-30 -translate-x-1/2 rounded-t-[60px]" />
+          {/* mp4 있으면 재생, 없으면 실루엣 플레이스홀더 (선구축) */}
+          <CoachDemo
+            characterId={coach.characterId}
+            exerciseId={exerciseId}
+            className="absolute inset-0 size-full object-cover"
+          >
+            <span className="bg-dark-surface-2/60 absolute bottom-0 left-1/2 h-72 w-30 -translate-x-1/2 rounded-t-[60px]" />
+          </CoachDemo>
 
           <div className="border-dark-line bg-dark-surface-2 absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_16px_40px_-18px_rgba(0,0,0,0.7)]">
             <button

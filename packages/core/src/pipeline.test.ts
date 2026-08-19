@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { estimateStandingAngle, runSquatPipeline } from "./pipeline";
+import {
+  estimateStandingAngle,
+  runSquatPipeline,
+  standingAngleFromSamples,
+} from "./pipeline";
 import { LM, type Landmark, type PoseFrame } from "./types";
 
 /** 무릎각(θ) → 왼쪽 다리 프레임. extractFeatures가 그 각도를 뽑도록 관절을 배치한다. */
@@ -43,6 +47,23 @@ describe("runSquatPipeline", () => {
     expect(estimateStandingAngle(sequence([...deep, ...deep]))).toBeGreaterThan(
       160,
     );
+  });
+});
+
+describe("standingAngleFromSamples", () => {
+  it("빈 입력이면 기본값 170", () => {
+    expect(standingAngleFromSamples([])).toBe(170);
+  });
+
+  it("초반 자세 잡던 저각 프레임에 눌리지 않고 참 기립각(p90)을 잡는다", () => {
+    // 서있음 ~177 다수 + 자세 잡던/흔들린 저각 12프레임. 중앙값이면 ~167로 저측정되어
+    // 깊이 목표(S−65)가 과해져 정상 스쿼트를 knee_shallow로 오탐(회귀 방지).
+    const settling = [
+      150, 152, 154, 156, 158, 160, 162, 164, 165, 166, 167, 168,
+    ];
+    const standing = [177, 177, 177, 177, 177, 177, 177, 178];
+    const s = standingAngleFromSamples([...settling, ...standing]);
+    expect(s).toBeGreaterThanOrEqual(177); // 중앙값 방식(~167)이면 실패
   });
 });
 
