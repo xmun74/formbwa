@@ -1,0 +1,4 @@
+{
+  "pt": { "voiceId": "tc_6699eb0f10b8e361d6a9aba1", "model": "ssfm-v30" },
+  "busan": { "voiceId": "tc_65d6f8d2905d7082a9e4e382", "model": "ssfm-v30" }
+}

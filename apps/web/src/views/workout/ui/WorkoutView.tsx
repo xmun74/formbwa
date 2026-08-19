@@ -19,7 +19,6 @@ import { track } from "@/shared/lib/analytics";
 import { playClip, stopClip } from "@/shared/lib/audio";
 import { CoachDemo } from "@/shared/lib/coach-demo";
 import { useCameraPose } from "@/shared/lib/pose";
-import { speak } from "@/shared/lib/speech";
 import { ExitGuard } from "@/shared/ui/exit-guard";
 import { personalize, pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
@@ -215,7 +214,14 @@ export function WorkoutView() {
       pickLine(coachIdRef.current, exerciseIdRef.current, "form_intro") ??
       "시작해볼게요!";
     setCaption(personalize(intro, nameRef.current));
-    if (voiceOnRef.current) speak(personalize(intro, nameRef.current));
+    // mp3 있으면 form_intro mp3, 없으면 playClip 내부에서 Web Speech 폴백
+    if (voiceOnRef.current) {
+      void playClip({
+        coachId: coachIdRef.current,
+        clipKey: "form_intro",
+        text: intro,
+      });
+    }
   }, [status]);
 
   // 다음 세트 시작 — 상태·엔진 리셋 후 다시 운동 (자동 진행)

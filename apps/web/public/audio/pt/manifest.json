@@ -1,0 +1,48 @@
+{
+  "clips": {
+    "motivation": [
+      "motivation-1.mp3",
+      "motivation-2.mp3",
+      "motivation-3.mp3",
+      "motivation-4.mp3",
+      "motivation-5.mp3",
+      "motivation-6.mp3",
+      "motivation-7.mp3"
+    ],
+    "good_rep": [
+      "good_rep-1.mp3",
+      "good_rep-2.mp3",
+      "good_rep-3.mp3",
+      "good_rep-4.mp3"
+    ],
+    "form_intro": ["form_intro-1.mp3", "form_intro-2.mp3", "form_intro-3.mp3"],
+    "knee_shallow": [
+      "knee_shallow-1.mp3",
+      "knee_shallow-2.mp3",
+      "knee_shallow-3.mp3",
+      "knee_shallow-4.mp3",
+      "knee_shallow-5.mp3"
+    ],
+    "back_bent": [
+      "back_bent-1.mp3",
+      "back_bent-2.mp3",
+      "back_bent-3.mp3",
+      "back_bent-4.mp3",
+      "back_bent-5.mp3"
+    ],
+    "knee_over_toe": [
+      "knee_over_toe-1.mp3",
+      "knee_over_toe-2.mp3",
+      "knee_over_toe-3.mp3",
+      "knee_over_toe-4.mp3",
+      "knee_over_toe-5.mp3"
+    ],
+    "tempo_too_fast": [
+      "tempo_too_fast-1.mp3",
+      "tempo_too_fast-2.mp3",
+      "tempo_too_fast-3.mp3",
+      "tempo_too_fast-4.mp3",
+      "tempo_too_fast-5.mp3"
+    ]
+  }
+}
