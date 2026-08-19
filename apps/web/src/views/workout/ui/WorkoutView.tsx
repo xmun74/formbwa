@@ -103,6 +103,7 @@ export function WorkoutView() {
   const startAnnouncedRef = useRef(false);
   const lastLineRef = useRef<string | null>(null); // 직전 대사 — 연속 중복 멘트 방지
   const finishedRef = useRef(false); // 세트 종료 1회 보장 (자동·수동 중복 방지)
+  const completedSetRef = useRef(false); // 한 세트라도 완료했는가 — 경계(0회)에서 끝낼 때 직전 결과 유지용
   const [voiceOn, setVoiceOn] = useState(true);
   const voiceOnRef = useRef(voiceOn);
   voiceOnRef.current = voiceOn;
@@ -264,22 +265,24 @@ export function WorkoutView() {
   const completeSet = useCallback(() => {
     if (finishedRef.current) return; // 자동 완료와 수동 버튼 동시 방지
     finishedRef.current = true;
+    completedSetRef.current = true;
     const isLast = setNo >= totalSets;
     track("set_completed", { reps, quality });
     setCaption(
       personalize(isLast ? "마지막 세트 완료!" : `${setNo}세트 완료!`, name),
     );
+    // 완료 시점의 세트 결과를 항상 저장 → 세트 경계에서 '세트 끝내기'를 눌러도 직전 세트가 요약에 남는다.
+    setResult(
+      buildSetResult({
+        reps,
+        goodReps,
+        targetReps: SET_TARGET_REPS,
+        faultCounts: faultCountsRef.current,
+        durationMs: performance.now() - startMsRef.current,
+      }),
+    );
     window.setTimeout(() => {
       if (isLast) {
-        setResult(
-          buildSetResult({
-            reps,
-            goodReps,
-            targetReps: SET_TARGET_REPS,
-            faultCounts: faultCountsRef.current,
-            durationMs: performance.now() - startMsRef.current,
-          }),
-        );
         router.push(ROUTES.SUMMARY);
       } else {
         setRestLeft(REST_SECONDS);
@@ -287,6 +290,29 @@ export function WorkoutView() {
       }
     }, SET_END_DELAY_MS);
   }, [reps, goodReps, quality, name, setNo, totalSets, setResult, router]);
+
+  // "세트 끝내기" 버튼 — 자동 완료(휴식→다음 세트)와 별개로, 현재 세트 기준으로 **즉시** 요약 화면으로.
+  // 지연·휴식 없이 바로 전환하고, 재생 중이던 멘트는 끊는다.
+  const finishNow = useCallback(() => {
+    if (finishedRef.current) return; // 자동 완료가 이미 돌았으면 중복 방지
+    finishedRef.current = true;
+    stopClip(); // 재생 중이던 멘트 즉시 중단
+    // 현재 세트에 기록이 있으면 그 값으로 요약을 만든다.
+    // 세트 경계(방금 완료→다음 세트 0회)에서 누르면 직전 완료 세트 결과를 그대로 유지한다.
+    if (reps > 0 || !completedSetRef.current) {
+      track("set_completed", { reps, quality });
+      setResult(
+        buildSetResult({
+          reps,
+          goodReps,
+          targetReps: SET_TARGET_REPS,
+          faultCounts: faultCountsRef.current,
+          durationMs: performance.now() - startMsRef.current,
+        }),
+      );
+    }
+    router.push(ROUTES.SUMMARY);
+  }, [reps, goodReps, quality, setResult, router]);
 
   // 목표 횟수를 채우면 자동으로 세트 완료
   useEffect(() => {
@@ -317,7 +343,7 @@ export function WorkoutView() {
           <ExitGuard />
           <button
             type="button"
-            onClick={completeSet}
+            onClick={finishNow}
             className="bg-brand-500 hover:bg-brand-600 rounded-full px-4 py-2 font-bold text-white transition-colors"
           >
             세트 끝내기 →
