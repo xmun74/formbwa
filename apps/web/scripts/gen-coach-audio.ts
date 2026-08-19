@@ -2,7 +2,7 @@
  * 코치 멘트(mnemonics.ts) → Typecast API → public/audio/{coachId}/*.mp3 + manifest.json.
  * 앱은 mp3가 있으면 자동 재생, 없으면 Web Speech 폴백(shared/lib/audio) — 코드 변경 0으로 전환.
  */
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { MNEMONICS } from "../src/views/workout/model/mnemonics";
@@ -31,6 +31,11 @@ const clipLines = (
 ): Record<string, string[]> => {
   const c = MNEMONICS[coachId];
   const sq = c.exercises.squat;
+  // 막판 카운트다운: count1..count5 (각 단일 파일). playClip({clipKey:`count${remaining}`})
+  const counts: Record<string, string[]> = {};
+  c.countdown.forEach((line, i) => {
+    counts[`count${i + 1}`] = [line];
+  });
   return {
     motivation: c.motivation,
     good_rep: c.good_rep,
@@ -39,6 +44,7 @@ const clipLines = (
     back_bent: sq.back_bent,
     knee_over_toe: sq.knee_over_toe,
     tempo_too_fast: sq.tempo_too_fast,
+    ...counts,
   };
 };
 
@@ -66,6 +72,7 @@ const synth = async (text: string, cfg: VoiceCfg): Promise<Buffer> => {
 const main = async (): Promise<void> => {
   if (!API_KEY) throw new Error("TYPECAST_API_KEY 환경변수가 필요합니다");
   const only = process.env.COACH; // COACH=pt 처럼 지정하면 그 코치만 재생성
+  const force = process.env.FORCE === "1"; // 기본은 없는 파일만 생성. FORCE=1이면 전체 재합성(텍스트 수정 시)
   for (const coachId of Object.keys(MNEMONICS) as (keyof typeof MNEMONICS)[]) {
     if (only && coachId !== only) continue;
     const cfg = voices[coachId];
@@ -81,8 +88,13 @@ const main = async (): Promise<void> => {
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i]!;
         const file = `${clipKey}-${i + 1}.mp3`;
-        console.log(`[gen] ${coachId}/${file}  "${line}"`);
-        writeFileSync(path.join(dir, file), await synth(line, cfg));
+        const dest = path.join(dir, file);
+        if (!force && existsSync(dest)) {
+          console.log(`[skip] ${coachId}/${file} (이미 있음)`);
+        } else {
+          console.log(`[gen] ${coachId}/${file}  "${line}"`);
+          writeFileSync(dest, await synth(line, cfg));
+        }
         files.push(file);
       }
       clips[clipKey] = files;

@@ -2,7 +2,7 @@
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
   "globalEnv": ["NODE_ENV", "NAVER_SITE_VERIFICATION"],
-  "globalPassThroughEnv": ["PORT", "TYPECAST_API_KEY", "COACH"],
+  "globalPassThroughEnv": ["PORT", "TYPECAST_API_KEY", "COACH", "FORCE"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

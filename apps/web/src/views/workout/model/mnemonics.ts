@@ -28,6 +28,8 @@ interface ExerciseMnemonics {
 interface CoachMnemonics {
   motivation: string[];
   good_rep: string[];
+  /** 막판 카운트다운 — index+1 = 남은 회수 (예: [4] = 5개 남음, [0] = 마지막 1개). */
+  countdown: string[];
   exercises: Record<string, ExerciseMnemonics>;
 }
 
@@ -48,6 +50,7 @@ export const MNEMONICS: Record<CoachId, CoachMnemonics> = {
       "완벽한 자세예요!",
       "바로 그거예요!",
     ],
+    countdown: ["마지막 하나!", "둘!", "셋!", "넷!", "다섯 개 남았어요!"],
     exercises: {
       squat: {
         form_intro: [
@@ -102,6 +105,7 @@ export const MNEMONICS: Record<CoachId, CoachMnemonics> = {
       "그래 그거지, 완벽하다!",
       "마, 자세 좋다!",
     ],
+    countdown: ["마지막 하나다!", "둘!", "셋!", "넷!", "다섯 개 남았다!"],
     exercises: {
       squat: {
         form_intro: [
@@ -166,6 +170,15 @@ export function pickLine(
   const pool = exclude ? lines.filter((l) => l !== exclude) : lines;
   if (pool.length === 0) return null;
   return pool[Math.floor(Math.random() * pool.length)]!;
+}
+
+/** 남은 회수(1~5)에 해당하는 카운트다운 대사. index+1 = 남은 회수. */
+export function countdownLine(
+  coachId: string,
+  remaining: number,
+): string | null {
+  const c = MNEMONICS[coachId as CoachId];
+  return c?.countdown[remaining - 1] ?? null;
 }
 
 /**

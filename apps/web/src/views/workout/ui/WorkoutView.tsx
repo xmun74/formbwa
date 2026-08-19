@@ -20,7 +20,7 @@ import { playClip, stopClip } from "@/shared/lib/audio";
 import { CoachDemo } from "@/shared/lib/coach-demo";
 import { useCameraPose } from "@/shared/lib/pose";
 import { ExitGuard } from "@/shared/ui/exit-guard";
-import { personalize, pickLine } from "../model/mnemonics";
+import { countdownLine, personalize, pickLine } from "../model/mnemonics";
 import { buildSetResult } from "../model/setResult";
 import {
   COUNTDOWN_FROM,
@@ -140,6 +140,25 @@ export function WorkoutView() {
       faultCountsRef.current[f.type] =
         (faultCountsRef.current[f.type] ?? 0) + 1;
     }
+
+    // 막판 카운트다운(남은 1~5회): 교정·동기부여보다 우선 — 코치가 세어준다
+    const remaining = SET_TARGET_REPS - rep.repIndex;
+    if (remaining >= 1 && remaining <= COUNTDOWN_FROM) {
+      const line = countdownLine(coachIdRef.current, remaining);
+      if (line) {
+        setCaption(line); // 숫자 구호라 이름은 얹지 않음
+        if (voiceOnRef.current) {
+          void playClip({
+            coachId: coachIdRef.current,
+            clipKey: `count${remaining}`,
+            text: line,
+          });
+        }
+        quietStreakRef.current = 0; // 카운트도 발화로 취급
+      }
+      return; // 이 회는 카운트만 (교정·동기부여 생략)
+    }
+
     // 멘트: 결함/칭찬 우선 (core Coach 쿨다운·우선순위·침묵)
     const { clipKey } = coachRef.current!.decide(events, tMs);
     let spoke = false;
@@ -166,11 +185,8 @@ export function WorkoutView() {
       quietStreakRef.current = 0;
     } else {
       quietStreakRef.current += 1;
-      const remaining = SET_TARGET_REPS - rep.repIndex;
-      const milestone =
-        rep.repIndex === Math.floor(SET_TARGET_REPS / 2) ||
-        remaining === 3 ||
-        remaining === 1;
+      // 절반 지점 격려 (막판 1~5회는 위 카운트다운이 가져감)
+      const milestone = rep.repIndex === Math.floor(SET_TARGET_REPS / 2);
       const quiet = quietStreakRef.current >= QUIET_REPS_FOR_MOTIVATION;
       if (
         (milestone || quiet) &&

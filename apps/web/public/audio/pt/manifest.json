@@ -43,6 +43,11 @@
       "tempo_too_fast-3.mp3",
       "tempo_too_fast-4.mp3",
       "tempo_too_fast-5.mp3"
-    ]
+    ],
+    "count1": ["count1-1.mp3"],
+    "count2": ["count2-1.mp3"],
+    "count3": ["count3-1.mp3"],
+    "count4": ["count4-1.mp3"],
+    "count5": ["count5-1.mp3"]
   }
 }
