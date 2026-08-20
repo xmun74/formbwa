@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **상태 (2026-08-20): ✅ 구현·커밋 완료** — Phase 0(렌더 화질 게이트 통과) + Track A(런타임 플레이어, Task 1–5) + Track B(`packages/coach-assets` 렌더 파이프라인)까지 전부 구현. character1·character2 스쿼트 시범 영상 렌더·연결(PR #1). 아래 세부 체크박스는 계획 시점 기준이며, 실제 완료 상태는 이 배너를 따른다. **남음**: 운동 카탈로그 확장(런지 등)·최종 코치-얼굴 캐릭터 정식화 — M6/사투리 게이트 후.
+
 **Goal:** 운동 화면 우측 "코치 시범"을, 캐릭터×운동이 늘어도 저작은 N+M으로 끝나는 시스템으로 구현 — 지금은 런타임 플레이어를 선(先)구축하고, 오프라인 렌더 mp4는 파일만 드롭하면 자동 재생되게 한다.
 
 **Architecture:** 오프라인 Blender 렌더가 리그×클립을 N×M mp4로 생성(Track B, Phase 0 게이트 후) → 웹은 매니페스트로 mp4를 골라 `<video loop>` 재생(Track A, 지금). 매니페스트가 계약. 설계: `docs/coach-demo-design.md`.
@@ -31,16 +33,18 @@
 
 **목표:** "Blender 클레이 셋업으로 opengraph 같은 클레이 계열·완성도가 나오나?" + "opengraph 여성을 리그드 3D로 옮길 수 있나?"
 
-- [ ] 기존 리그(`3d-assets/`의 busan 리그 등) + Mixamo 스쿼트 클립을 Blender로.
-- [ ] 클레이 머티리얼·조명·환경 셋업 → 짧은 루프 렌더 → opengraph와 **스타일 계열·완성도 육안 비교**.
-- [ ] `opengraph-image.png` 여성 **image→3D 빠른 테스트**(sample\*.glb 방식) → character1 제작·리깅 난도 가늠.
-- **게이트 판정:** 같은 계열·완성도 도달 → Track B 상세화 진행. 미달 → 셋업 반복(또는 아트 방향 재논의).
+- [x] 기존 리그(`3d-assets/`의 busan 리그 등) + Mixamo 스쿼트 클립을 Blender로.
+- [x] 클레이 머티리얼·조명·환경 셋업 → 짧은 루프 렌더 → opengraph와 **스타일 계열·완성도 육안 비교**.
+- [x] `opengraph-image.png` 여성 **image→3D 빠른 테스트**(sample\*.glb 방식) → character1 제작·리깅 난도 가늠.
+- **게이트 판정:** ✅ **통과** — 같은 계열·완성도 도달(Blender 5.2 클레이 셋업, view_transform="Standard"). Track B 진행·구현 완료.
 
 > Track A는 이 게이트와 **독립**이라 지금 착수 가능.
 
 ---
 
-## Track A — 런타임 플레이어 + 통합 (지금 착수)
+## Track A — 런타임 플레이어 + 통합 (✅ 완료)
+
+> Task 1–5 전부 구현·커밋 완료. `shared/lib/coach-demo`(manifest·CoachDemo) + WorkoutView 우측 패널 교체 + `characterId`·`exerciseId` 도입 + 플레이스홀더 매니페스트/README. 이제 실제 mp4가 채워져 재생 중(character1·character2 스쿼트).
 
 ### 파일 구조
 
@@ -294,15 +298,15 @@ import { CoachDemo } from "@/shared/lib/coach-demo";
 
 ---
 
-## Track B — 렌더 파이프라인 (Phase 0 통과 후, 별도 계획)
+## Track B — 렌더 파이프라인 (✅ 구현 완료)
 
-Phase 0에서 클레이 셋업이 확정돼야 render.py 세부가 정해지므로, 통과 후 별도 계획으로 상세화. 개요만:
+`packages/coach-assets` 구현·커밋 완료. 리그(캐릭터 FBX) + 클립(모션 FBX) + 공용 클레이 셋업 → **N×M mp4 + 매니페스트 자동 생성**.
 
-- `packages/coach-assets` 워크스페이스 패키지 생성 (vitest 가능 = **진짜 유닛테스트 여기 집중**).
-- `src/render.py` — Blender 헤드리스: 리그+클립+클레이셋업 → 프레임 → mp4(ffmpeg).
-- `src/build.ts` — 조합 나열·증분 판단·스켈레톤 본이름 호환 검증·manifest 생성 → `public/coach-3d/`. (이 순수 로직들이 유닛테스트 대상)
-- turbo task `render-demos`. 로컬 렌더 → 산출물 커밋(원본은 로컬 gitignored).
-- 테스트 대상(예): 조합 열거(N×M), manifest 생성 형태, 스켈레톤 본이름 불일치 검증기.
+- `render/clay.py` — Blender 5.2 헤드리스: 리그+클립 → 클레이 렌더(PNG 프레임) → ffmpeg mp4. 측면 45° 카메라(앱 촬영각), `view_transform="Standard"`(AgX 탈색 회피). FBX 광원 import 워크어라운드 포함.
+- `render/split.py` — 통합 FBX → rig.fbx(메시+아마추어) + clip.fbx(애니만) 분리.
+- `src/{discover,combos,incremental,manifest,render,build}.ts` — 조합 나열·증분 판단·매니페스트 생성. **유닛테스트 8개**(combos·incremental·manifest) 통과.
+- turbo task `render-demos`(증분: 변경 조합만). 자산 규약: 원본 rig/clip은 `3d-assets/{characters,motions}/`(gitignored 로컬), 산출물(`public/coach-3d/`)만 커밋.
+- **실증**: 동일 스쿼트 클립이 character1·character2 리그 양쪽에 올바르게 렌더(팩터링 결정1·2).
 
 ---
 
