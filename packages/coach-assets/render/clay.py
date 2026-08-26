@@ -131,10 +131,31 @@ def world_bbox(objs):
     return mn, mx
 
 
-mn, mx = world_bbox(meshes)
+# 프레임 범위 먼저 확정 (bbox를 전 애니 프레임에서 재기 위해)
+end = int(scene.frame_end)
+_acts = list(bpy.data.actions)
+if _acts:
+    _e = max(int(a.frame_range[1]) for a in _acts)
+    if _e > 1:
+        end = _e
+scene.frame_start = 1
+scene.frame_end = end
+
+# bbox = 전 애니 프레임의 합집합 (한 프레임만 재면 동작 중 잘림 — 서기/앉기/팔뻗기 모두 포함)
+mn = Vector((1e9, 1e9, 1e9))
+mx = Vector((-1e9, -1e9, -1e9))
+for _f in range(scene.frame_start, scene.frame_end + 1):
+    scene.frame_set(_f)
+    fmn, fmx = world_bbox(meshes)
+    mn = Vector(map(min, mn, fmn))
+    mx = Vector(map(max, mx, fmx))
+# 가장자리 여유 — 발·팔이 프레임에 딱 붙지 않게
+pad = max((mx - mn).x, (mx - mn).y, (mx - mn).z) * 0.08
+mn -= Vector((pad, pad, pad))
+mx += Vector((pad, pad, pad))
 center = (mn + mx) / 2
 height = (mx - mn).z or 1.0
-log(f"bbox size=({(mx - mn).x:.2f},{(mx - mn).y:.2f},{(mx - mn).z:.2f})")
+log(f"bbox(전프레임+pad) size=({(mx - mn).x:.2f},{(mx - mn).y:.2f},{(mx - mn).z:.2f})")
 
 # --- 카메라: 측면45°, 전신 프레이밍 ---
 cam_data = bpy.data.cameras.new("Cam")
@@ -182,15 +203,7 @@ scene.render.resolution_x = RES_X
 scene.render.resolution_y = RES_Y
 scene.render.fps = FPS
 
-end = int(scene.frame_end)
-acts = list(bpy.data.actions)
-if acts:
-    e = max(int(a.frame_range[1]) for a in acts)
-    if e > 1:
-        end = e
-scene.frame_start = 1
-scene.frame_end = end
-log(f"frames 1..{end}")
+log(f"frames 1..{scene.frame_end}")
 
 if os.environ.get("SPIKE_STILL"):
     scene.frame_set((scene.frame_start + scene.frame_end) // 2)
