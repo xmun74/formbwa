@@ -30,7 +30,7 @@ BUMP_SCALE = 28.0
 BUMP_STRENGTH = 0.07
 BG_COLOR = (0.62, 0.80, 0.92)
 KEY_ENERGY = 3.0
-VIEW_ANGLE_DEG = -45  # ±45=측면45°(앱 촬영각), 부호=바라보는 방향
+VIEW_ANGLE_DEG = float(os.environ.get("VIEW_ANGLE", "-45"))  # ±45=측면45°(앱 촬영각). env로 override(썸네일 정면=0)
 # ====================
 
 
@@ -202,6 +202,9 @@ scene.view_settings.view_transform = "Standard"
 scene.render.resolution_x = RES_X
 scene.render.resolution_y = RES_Y
 scene.render.fps = FPS
+if os.environ.get("FILM_TRANSPARENT"):  # 썸네일용: 배경 투명 PNG(알파)
+    scene.render.film_transparent = True
+    scene.render.image_settings.color_mode = "RGBA"
 
 log(f"frames 1..{scene.frame_end}")
 

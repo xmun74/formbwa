@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Badge } from "@repo/ui";
 import type { Exercise } from "../model/exercises";
 
@@ -35,19 +36,29 @@ export function ExerciseCard({
             : "border-line",
       ].join(" ")}
     >
-      {/* 썸네일 플레이스홀더 */}
+      {/* 썸네일 — 이미지 있으면 표시, 없으면 실루엣 플레이스홀더 */}
       <div
         className={[
-          "mb-3 flex h-37.5 items-center justify-center rounded-xl",
+          "relative mb-3 flex h-37.5 items-center justify-center overflow-hidden rounded-xl",
           selected ? "bg-brand-50" : "bg-[#eef2f0]",
         ].join(" ")}
       >
-        <span
-          className={[
-            "h-15.5 w-11 rounded-t-3xl",
-            selected ? "bg-brand-300" : "bg-[#d4dcd9]",
-          ].join(" ")}
-        />
+        {exercise.image ? (
+          <Image
+            src={exercise.image}
+            alt={exercise.name}
+            fill
+            sizes="(max-width: 640px) 50vw, 200px"
+            className="object-contain p-1"
+          />
+        ) : (
+          <span
+            className={[
+              "h-15.5 w-11 rounded-t-3xl",
+              selected ? "bg-brand-300" : "bg-[#d4dcd9]",
+            ].join(" ")}
+          />
+        )}
       </div>
 
       {/* 이름 + 상태 배지 */}

@@ -9,6 +9,7 @@ export interface Exercise {
   id: string;
   name: string;
   status: ExerciseStatus;
+  image?: string;
 }
 
 export interface ExerciseCategory {
@@ -42,7 +43,12 @@ export const EXERCISE_CATEGORIES: ExerciseCategory[] = [
     name: "하체",
     note: "지금 가능",
     exercises: [
-      { id: "squat", name: "스쿼트", status: "ready" },
+      {
+        id: "squat",
+        name: "스쿼트",
+        status: "ready",
+        image: "/exercises/squat.png",
+      },
       { id: "lunge", name: "런지", status: "soon" },
     ],
   },

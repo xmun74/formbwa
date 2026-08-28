@@ -29,9 +29,7 @@ export function ExerciseListView() {
       <div className="px-gutter max-w-4xl pt-14 pb-32">
         <h1 className="text-3xl font-extrabold tracking-tight">운동 목록</h1>
         <p className="text-ink-soft mt-2 text-base">
-          부위를 골라 종목을 선택하세요. 지금은{" "}
-          <b className="text-brand-700 font-bold">스쿼트</b>부터 시작할 수
-          있어요.
+          부위를 골라 종목을 선택하세요.
         </p>
 
         <div className="mt-10 flex flex-col gap-9">
