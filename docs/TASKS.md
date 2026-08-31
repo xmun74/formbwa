@@ -109,13 +109,16 @@
 - [x] `coach.ts` — **멘트 결정 정책 완료**(`packages/core/coach.ts`: 쿨다운·우선순위·`suppressRepeat`(동일 이벤트 억제)·confidence 침묵). `/workout`가 `playClip`으로 재생(mp3 우선·Web Speech 폴백). 이름 호명은 임의 텍스트라 세트 경계 런타임 TTS 유지 (F1-3, §6.1)
   - ✅ **라이브 튜닝**(실사용 피드백): core 기본값은 보수적(그레이스 2·conf 0.8·쿨다운 4초·중복억제)으로 두고 **web(`WorkoutView`)에서 완화 주입** — graceReps 0(첫 회부터)·minConfidence 0.72·cooldown 2.5s·suppressRepeat false(자주 교정). **연속 중복 대사는 `pickLine(exclude)`로 직전 대사 제외**해 막음(변형 소진 시 침묵). fixture 검증(graceReps 0·기본 conf)과 앱 튜닝이 분리됨
 - [~] **코치 시범 영상 시스템** (F1-8, TRD-FE §6.2) — **재설계·구현 완료**(오프라인 Blender 렌더, PR #1). 설계: [coach-demo-design.md](./coach-demo-design.md) · 계획: [coach-demo-plan.md](./coach-demo-plan.md)
-  - ✅ **런타임 플레이어**(Track A): `shared/lib/coach-demo`의 `<CoachDemo characterId exerciseId>` = 매니페스트로 mp4 골라 `<video loop muted playsInline>` 재생, 없으면 실루엣 폴백. WorkoutView 우측 패널 교체. **three.js 0**(네이티브 video)
-  - ✅ **팩터링 렌더 파이프라인**(Track B): `packages/coach-assets` — 리그(캐릭터 FBX)+클립(모션 FBX)+공용 클레이 셋업 → **N×M mp4+매니페스트 자동 생성**(`render/clay.py`·`split.py`, discover·combos·incremental·manifest **유닛테스트 8개**, turbo `render-demos` 증분). 도구: HF Space image→3D + Mixamo 리깅 + **Blender 5.2 클레이 렌더**(≠ 원안 MakeHuman/모캡)
-  - ✅ **character1·character2 스쿼트 시범 영상 렌더·연결**(`public/coach-3d/videos/{character1,character2}-squat.mp4`). 팩터링 실증: **동일 스쿼트 클립이 두 리그에 올바르게 렌더**(결정1·2)
+  - [x] **런타임 플레이어**(Track A): `shared/lib/coach-demo`의 `<CoachDemo characterId exerciseId>` = 매니페스트로 mp4 골라 `<video loop muted playsInline>` 재생, 없으면 실루엣 폴백. WorkoutView 우측 패널 교체. **three.js 0**(네이티브 video)
+  - [x] **팩터링 렌더 파이프라인**(Track B): `packages/coach-assets` — 리그(캐릭터 FBX)+클립(모션 FBX)+공용 클레이 셋업 → **N×M mp4+매니페스트 자동 생성**(`render/clay.py`·`split.py`, discover·combos·incremental·manifest **유닛테스트 8개**, turbo `render-demos` 증분). 도구: HF Space image→3D + Mixamo 리깅 + **Blender 5.2 클레이 렌더**(≠ 원안 MakeHuman/모캡)
+  - [x] **character1·character2 스쿼트 시범 영상 렌더·연결**(`public/coach-3d/videos/{character1,character2}-squat.mp4`). 팩터링 실증: **동일 스쿼트 클립이 두 리그에 올바르게 렌더**(결정1·2)
+  - [x] **캐릭터 품질 업그레이드**(PR #2): character1·2를 **고품질 클레이 메시로 교체**(자체 FBX 저품질 → 상용 생성). 눈 스타일 보정(흰자 제거→클레이 점눈, **텍스처만** 편집·지오메트리 미변경). **Mixamo 스케일 트릭**: 메시를 100배 키워 OBJ 업로드→올바른 뼈 스케일(클립 호환), 사후 스케일 보정은 스킨 메시라 불가
+  - [x] **clay.py 렌더 개선**: 카메라 프레이밍을 **전(全) 애니 프레임 bbox 합집합+패딩**으로(동작 중 잘림/공중부양 방지) + `VIEW_ANGLE`(썸네일 각도)·`FILM_TRANSPARENT`(배경 투명 RGBA PNG) env 추가
   - `characterId` 불투명(character1/character2)·`exerciseId` slug(squat) 도입 + persist 마이그레이션. 자산 규약: 원본 rig/clip은 `3d-assets/`(gitignored 로컬), **산출물(mp4·manifest)만 커밋**
-  - **남음(게이트 후)**: 최종 코치-얼굴 클레이 캐릭터 정식화(현재 리깅 아티팩트는 카메라각으로 완화) + 운동 카탈로그 확장(런지 등) + Mixamo 네이티브 export 정식화
+  - **남음(게이트 후)**: 캐릭터는 고품질화 완료 → 남은 건 **운동 카탈로그 확장(런지 등)** + Mixamo 네이티브 export 정식화
 - [x] **`/` 인트로 + `/routine` 운동 목록 + `/start` 설정 화면 (UI 완료)** (F1-4·F1-10, PRD §4) — `/`는 히어로+"시작하기", `/routine`는 부위별(웜업·상체·하체·전신) 종목 목록(스쿼트만 동작, 나머지 "준비 중"), `/start`(`views/workout-setup`)는 닉네임 입력 + 준비물 안내(2m·측면 45°) + 캐릭터 카드(리치) + "운동 시작"(→ `/prepare`)
   - **UI는 목 데이터로 완성**. 실 캐릭터 에셋(코치 시범 영상)·음성은 M4 본체에서. `/` 피처 카드엔 클레이 캐릭터 일러스트(`views/intro/assets/pose-*.png`, 장식용) 적용, 하단 공용 `footer`에 운동 면책 고지(PRD §10)
+  - [x] **운동 카드 썸네일**: `/routine` 스쿼트 카드에 **클레이 캐릭터 스쿼트 자세 이미지**(`public/exercises/squat.png`, Blender `FILM_TRANSPARENT` 투명 배경 렌더·`object-contain`) 표시. 준비 중 종목은 실루엣 플레이스홀더 유지. 데이터에 `image?` 필드 추가 → 종목 늘면 경로만 추가
   - M2에서 라우트 골격·운동 store(entities/workout)는 이미 섬 — 여기선 화면 내용을 채움
   - 운동 목록은 **부위별 구조를 미리** 세워 3단계 종목 추가(F3-3) 때 화면 재작업 없게. 선택 종목은 entities/workout에 저장
   - 프리로드 (TRD-FE §9.1): `/` 진입 시 모델·WASM(store 보관) / `/start` 캐릭터 선택 시 mp3
@@ -123,14 +126,14 @@
 - [~] 닉네임 개인화 (F1-9, TRD-FE §6.1) — **선택 입력(필수 아님, 비우면 "회원님")**, 자동 포커스 금지·플레이스홀더 예시. localStorage 저장(재방문 유지), 운동 중 **자막에 이름 상시**. 세트 경계 음성 호명은 비-실시간이라 런타임 TTS 허용(미리 합성·캐싱, 실시간 교정 루프엔 넣지 않음)
   - **자막 개인화**: `mnemonics.personalize(line, name)`로 교정·칭찬 자막 앞에 이름을 얹음(`"민수님, 더 깊게!"`). **실시간 음성엔 이름 없이 원문만**(§6.1: 텍스트만 항상 개인화). 초기 자막·세트 시작 자막도 개인화. 자막 카드의 화자 라벨은 코치명으로(이름 중복 제거)
   - **세트 시작 안내**: 카메라 ready 시 1회 `form_intro`(자세 설명 멘트) 재생 — 자막은 이름 개인화(`"{name}님, …"`), 음성은 mp3 우선·Web Speech 폴백. (초기 "시작해볼게요" 호명 → form_intro로 대체) 입력·persist·폴백 충족
-  - ✅ **mp3 파이프라인 연결됨**(Typecast): 교정·자세설명·카운트다운은 사전 mp3 재생(없으면 Web Speech 폴백). 세트 시작 이름 호명은 비-실시간이라 런타임 TTS 유지. 세트 끝 호명은 `/summary` 이동이 음성을 끊어 보류(요약 화면은 시각 개인화로 처리)
+  - [x] **mp3 파이프라인 연결됨**(Typecast): 교정·자세설명·카운트다운은 사전 mp3 재생(없으면 Web Speech 폴백). 세트 시작 이름 호명은 비-실시간이라 런타임 TTS 유지. 세트 끝 호명은 `/summary` 이동이 음성을 끊어 보류(요약 화면은 시각 개인화로 처리)
 
-> M4 코어(멘트 4종 체계·Typecast 캐릭터 음성·오프라인 렌더 시범 시스템·닉네임 개인화)는 **구현 완료**(PR #1). **남은 게이트**: 사투리 품질(콕스 라이브 평가)·최종 코치-얼굴 캐릭터 정식화·운동 카탈로그 확장 — M6/사투리 게이트 후. 라이브 카메라 검증(멘트 트리거·카운트다운·세트 종료 흐름)은 실촬영 대기.
+> M4 코어(멘트 4종 체계·Typecast 캐릭터 음성·오프라인 렌더 시범 시스템·닉네임 개인화)는 **구현 완료**(PR #1). 캐릭터 **고품질화 완료**(PR #2). **남은 게이트**: 사투리 품질(콕스 라이브 평가)·운동 카탈로그 확장(런지 등) — M6/사투리 게이트 후. 라이브 카메라 검증(멘트 트리거·카운트다운·세트 종료 흐름)은 실촬영 대기.
 
 ### M5. 세트 요약·마무리 (F1-6) (~1일)
 
 - [x] entities/workout 스토어 + 세트 종료 요약 화면 (F1-6) — 운동 중 회수·품질·결함을 집계(`views/workout/model/setResult.ts`), 세트 완료(자동 또는 "세트 끝내기") → `store.setResult` → `/summary`가 실제값 표시(회수/목표·자세 정확도·상위 지적 포인트·운동 시간). 지적 없으면 포인트 카드 숨김. `/summary` 직접 방문 시엔 기본 목(데모용). 요약은 3세트 자동 진행의 **마지막 세트** 후 표시, "다시 하기"는 1세트부터(`resetSetNo`)
-  - ✅ **세트 끝내기 버튼 수정**: 자동완료용 지연·휴식 없이 **즉시** 현재 세트 요약으로 전환(`finishNow`). 세트 완료 때마다 결과 저장 → 세트 경계(직전 세트 완주 후 다음 세트 0회 상태)에서 눌러도 **직전 완료 세트 결과가 요약에 남도록** 수정(0회 리셋 버그 해결)
+  - [x] **세트 끝내기 버튼 수정**: 자동완료용 지연·휴식 없이 **즉시** 현재 세트 요약으로 전환(`finishNow`). 세트 완료 때마다 결과 저장 → 세트 경계(직전 세트 완주 후 다음 세트 0회 상태)에서 눌러도 **직전 완료 세트 결과가 요약에 남도록** 수정(0회 리셋 버그 해결)
   - 총평은 임시 템플릿 — 2단계 AI 리포트(F2-3)에서 캐릭터 톤 총평으로 교체
 - [x] 카메라 처리 방식 고지 + 운동 면책 문구 → **랜딩(`/`)에 배치 완료** (PRD §10 "첫 화면에 명시"). 카메라 고지는 히어로 서브라인+🔒 피처, 운동 면책은 하단 푸터. `/start`엔 권한 요청 직전 재고지(TRD-FE §8) 유지
 - [ ] 판정 튜닝 라운드 1 — 지인 ~5명 테스트, fixture 보강 (**촬영·사람 필요**)
