@@ -26,16 +26,36 @@ export const EXERCISE_CATEGORIES: ExerciseCategory[] = [
     name: "웜업",
     note: "몸풀기",
     exercises: [
-      { id: "neck-shoulder", name: "목·어깨 풀기", status: "soon" },
-      { id: "cat-pose", name: "고양이 자세", status: "soon" },
+      {
+        id: "neck-shoulder",
+        name: "목/어깨 스트레칭",
+        status: "soon",
+        image: "/exercises/pose_neck-shoulder.png",
+      },
+      {
+        id: "cat-pose",
+        name: "고양이 자세",
+        status: "soon",
+        image: "/exercises/pose_cat-pose.png",
+      },
     ],
   },
   {
     id: "upper",
     name: "상체",
     exercises: [
-      { id: "pushup", name: "푸시업", status: "soon" },
-      { id: "plank", name: "플랭크", status: "soon" },
+      {
+        id: "pushup",
+        name: "푸시업",
+        status: "soon",
+        image: "/exercises/pose_pushup.png",
+      },
+      {
+        id: "plank",
+        name: "플랭크",
+        status: "soon",
+        image: "/exercises/pose_plank.png",
+      },
     ],
   },
   {
@@ -47,17 +67,32 @@ export const EXERCISE_CATEGORIES: ExerciseCategory[] = [
         id: "squat",
         name: "스쿼트",
         status: "ready",
-        image: "/exercises/squat.png",
+        image: "/exercises/pose_squat.png",
       },
-      { id: "lunge", name: "런지", status: "soon" },
+      {
+        id: "lunge",
+        name: "런지",
+        status: "soon",
+        image: "/exercises/pose_lunge.png",
+      },
     ],
   },
   {
     id: "full",
     name: "전신",
     exercises: [
-      { id: "burpee", name: "버피", status: "soon" },
-      { id: "mountain-climber", name: "마운틴클라이머", status: "soon" },
+      {
+        id: "burpee",
+        name: "버피",
+        status: "soon",
+        image: "/exercises/pose_burpee.png",
+      },
+      {
+        id: "mountain-climber",
+        name: "마운틴클라이머",
+        status: "soon",
+        image: "/exercises/pose_mountain-climber.png",
+      },
     ],
   },
 ];
